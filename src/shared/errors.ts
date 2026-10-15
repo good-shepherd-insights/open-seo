@@ -8,7 +8,7 @@
  * - Codes are stable identifiers (never change after ship)
  * - Messages name the actual thing that failed, in plain language
  * - No provider names, no env vars, no jargon, no ALL CAPS
- * - If the user can't fix it themselves, include support@goodshepherdinsights.com
+ * - If the user can't fix it themselves, include ${ERROR_SUPPORT_EMAIL}
  */
 
 import type { ErrorCode } from "@/shared/error-codes";
@@ -36,12 +36,12 @@ export const balanceIssue: ErrorDef = {
 
 export const billingCustomerMissing: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't load your billing info. Email support@goodshepherdinsights.com and we'll sort it out.",
+  message: "We couldn't load your billing info. Email ${ERROR_SUPPORT_EMAIL} and we'll sort it out.",
 };
 
 export const authConfigMissing: ErrorDef = {
   code: "AUTH_CONFIG_MISSING",
-  message: "Sign-in isn't set up right now. Email support@goodshepherdinsights.com and we'll get it working.",
+  message: "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
 };
 
 // ── Validation ───────────────────────────────────────────────────────────────
@@ -102,7 +102,7 @@ export const unauthenticated: ErrorDef = {
 
 export const authMissingEnv: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "Sign-in isn't set up right now. Email support@goodshepherdinsights.com and we'll get it working.",
+  message: "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
 };
 
 // ── Audit ────────────────────────────────────────────────────────────────────
@@ -124,24 +124,24 @@ export const auditPageLimitExceeded: ErrorDef = {
 
 export const auditContextMismatch: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We lost track of that audit mid-run. Email support@goodshepherdinsights.com if this keeps happening.",
+  message: "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
 };
 
 export const auditProjectMismatch: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We lost track of that audit mid-run. Email support@goodshepherdinsights.com if this keeps happening.",
+  message: "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
 };
 
 export const auditConfigInvalid: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "That audit's settings are mixed up. Email support@goodshepherdinsights.com and we'll fix it.",
+  message: "That audit's settings are mixed up. Email ${ERROR_SUPPORT_EMAIL} and we'll fix it.",
 };
 
 // ── Upstream / service ───────────────────────────────────────────────────────
 
 export const serviceTaskMissing: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't start that scan. Please try again — if it keeps happening, email support@goodshepherdinsights.com.",
+  message: "We couldn't start that scan. Please try again — if it keeps happening, email ${ERROR_SUPPORT_EMAIL}.",
 };
 
 export const serviceUnavailable: ErrorDef = {
@@ -163,7 +163,7 @@ export const crawlTargetBlocked: ErrorDef = {
 
 export const crawlFailed: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't scan that site. Please try again — email support@goodshepherdinsights.com if it keeps happening.",
+  message: "We couldn't scan that site. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 export const crawlTimeout: ErrorDef = {
@@ -185,7 +185,7 @@ export const renderEmptyResponse: ErrorDef = {
 
 export const renderFailed: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't load that page. Please try again — email support@goodshepherdinsights.com if it keeps happening.",
+  message: "We couldn't load that page. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 // ── Rank tracking ────────────────────────────────────────────────────────────
@@ -204,7 +204,7 @@ export const projectArchiveOnly: ErrorDef = {
 
 export const projectStopAudit: ErrorDef = {
   code: "CONFLICT",
-  message: "We couldn't stop that audit. Refresh and try again — email support@goodshepherdinsights.com if it keeps happening.",
+  message: "We couldn't stop that audit. Refresh and try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 export const projectDefault: ErrorDef = {

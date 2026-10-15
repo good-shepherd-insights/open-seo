@@ -1,6 +1,8 @@
-const DEFAULT_SITE_URL = "https://openseo.so";
+import { PRIMARY_DOMAIN, PRODUCT_NAME } from "@/shared/branding";
+
+const DEFAULT_SITE_URL = `https://${PRIMARY_DOMAIN}`;
 const DEFAULT_SOCIAL_IMAGE_PATH = "/social-card.jpg";
-const DEFAULT_SOCIAL_IMAGE_ALT = "OpenSEO product preview";
+const DEFAULT_SOCIAL_IMAGE_ALT = `${PRODUCT_NAME} product preview`;
 
 export const SITE_URL = (
   process.env.SITE_URL ??
@@ -59,7 +61,7 @@ export function buildPageSeo({
     meta: [
       { title: fullTitle },
       ...(description ? [{ name: "description", content: description }] : []),
-      { property: "og:site_name", content: "OpenSEO" },
+      { property: "og:site_name", content: PRODUCT_NAME },
       { property: "og:type", content: ogType },
       { property: "og:title", content: fullTitle },
       ...(description
