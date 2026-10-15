@@ -8,6 +8,7 @@ import {
   type BusinessTaskOutcome,
 } from "@/server/lib/dataforseo";
 import { AppError } from "@/server/lib/errors";
+import { jsonRequired } from "@/shared/errors";
 import { buildCacheKey, getCached, setCached } from "@/server/lib/r2-cache";
 import { buildProjectMeta } from "@/server/mcp/context";
 import { mcpResponse } from "@/server/mcp/formatters";
@@ -303,10 +304,7 @@ function parseReviewsTaskId(taskId: string): {
 } {
   const match = REVIEWS_TASK_ID_PATTERN.exec(taskId);
   if (!match) {
-    throw new AppError(
-      "VALIDATION_ERROR",
-      'taskId must be the value this tool returned, formatted as "google:<id>" or "extended:<id>".',
-    );
+    throw new AppError(jsonRequired.code, jsonRequired.message);
   }
   return {
     endpoint: match[1] === "extended" ? "extended_reviews" : "reviews",
@@ -523,10 +521,7 @@ export const getBusinessUpdatesTool = {
     let taskId: string;
     if (args.taskId) {
       if (args.taskId.includes(":")) {
-        throw new AppError(
-          "VALIDATION_ERROR",
-          "That looks like a get_business_reviews taskId; pass the bare taskId this tool returned.",
-        );
+        throw new AppError(jsonRequired.code, jsonRequired.message);
       }
       taskId = args.taskId;
     } else {
@@ -919,10 +914,7 @@ export const getLocalRankGridTool = {
       args.target.placeId == null &&
       args.target.name == null
     ) {
-      throw new AppError(
-        "VALIDATION_ERROR",
-        "target needs at least one of cid, placeId, or name.",
-      );
+      throw new AppError(jsonRequired.code, jsonRequired.message);
     }
 
     const gridSize = args.gridSize ?? 3;

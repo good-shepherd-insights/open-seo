@@ -12,6 +12,7 @@ import {
   type DataforseoTaskLike,
 } from "@/server/lib/dataforseo/envelope";
 import { AppError } from "@/server/lib/errors";
+import { auditConfigInvalid, auditContextMismatch, auditNotFound, auditProjectMismatch, authConfigMissing, authMissingEnv, balanceIssue, billingCustomerMissing, chatSessionNotFound, crawlFailed, crawlTargetBlocked, crawlTimeout, domainInvalid, domainRequired, forbidden, insufficientCredits, jsonRequired, notFound, notImplemented, paymentRequired, projectArchiveOnly, projectDefault, projectStopAudit, rankConfigNotFound, rankNoKeywords, rateLimited, renderEmptyResponse, renderFailed, renderInvalidTarget, serviceTaskMissing, serviceUnavailable, unauthenticated, urlInvalid } from "@/shared/errors";
 
 // Consumers pick fields generically (pickRowFields), so listing rows stay an
 // untyped record.
@@ -172,7 +173,7 @@ function postedTaskId<T extends DataforseoTaskLike & { id?: string }>(
 ): DataforseoApiResponse<string> {
   const task = assertOk(response, { okTaskStatusCode: 20100 });
   if (!task.id) {
-    throw new AppError("INTERNAL_ERROR", "DataForSEO did not return a task id");
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
   }
   return { data: task.id, billing: buildTaskBilling(task) };
 }
@@ -278,10 +279,7 @@ export async function fetchBusinessDataTaskResult(input: {
 
   const task = response?.tasks?.[0];
   if (!response || response.status_code !== 20000 || !task) {
-    throw new AppError(
-      "INTERNAL_ERROR",
-      response?.status_message || "DataForSEO task_get failed",
-    );
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
   }
 
   if (isTaskInProgress(task)) return { status: "pending", result: null };
@@ -289,10 +287,7 @@ export async function fetchBusinessDataTaskResult(input: {
   if (task.status_code !== 20000) {
     // "No Search Results" is a valid empty outcome (no reviews/updates yet).
     if (!isNoResultsTask(task)) {
-      throw new AppError(
-        "INTERNAL_ERROR",
-        task.status_message || `DataForSEO task failed (${task.status_code})`,
-      );
+      throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
     }
     return { status: "completed", result: null };
   }

@@ -20,6 +20,17 @@ import {
   type AuditLimitTier,
 } from "@/server/features/audit/services/audit-capacity";
 import { AppError } from "@/server/lib/errors";
+import {
+  auditAlreadyRunning,
+  auditCapacityReached,
+  auditConfigInvalid,
+  auditNotFound,
+  auditPageLimitExceeded,
+  forbidden,
+  notFound,
+  paymentRequired,
+  projectStopAudit,
+} from "@/shared/errors";
 import { RENDERED_MAX_AUDIT_PAGES } from "@/shared/audit-limits";
 import { AuditProgressKV } from "@/server/lib/audit/progress-kv";
 import {
@@ -50,7 +61,7 @@ async function resolveAuditLimitTier(
     customerHasPaidPlan(customer.organizationId),
   ]);
   if (!hasManagedAccess) {
-    throw new AppError("PAYMENT_REQUIRED", "Subscribe to run site audits");
+    throw new AppError(paymentRequired.code, paymentRequired.message);
   }
   return hasPaidPlan ? "paid" : "free";
 }
@@ -67,21 +78,15 @@ async function startAudit(input: {
 }) {
   const renderJavaScript = input.renderJavaScript ?? false;
   if (renderJavaScript && !(await isAuditRenderingAllowed())) {
-    throw new AppError(
-      "FORBIDDEN",
-      "JavaScript rendering is not available on this deployment. It needs a Cloudflare deployment with Browser Run, or CONTEXT_API_KEY. Run the audit without rendering instead.",
-    );
+    throw new AppError(forbidden.code, forbidden.message);
   }
   const limits = AUDIT_LIMITS[input.limitTier];
   const maxPages = clampAuditMaxPages(input.maxPages);
   if (maxPages > limits.maxPagesPerAudit) {
-    throw new AppError("AUDIT_PAGE_LIMIT_EXCEEDED");
+    throw new AppError(auditPageLimitExceeded.code, auditPageLimitExceeded.message);
   }
   if (renderJavaScript && maxPages > RENDERED_MAX_AUDIT_PAGES) {
-    throw new AppError(
-      "AUDIT_PAGE_LIMIT_EXCEEDED",
-      `Audits that render JavaScript are limited to ${RENDERED_MAX_AUDIT_PAGES.toLocaleString("en-US")} pages.`,
-    );
+    throw new AppError(auditPageLimitExceeded.code, auditPageLimitExceeded.message);
   }
 
   const lighthouseStrategy = input.lighthouseStrategy ?? "auto";
@@ -152,10 +157,10 @@ async function startAudit(input: {
       input.billingCustomer.organizationId,
     );
     if (usage.runningCount > limits.maxRunningAudits) {
-      throw new AppError("AUDIT_ALREADY_RUNNING");
+      throw new AppError(auditAlreadyRunning.code, auditAlreadyRunning.message);
     }
     if (usage.capacityUnits > limits.maxCapacityUnits) {
-      throw new AppError("AUDIT_CAPACITY_REACHED");
+      throw new AppError(auditCapacityReached.code, auditCapacityReached.message);
     }
     // Holds the worst-case rendering cost for the whole audit. Refused here,
     // the audit never runs; the workflow settles the hold when it ends.
@@ -203,7 +208,7 @@ async function startAudit(input: {
 async function getStatus(auditId: string, projectId: string) {
   let audit = await AuditRepository.getAuditForProject(auditId, projectId);
   if (!audit)
-    throw new AppError("NOT_FOUND", "Audit not found in this project.");
+    throw new AppError(auditNotFound.code, auditNotFound.message);
 
   // Self-heal audits whose workflow died without reaching the mark-failed
   // step (instance terminated/errored, instance expired from retention, ...).
@@ -236,11 +241,11 @@ async function getResults(auditId: string, projectId: string) {
   const { audit, pages, lighthouse, issues } =
     await AuditRepository.getAuditResultsForProject(auditId, projectId);
 
-  if (!audit) throw new AppError("NOT_FOUND");
+  if (!audit) throw new AppError(notFound.code, notFound.message);
 
   const parsedConfig = parseAuditConfig(audit.config);
   if (!parsedConfig) {
-    throw new AppError("INTERNAL_ERROR", "Invalid audit configuration");
+    throw new AppError(auditConfigInvalid.code, auditConfigInvalid.message);
   }
 
   return {
@@ -283,7 +288,7 @@ async function getHistory(projectId: string) {
 async function getCrawlProgress(auditId: string, projectId: string) {
   const audit = await AuditRepository.getAuditForProject(auditId, projectId);
   if (!audit) {
-    throw new AppError("NOT_FOUND");
+    throw new AppError(notFound.code, notFound.message);
   }
 
   return AuditProgressKV.getCrawledUrls(auditId);
@@ -292,15 +297,12 @@ async function getCrawlProgress(auditId: string, projectId: string) {
 async function remove(auditId: string, projectId: string) {
   const audit = await AuditRepository.getAuditForProject(auditId, projectId);
   if (!audit) {
-    throw new AppError("NOT_FOUND");
+    throw new AppError(notFound.code, notFound.message);
   }
 
   if (audit.status === "running") {
     if (!audit.workflowInstanceId) {
-      throw new AppError(
-        "CONFLICT",
-        "Cannot delete a running audit without workflow context.",
-      );
+      throw new AppError(projectStopAudit.code, projectStopAudit.message);
     }
 
     // A row can be "running" with no live workflow instance if a start failed
@@ -324,7 +326,7 @@ async function remove(auditId: string, projectId: string) {
         );
       if (stillRunning) {
         console.error(`Failed to terminate audit workflow ${audit.id}:`, error);
-        throw new AppError("CONFLICT", "Unable to stop the running audit.");
+        throw new AppError(projectStopAudit.code, projectStopAudit.message);
       }
     }
   }

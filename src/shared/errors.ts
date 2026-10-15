@@ -12,7 +12,6 @@
  */
 
 import type { ErrorCode } from "@/shared/error-codes";
-
 export interface ErrorDef {
   code: ErrorCode;
   message: string;

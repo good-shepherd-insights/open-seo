@@ -1,12 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
 import { z } from "zod";
-import {
-  AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
+import {   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
 } from "@/shared/billing";
 import { AppError } from "@/server/lib/errors";
-import {
-  getRequiredEnvValue,
+import {   getRequiredEnvValue,
   isHostedServerAuthMode,
 } from "@/server/lib/runtime-env";
 import { requireAuthenticatedContext } from "@/serverFunctions/middleware";

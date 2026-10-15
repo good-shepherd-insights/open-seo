@@ -28,6 +28,7 @@ import { getPublicOrigin } from "@/server/mcp/public-origin";
 import { handleAuthenticatedOpenSeoMcpRequest } from "@/server/mcp/transport";
 import { resolveHostedContext } from "@/middleware/ensure-user/hosted";
 import { handleMcpApiKeyRequest } from "@/server/mcp/api-key-auth";
+import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
 
 const OAUTH_AUTHORIZE_PATH = "/api/auth/oauth2/authorize";
 const OAUTH_TOKEN_PATH = "/api/auth/oauth2/token";
@@ -232,7 +233,7 @@ function getGrantedMcpScopes(requestedScopes: string[]) {
   const granted = MCP_OAUTH_SCOPES.filter((scope) => requested.has(scope));
 
   if (!granted.includes(MCP_SCOPE)) {
-    throw new Error("The mcp scope is required");
+    throw new AppError("INTERNAL_ERROR", "The mcp scope is required");
   }
 
   return granted;
