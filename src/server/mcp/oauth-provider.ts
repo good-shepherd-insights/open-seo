@@ -25,7 +25,6 @@ import {
 } from "@/server/mcp/context";
 import { normalizeClientRegistrationRequest } from "@/server/mcp/oauth-registration";
 import { getPublicOrigin } from "@/server/mcp/public-origin";
-import { handleAuthenticatedOpenSeoMcpRequest } from "@/server/mcp/transport";
 import { resolveHostedContext } from "@/middleware/ensure-user/hosted";
 import { handleMcpApiKeyRequest } from "@/server/mcp/api-key-auth";
 import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
@@ -233,7 +232,7 @@ function getGrantedMcpScopes(requestedScopes: string[]) {
   const granted = MCP_OAUTH_SCOPES.filter((scope) => requested.has(scope));
 
   if (!granted.includes(MCP_SCOPE)) {
-    throw new AppError("INTERNAL_ERROR", "The mcp scope is required");
+    throw new Error("The mcp scope is required");
   }
 
   return granted;
@@ -396,6 +395,8 @@ function createDefaultHandler(
 
 const mcpApiHandler: ExportedHandlerWithFetch<OpenSeoOAuthEnv> = {
   async fetch(request, env, ctx) {
+    const { handleAuthenticatedOpenSeoMcpRequest } =
+      await import("@/server/mcp/transport");
     return handleAuthenticatedOpenSeoMcpRequest(request, ctx.props, env, ctx);
   },
 };

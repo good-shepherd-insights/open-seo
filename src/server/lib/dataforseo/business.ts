@@ -10,6 +10,7 @@ import {
   type DataforseoItemsTask,
   type DataforseoResponseLike,
   type DataforseoTaskLike,
+  failedResponseError,
 } from "@/server/lib/dataforseo/envelope";
 import { AppError } from "@/server/lib/errors";
 import { auditConfigInvalid, auditContextMismatch, auditNotFound, auditProjectMismatch, authConfigMissing, authMissingEnv, balanceIssue, billingCustomerMissing, chatSessionNotFound, crawlFailed, crawlTargetBlocked, crawlTimeout, domainInvalid, domainRequired, forbidden, insufficientCredits, jsonRequired, notFound, notImplemented, paymentRequired, projectArchiveOnly, projectDefault, projectStopAudit, rankConfigNotFound, rankNoKeywords, rateLimited, renderEmptyResponse, renderFailed, renderInvalidTarget, serviceTaskMissing, serviceUnavailable, unauthenticated, urlInvalid } from "@/shared/errors";
@@ -279,7 +280,7 @@ export async function fetchBusinessDataTaskResult(input: {
 
   const task = response?.tasks?.[0];
   if (!response || response.status_code !== 20000 || !task) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw failedResponseError(response, "DataForSEO task_get failed");
   }
 
   if (isTaskInProgress(task)) return { status: "pending", result: null };

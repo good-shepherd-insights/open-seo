@@ -29,18 +29,17 @@ import {
 } from "./rankCheckRunGuards";
 import {
   estimateRankCheckCredits,
-  computeNextCheckAt,
-  isScheduledRankTrackingInterval,
   MAX_CONFIGS_PER_PROJECT,
   rankCheckCostApprovalError,
 } from "@/shared/rank-tracking";
+import { resolveNextCheckAt } from "./configSchedule";
 import {
   getIsoCountryCode,
   resolveKeywordDataLanguage,
   resolveMarket,
 } from "@/shared/keyword-locations";
 import { getLatestResults } from "./rankTrackingResults";
-import { toSqliteTimestamp } from "@/server/features/rank-tracking/rankTrackingTimestamps";
+import { toRankTrackingTimestamp } from "@/server/features/rank-tracking/rankTrackingTimestamps";
 import { RankTrackingKeywordService } from "./RankTrackingKeywordService";
 
 // ---------------------------------------------------------------------------
@@ -66,7 +65,10 @@ async function createConfig(input: {
     input.projectMarket,
   );
   const scheduleInterval = input.scheduleInterval ?? "weekly";
-  const nextCheckAt = resolveNextCheckAt(scheduleInterval, input.scheduleTime);
+  const nextCheckAt = await resolveNextCheckAt(
+    scheduleInterval,
+    input.scheduleTime,
+  );
 
   const locationName = input.locationName ?? null;
   // Before the duplicate/limit checks so an unusable location name is the
@@ -135,7 +137,7 @@ async function createConfig(input: {
     isActive: true,
     lastCheckedAt: null,
     lastSkipReason: null,
-    createdAt: toSqliteTimestamp(new Date()),
+    createdAt: toRankTrackingTimestamp(new Date()),
   };
 
   await RankTrackingRepository.createConfig(config);
@@ -206,32 +208,15 @@ async function updateConfig(
     (scheduleInterval !== "manual" && !existing.nextCheckAt)
   ) {
     updates.scheduleInterval = scheduleInterval;
-    updates.nextCheckAt = resolveNextCheckAt(scheduleInterval, scheduleTime);
+    updates.nextCheckAt = await resolveNextCheckAt(
+      scheduleInterval,
+      scheduleTime,
+    );
   }
 
   await RankTrackingRepository.updateConfig(configId, projectId, updates);
 }
 
-function resolveNextCheckAt(
-  scheduleInterval: RankTrackingConfig["scheduleInterval"],
-  scheduleTime: RankCheckScheduleTime | undefined,
-): string | null {
-  if (isScheduledRankTrackingInterval(scheduleInterval)) {
-    // Without one the check would quietly repeat on whatever day today is.
-    if (
-      scheduleInterval === "weekly" &&
-      scheduleTime &&
-      scheduleTime.weekday === undefined
-    ) {
-      throw new AppError(nameRequired.code, nameRequired.message);
-    }
-    return computeNextCheckAt(scheduleInterval, null, scheduleTime);
-  }
-  if (scheduleTime) {
-    throw new AppError(nameRequired.code, nameRequired.message);
-  }
-  return null;
-}
 
 // ---------------------------------------------------------------------------
 // Trigger a manual check

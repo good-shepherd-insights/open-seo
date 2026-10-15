@@ -34,6 +34,7 @@ type BacklinksListRequest = BacklinksRequest &
     filters?: unknown[];
     /** Result grouping (backlinks list only): "one_per_domain" | "as_is". */
     mode?: string;
+    status?: "live" | "lost" | "all";
   };
 type BacklinksTimeseriesRequest = {
   target: string;
@@ -88,6 +89,7 @@ export const backlinksItemSchema = z
     backlinks_spam_score: z.number().nullable().optional(),
     backlink_spam_score: z.number().nullable().optional(),
     first_seen: z.string().nullable().optional(),
+    last_seen: z.string().nullable().optional(),
     last_visited: z.string().nullable().optional(),
     lost_date: z.string().nullable().optional(),
     is_new: z.boolean().nullable().optional(),
@@ -221,6 +223,7 @@ export async function fetchBacklinksRows(input: BacklinksListRequest) {
     [
       {
         ...buildCommonPayload(input),
+        backlinks_status_type: input.status ?? "live",
         limit: input.limit ?? BACKLINKS_DEFAULT_LIMIT,
         offset: input.offset,
         order_by: input.orderBy ?? ["rank,desc"],

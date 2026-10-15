@@ -1,4 +1,5 @@
 import type { Response as BrowserResponse } from "@cloudflare/workers-types";
+import { AppError } from "@/server/lib/errors";
 import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
 
 export const MAX_HTML_BYTES = 1024 * 1024;

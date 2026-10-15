@@ -69,6 +69,7 @@ type LlmMentionsSearchInput = {
   locationCode: number;
   languageCode: string;
   limit?: number;
+  orderBy?: string[];
 };
 
 export async function fetchLlmMentionsSearch(
@@ -83,6 +84,7 @@ export async function fetchLlmMentionsSearch(
         location_code: input.locationCode,
         language_code: input.languageCode,
         limit: resolveLlmMentionsLimit(input.limit),
+        order_by: input.orderBy,
       },
     ],
     { classify: classifyAiSearchError },
@@ -307,7 +309,8 @@ export async function fetchLlmResponse(
   const response = await dataforseoPost(
     `/v3/ai_optimization/${input.modelSlug}/llm_responses/live`,
     [fields],
-    { classify: classifyAiSearchError },
+    // A billed live call must never be replayed on an ambiguous 5xx.
+    { classify: classifyAiSearchError, maxServerErrorRetries: 0 },
   );
 
   const task = assertOk(
