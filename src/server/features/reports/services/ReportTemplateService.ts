@@ -42,7 +42,7 @@ async function getReportTemplate(
 }
 
 function notFound(templateId: string) {
-  return new AppError(notFound.code, notFound.message);
+  return new AppError("NOT_FOUND", "We couldn't find that. It may have been moved or deleted.");
 }
 
 type SaveParams = {
@@ -97,7 +97,7 @@ async function saveReportTemplate(params: SaveParams): Promise<{
     ? templates.find((template) => template.id === params.templateId)
     : undefined;
   if (params.templateId && !existing) {
-    throw new AppError(notFound.code, notFound.message);
+    throw notFound(params.templateId);
   }
 
   // A name that appears twice in a project makes "use the monthly check-in

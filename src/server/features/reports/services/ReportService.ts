@@ -87,7 +87,7 @@ async function saveReport(params: SaveReportParams): Promise<{
     ? await ReportRepository.getReport(projectId, params.reportId)
     : null;
   if (params.reportId && !existing) {
-    throw new AppError(notFound.code, notFound.message);
+    throw notFound(params.reportId);
   }
 
   // Titles are unique within a project, which the skills state as a contract
@@ -288,7 +288,7 @@ async function unshareReport(params: ShareParams): Promise<ReportMetadata> {
 // so no "omit reportId" hint here; that one belongs to save_report, which has
 // its own message above.
 function notFound(reportId: string) {
-  return new AppError(notFound.code, notFound.message);
+  return new AppError("NOT_FOUND", "We couldn't find that. It may have been moved or deleted.");
 }
 
 export const ReportService = {
