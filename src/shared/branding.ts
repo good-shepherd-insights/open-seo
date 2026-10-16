@@ -60,6 +60,7 @@ export const LOGO_PATH = "/images/logo.svg";
 export const LOGO_ALT = "Maryland Insights";
 export const LOGO_HEIGHT_MOBILE = 40;
 export const LOGO_HEIGHT_DESKTOP = 64;
+export const LOGO_SCALE = 0.85;
 
 // ── Social ──────────────────────────────────────────────────────────────────
 

@@ -10,6 +10,11 @@
   font-display: swap;
 }
 
+.brand-wordmark {
+  gap: calc(8px * var(--brand-logo-scale));
+}
+
+.brand-standalone-icon,
 .brand-lockup-icon {
   width: var(--brand-mark-mobile);
   height: var(--brand-mark-mobile);
@@ -17,7 +22,7 @@
 
 .brand-wordmark-text {
   font-family: "Onest", sans-serif;
-  font-size: 25px;
+  font-size: calc(25px * var(--brand-logo-scale));
   font-weight: 600;
   letter-spacing: -0.06em;
   line-height: 1.05;
@@ -30,7 +35,7 @@
   }
 
   .brand-wordmark-text {
-    font-size: 29px;
+    font-size: calc(29px * var(--brand-logo-scale));
   }
 }
 
