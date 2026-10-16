@@ -51,7 +51,8 @@ export function FreePlanBanner() {
         {isFreePlan ? (
           <>
             You&rsquo;ve used your free credits. {creditsActionLink} to get $
-            {BASE_PLAN_OFFER.monthlyCreditsUsd} of credits every month.
+            {BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of credits every
+            month.
           </>
         ) : (
           <>

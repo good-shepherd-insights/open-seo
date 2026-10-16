@@ -33,7 +33,7 @@ export function InsufficientCreditsError({
       <CreditsButton link={<Link to={BILLING_ROUTE} />} label="Go to Billing" />
     );
   } else if (isFreePlan) {
-    message = `You don't have enough credits for this. Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd} of credits every month.`;
+    message = `You don't have enough credits for this. Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of credits every month.`;
     action = (
       <CreditsButton
         link={<Link to={SUBSCRIBE_ROUTE} search={{ upgrade: true }} />}

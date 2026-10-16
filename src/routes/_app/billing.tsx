@@ -203,7 +203,7 @@ function BillingPage() {
                     <p className="mt-2 text-xs text-amber-600">
                       You&rsquo;re running low on credits.{" "}
                       {isFreePlan
-                        ? `Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd}/month.`
+                        ? `Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)}/month.`
                         : "Buy more credits below."}
                     </p>
                   ) : null}
