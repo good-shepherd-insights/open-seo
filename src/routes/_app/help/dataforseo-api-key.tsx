@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import {
   CommandBlock,
   helpLinkClassName,
@@ -17,7 +18,7 @@ function DataforseoApiKeyHelpPage() {
       title="Set up your DataForSEO API key"
       intro={
         <>
-          Maryland Insights SEO needs the <code>DATAFORSEO_API_KEY</code> secret before
+          {PRODUCT_NAME} needs the <code>DATAFORSEO_API_KEY</code> secret before
           keyword, domain, and SEO data workflows can run.
         </>
       }

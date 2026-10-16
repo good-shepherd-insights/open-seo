@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ApiKeySettings } from "@/client/features/settings/ApiKeySettings";
@@ -56,7 +57,7 @@ function PersonalSettings() {
             <SectionHeader title="Analytics" />
             <div className="flex items-start justify-between gap-6">
               <div>
-                <p className="text-sm">Help improve Maryland Insights SEO</p>
+                <p className="text-sm">Help improve {PRODUCT_NAME}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Share analytics and usage data.
                 </p>

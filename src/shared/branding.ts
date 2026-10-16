@@ -25,12 +25,15 @@ export const INSTALLER_SOURCE_URL = "https://app.openseo.so";
 export const TERMS_URL = "https://openseo.so/terms-and-conditions";
 export const PRIVACY_URL = "https://openseo.so/privacy";
 export const UPSTREAM_DOCS_URL = "https://openseo.so/docs";
+export const UPSTREAM_SKILLS_NAME = "OpenSEO";
+export const CHATGPT_UPDATE_GUIDE_URL = `${UPSTREAM_DOCS_URL}/chatgpt#update-openseo`;
 export const GSC_SETUP_GUIDE_URL =
   "https://openseo.so/blogs/google-search-console-setup";
 
 // ── URLs ────────────────────────────────────────────────────────────────────
 
 export const GITHUB_REPO = "https://github.com/every-app/open-seo";
+export const PUBLIC_SKILLS_REPO_URL = `${GITHUB_REPO}/tree/main/plugins/openseo/skills`;
 export const GITHUB_ISSUES_URL = "https://github.com/every-app/open-seo/issues";
 export const PRICING_URL = "https://marylandinsights.com/pricing";
 export const HOSTED_APP_URL = "https://app.marylandinsights.com";

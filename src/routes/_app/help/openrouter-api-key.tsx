@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import {
   helpLinkClassName,
   SecretHelpPage,
@@ -16,9 +17,9 @@ function OpenrouterApiKeyHelpPage() {
       title="Set up your OpenRouter API key"
       intro={
         <>
-          Maryland Insights SEO needs the <code>OPENROUTER_API_KEY</code> secret before AI
-          features like SAM, the in-app SEO agent, can run. It is optional —
-          everything else in Maryland Insights SEO works without it.
+          {PRODUCT_NAME} needs the <code>OPENROUTER_API_KEY</code> secret before
+          AI features like SAM, the in-app SEO agent, can run. It is optional —
+          everything else in {PRODUCT_NAME} works without it.
         </>
       }
       secretName="OPENROUTER_API_KEY"
@@ -61,7 +62,7 @@ function OpenrouterApiKeyHelpPage() {
               </li>
             </ul>
           </li>
-          <li>Restart Maryland Insights SEO.</li>
+          <li>Restart {PRODUCT_NAME}.</li>
         </>
       }
       dashboardPasteStep="Paste your OpenRouter API key and save."

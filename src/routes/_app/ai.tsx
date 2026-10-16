@@ -85,7 +85,7 @@ function AiPage() {
       <div className="mx-auto max-w-7xl">
         <PageHeader
           title="Agent setup"
-          description="The most powerful way to use Maryland Insights SEO is through the AI agent you already use. Set it up once, then ask it anything."
+          description={`The most powerful way to use ${PRODUCT_NAME} is through the AI agent you already use. Set it up once, then ask it anything.`}
         />
 
         <Tabs
