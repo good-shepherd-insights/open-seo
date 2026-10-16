@@ -18,7 +18,7 @@ export type PlanOffer = {
 export const BASE_PLAN_OFFER: PlanOffer = {
   planId: AUTUMN_PAID_PLAN_ID,
   name: "Base Plan",
-  priceUsd: 10,
+  priceUsd: 199.99,
   monthlyCreditsUsd: 10,
 };
 
