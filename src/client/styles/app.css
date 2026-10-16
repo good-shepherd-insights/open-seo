@@ -38,6 +38,7 @@
   flex: none;
   width: 1px;
   height: calc(var(--brand-wordmark-font-size) * 2.1);
+  margin-inline: calc(8px * var(--brand-logo-scale));
   background-color: currentColor;
 }
 
