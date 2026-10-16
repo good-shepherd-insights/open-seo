@@ -2,6 +2,28 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/onest-latin-600.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+.brand-wordmark-text {
+  font-family: "Onest", sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+@media (min-width: 768px) {
+  .brand-wordmark-text {
+    font-size: 29px;
+  }
+}
+
 /* shadcn components here are built on Base UI. The shadcn variables below are
    the source of truth for theme colors. */
 
