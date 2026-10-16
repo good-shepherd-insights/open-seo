@@ -10,6 +10,11 @@
   font-display: swap;
 }
 
+.brand-lockup-icon {
+  width: var(--brand-mark-mobile);
+  height: var(--brand-mark-mobile);
+}
+
 .brand-wordmark-text {
   font-family: "Onest", sans-serif;
   font-size: 25px;
@@ -19,6 +24,11 @@
 }
 
 @media (min-width: 768px) {
+  .brand-lockup-icon {
+    width: var(--brand-mark-desktop);
+    height: var(--brand-mark-desktop);
+  }
+
   .brand-wordmark-text {
     font-size: 29px;
   }
