@@ -14,6 +14,9 @@
 // ── Product Identity ────────────────────────────────────────────────────────
 
 export const PRODUCT_NAME = "Maryland Insights SEO";
+// Keep the actual HTTP User-Agent stable so existing WAF allowlists continue to work.
+export const CRAWLER_USER_AGENT = "OpenSEO-Audit/1.0";
+export const CRAWLER_USER_AGENT_TOKEN = CRAWLER_USER_AGENT.split("/")[0];
 export const COMPANY_NAME = "Maryland Insights";
 export const PRIMARY_DOMAIN = "marylandinsights.com";
 export const SECONDARY_DOMAIN = "seo.marylandinsights.com";
