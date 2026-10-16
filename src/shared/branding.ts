@@ -6,33 +6,31 @@
  *
  * Rules:
  * - Product name is always "OpenSEO" (never "openseo" or "openseo.so" in prose)
- * - Company legal name is "Every App, Inc."
- * - Support email for customers is support@openseo.so
- * - Support email in error catalog is support@goodshepherdinsights.com
+ * - Company legal name is "Maryland Insights"
+ * - All customer emails are @marylandinsights.com
  * - All URLs use https://
  */
 
 // ── Product Identity ────────────────────────────────────────────────────────
 
 export const PRODUCT_NAME = "OpenSEO";
-export const COMPANY_NAME = "Every App, Inc.";
-export const PRIMARY_DOMAIN = "openseo.so";
-export const HOSTED_APP_DOMAIN = "app.openseo.so";
+export const COMPANY_NAME = "Maryland Insights";
+export const PRIMARY_DOMAIN = "marylandinsights.com";
+export const SECONDARY_DOMAIN = "seo.marylandinsights.com";
 
 // ── URLs ────────────────────────────────────────────────────────────────────
 
 export const GITHUB_REPO = "https://github.com/every-app/open-seo";
 export const GITHUB_ISSUES_URL = "https://github.com/every-app/open-seo/issues";
-export const DISCORD_URL = "https://discord.gg/c9uGs3cFXr";
-export const PRICING_URL = "https://openseo.so/pricing";
-export const HOSTED_APP_URL = "https://app.openseo.so";
-export const MCP_ENDPOINT = "https://app.openseo.so/mcp";
-export const DOCS_URL = "https://openseo.so/docs";
+export const PRICING_URL = "https://marylandinsights.com/pricing";
+export const HOSTED_APP_URL = "https://app.marylandinsights.com";
+export const MCP_ENDPOINT = "https://seomarylandinsights.com/mcp";
+export const DOCS_URL = "https://marylandinsights.com/docs";
 
 // ── Emails ──────────────────────────────────────────────────────────────────
 
-export const SUPPORT_EMAIL = "support@openseo.so";
-export const ERROR_SUPPORT_EMAIL = "support@goodshepherdinsights.com";
+export const SUPPORT_EMAIL = "support@marylandinsights.com";
+export const ERROR_SUPPORT_EMAIL = "support@marylandinsights.com";
 export const LOCAL_ADMIN_EMAIL = "admin@localhost";
 
 // ── Legal ───────────────────────────────────────────────────────────────────
@@ -41,14 +39,23 @@ export const LEGAL_ADDRESS = "34 Harding Street, Cambridge, Massachusetts 02141"
 
 // ── Logos ───────────────────────────────────────────────────────────────────
 
-export const LOGO_PATH = "/transparent-logo.png";
-export const LOGO_ALT = `${PRODUCT_NAME}`;
-export const PLUGIN_ICON_PATH = "assets/icon.png";
-export const PLUGIN_LOGO_URL = "https://raw.githubusercontent.com/every-app/open-seo/main/public/transparent-logo.png";
+export const LOGO_PATH = "/images/logo.svg";
+export const LOGO_ALT = "Maryland Insights";
 
 // ── Social ──────────────────────────────────────────────────────────────────
 
 export const SOCIAL_LINKS = {
   github: GITHUB_REPO,
-  discord: DISCORD_URL,
 } as const;
+
+// ── Domain variations ───────────────────────────────────────────────────────
+
+export const DOMAIN = "marylandinsights.com";
+export const DOMAIN_WWW = "www.marylandinsights.com";
+export const GITHUB_ORG = "every-app";
+export const MESSAGING_URL = "https://app.marylandinsights.com";
+export const ADMINS_URL = "https://docs.marylandinsights.com";
+export const PLUGIN_SERVER_URL = "https://seomarylandinsights.com/mcp";
+export const AGENT_SETUP_URL = "https://app.marylandinsights.com";
+export const SOCIAL_CARD_URL = "https://marylandinsights.com/social-card.jpg";
+export const OGP_IMAGE_URL = "https://marylandinsights.com/social-card.jpg";

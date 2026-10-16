@@ -2,10 +2,15 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+/* Onest font (logo wordmark) - from maryland-insights PR */
+@import url("https://fonts.googleapis.com/css2?family=Onest:wght@300..700&display=swap");
+
 @theme {
+  /* Maryland Insights brand: dark charcoal + red (#C8102E) + gold (#FFB612) */
   --color-brand: #111111;
   --color-brand-muted: #66625e;
-  --color-brand-accent: #ff5600;
+  --color-brand-accent: #C8102E;
+  --color-gold: #FFB612;
   --color-surface: #f5f1ec;
   --color-surface-raised: #ffffff;
   --color-border-subtle: #d8d1c8;
@@ -66,5 +71,6 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+  --font-logo: "Onest", "Inter", sans-serif;
   overflow-x: clip;
 }

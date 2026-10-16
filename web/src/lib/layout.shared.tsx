@@ -1,9 +1,15 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import { Logo } from "@/components/Logo";
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: <span className="font-semibold">OpenSEO</span>,
+      title: (
+        <span className="inline-flex items-center gap-2 font-semibold">
+          <Logo size="sm" />
+          <span className="text-sm">Maryland Insights</span>
+        </span>
+      ),
     },
     searchToggle: {
       enabled: false,
@@ -29,11 +35,6 @@ export function baseOptions(): BaseLayoutProps {
             url: "/docs/skills",
           },
         ],
-      },
-      {
-        text: "GitHub",
-        url: "https://github.com/every-app/open-seo",
-        external: true,
       },
     ],
   };
