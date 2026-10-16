@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/client/components/ui/card";
@@ -28,7 +27,6 @@ import { CopyButton } from "@/client/components/CopyButton";
 import { AgentList } from "@/client/features/ai-mcp/AgentList";
 
 const AGENT_DOCS_URL = `${UPSTREAM_DOCS_URL}/agent-setup`;
-const COACH_DOCS_URL = `${UPSTREAM_DOCS_URL}/skills/seo-coach`;
 const LINK_CLASS =
   "text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-foreground";
 const MUTED_LINK_CLASS =
@@ -137,20 +135,6 @@ function AiPage() {
                     </a>
                   </div>
                 </CardContent>
-                <CardFooter className="text-muted-foreground">
-                  <p>
-                    Once connected, ask your agent to use{" "}
-                    <a
-                      href={COACH_DOCS_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={LINK_CLASS}
-                    >
-                      SEO Coach
-                    </a>{" "}
-                    to help you choose what to do next.
-                  </p>
-                </CardFooter>
               </Card>
 
               <Card size="lg">
@@ -173,15 +157,6 @@ function AiPage() {
                     successMessage="Update prompt copied"
                     onCopy={() => captureClientEvent("mcp:update_prompt_copy")}
                   />
-                  <a
-                    href={`${AGENT_DOCS_URL}#update-your-skills`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={MUTED_LINK_CLASS}
-                  >
-                    Update instructions
-                    <ArrowUpRight className="size-3.5" />
-                  </a>
                 </CardContent>
               </Card>
             </div>
