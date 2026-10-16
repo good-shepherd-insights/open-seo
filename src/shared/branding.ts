@@ -13,7 +13,7 @@
 
 // ── Product Identity ────────────────────────────────────────────────────────
 
-export const PRODUCT_NAME = "OpenSEO";
+export const PRODUCT_NAME = "Maryland Insights SEO";
 export const COMPANY_NAME = "Maryland Insights";
 export const PRIMARY_DOMAIN = "marylandinsights.com";
 export const SECONDARY_DOMAIN = "seo.marylandinsights.com";

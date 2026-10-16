@@ -1,15 +1,9 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { Logo } from "@/components/Logo";
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <span className="inline-flex items-center gap-2 font-semibold">
-          <Logo size="sm" />
-          <span className="text-sm">Maryland Insights</span>
-        </span>
-      ),
+      title: <span className="font-semibold">Maryland Insights SEO</span>,
     },
     searchToggle: {
       enabled: false,
@@ -26,15 +20,20 @@ export function baseOptions(): BaseLayoutProps {
           },
           {
             text: "MCP",
-            description: "Connect OpenSEO to AI clients.",
+            description: "Connect Maryland Insights to AI clients.",
             url: "/docs/mcp",
           },
           {
             text: "Skills",
-            description: "Focused OpenSEO workflows.",
+            description: "Focused Maryland Insights workflows.",
             url: "/docs/skills",
           },
         ],
+      },
+      {
+        text: "GitHub",
+        url: "https://github.com/every-app/open-seo",
+        external: true,
       },
     ],
   };

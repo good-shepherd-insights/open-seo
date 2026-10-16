@@ -42,6 +42,8 @@ export default defineConfig(({ mode, command }) => {
   const allowedHosts = [
     env.ALLOWED_HOST,
     env.BETTER_AUTH_URL ? new URL(env.BETTER_AUTH_URL).hostname : undefined,
+    'seo.marylandinsights.com',
+    'marylandinsights.com',
   ].filter((host): host is string => Boolean(host));
   const emitSourcemaps = env.POSTHOG_SOURCEMAPS === "true";
 

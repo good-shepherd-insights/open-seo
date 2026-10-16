@@ -3,7 +3,9 @@ import { useState } from "react";
 import { buildPageSeo } from "@/lib/seo";
 import { SocialLinks } from "@/components/social-links";
 
-import { SUPPORT_EMAIL, DISCORD_URL, GITHUB_ISSUES_URL } from "@/shared/branding";
+const SUPPORT_EMAIL = "support@openseo.so";
+const DISCORD_URL = "https://discord.gg/c9uGs3cFXr";
+const GITHUB_ISSUES_URL = "https://github.com/every-app/open-seo/issues";
 
 export const Route = createFileRoute("/_marketing/support")({
   head: () =>
