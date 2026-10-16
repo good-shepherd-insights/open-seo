@@ -6,6 +6,7 @@ import {
   LOGO_HEIGHT_MOBILE,
   LOGO_PATH,
   LOGO_SCALE,
+  PRODUCT_NAME,
 } from "@/shared/branding";
 
 const markStyle = {
@@ -42,6 +43,10 @@ export function BrandWordmark({ className = "" }: { className?: string }) {
             {word}
           </span>
         ))}
+      </span>
+      <span className="brand-wordmark-divider" aria-hidden="true" />
+      <span className="brand-wordmark-seo">
+        {PRODUCT_NAME.slice(COMPANY_NAME.length).trim()}
       </span>
     </span>
   );
