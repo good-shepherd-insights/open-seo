@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@/shared/branding";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { isHostedClientAuthMode } from "@/lib/auth-mode";
@@ -18,8 +19,6 @@ import { QueryError } from "@/client/components/QueryState";
 import { SkeletonPage } from "@/client/components/SkeletonPresets";
 import { Spinner } from "@/client/components/Spinner";
 import { Button } from "@/client/components/ui/button";
-
-const SUPPORT_EMAIL = "support@openseo.so";
 
 // How long the post-portal "checking" screen polls Autumn before telling the
 // user the retry is still pending, and how often it polls.

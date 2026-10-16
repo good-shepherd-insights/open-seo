@@ -1,4 +1,5 @@
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { useState } from "react";
 import { ErrorState } from "@/client/components/ErrorState";
@@ -241,7 +242,7 @@ function BillingPage() {
                     </div>
                     <ul className="space-y-1.5">
                       {[
-                        "Access to all OpenSEO features",
+                        `Access to all ${PRODUCT_NAME} features`,
                         monthlyCreditsFeature(BASE_PLAN_OFFER),
                       ].map((item) => (
                         <li

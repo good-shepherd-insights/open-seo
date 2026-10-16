@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { FileText, Trash2 } from "lucide-react";
 import { EmptyState } from "@/client/components/EmptyState";
 import { RowActionsMenu } from "@/client/components/RowActionsMenu";
@@ -31,7 +32,7 @@ export function ReportsList({
       <EmptyState
         icon={FileText}
         title="No reports yet"
-        description="Run an OpenSEO skill such as seo-audit from Claude Code or Codex and the report will appear here."
+        description={`Run a ${PRODUCT_NAME} skill such as seo-audit from Claude Code or Codex and the report will appear here.`}
       />
     );
   }

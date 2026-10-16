@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { CopyButton } from "@/client/components/CopyButton";
 import { PageHeader } from "@/client/components/PageHeader";
 import {
@@ -27,7 +28,7 @@ function SupportPage() {
           </p>
           <PageHeader
             title="We want to hear from you"
-            description="We want to talk to you! We're super open to feedback and want to learn how you work so we can make OpenSEO better."
+            description={`We want to talk to you! We're super open to feedback and want to learn how you work so we can make ${PRODUCT_NAME} better.`}
           />
         </div>
 

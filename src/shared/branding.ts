@@ -5,7 +5,7 @@
  * hardcoding product names, emails, URLs, or paths.
  *
  * Rules:
- * - Product name is always "OpenSEO" (never "openseo" or "openseo.so" in prose)
+ * - Import PRODUCT_NAME for the product name; do not hardcode it in the UI.
  * - Company legal name is "Maryland Insights"
  * - All customer emails are @marylandinsights.com
  * - All URLs use https://
@@ -17,6 +17,16 @@ export const PRODUCT_NAME = "Maryland Insights SEO";
 export const COMPANY_NAME = "Maryland Insights";
 export const PRIMARY_DOMAIN = "marylandinsights.com";
 export const SECONDARY_DOMAIN = "seo.marylandinsights.com";
+export const DASHBOARD_URL = `https://${SECONDARY_DOMAIN}`;
+export const DASHBOARD_MCP_URL = `${DASHBOARD_URL}/mcp`;
+// The bundled upstream installer contains this literal and replaces it at copy time.
+export const INSTALLER_SOURCE_URL = "https://app.openseo.so";
+// External guides and legal pages still live upstream; do not point users at 404s.
+export const TERMS_URL = "https://openseo.so/terms-and-conditions";
+export const PRIVACY_URL = "https://openseo.so/privacy";
+export const UPSTREAM_DOCS_URL = "https://openseo.so/docs";
+export const GSC_SETUP_GUIDE_URL =
+  "https://openseo.so/blogs/google-search-console-setup";
 
 // ── URLs ────────────────────────────────────────────────────────────────────
 
@@ -35,7 +45,8 @@ export const LOCAL_ADMIN_EMAIL = "admin@localhost";
 
 // ── Legal ───────────────────────────────────────────────────────────────────
 
-export const LEGAL_ADDRESS = "34 Harding Street, Cambridge, Massachusetts 02141";
+export const LEGAL_ADDRESS =
+  "34 Harding Street, Cambridge, Massachusetts 02141";
 
 // ── Logos ───────────────────────────────────────────────────────────────────
 

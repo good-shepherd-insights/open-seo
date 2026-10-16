@@ -1,4 +1,5 @@
 import { useIsMutating, useMutation, useQuery } from "@tanstack/react-query";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
 import {
@@ -160,7 +161,7 @@ export function ShopifyCrawlWarning({
             <p className="text-muted-foreground">
               Shopify rate-limits crawlers it hasn't authorized, so parts of
               this report are missing. If you own this store, authorizing
-              OpenSEO takes about a minute.
+              {PRODUCT_NAME} takes about a minute.
             </p>
           </>
         )}

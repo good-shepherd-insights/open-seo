@@ -9,6 +9,7 @@ import {
 import { GscReEngagementModal } from "@/client/features/gsc/GscReEngagementModal";
 import { Sidebar } from "@/client/components/Sidebar";
 import { BILLING_ROUTE } from "@/shared/billing";
+import { BrandWordmark } from "@/client/components/BrandIdentity";
 import { getSeoApiKeyStatus } from "@/serverFunctions/config";
 import { getLastProjectId } from "@/client/lib/active-project";
 import { dataforseoHelpLinkOptions } from "@/client/navigation/items";
@@ -142,7 +143,7 @@ function MobileTopBar() {
     <div className="flex shrink-0 items-center gap-1 border-b border-border bg-card px-2 py-1.5 md:hidden">
       <SidebarTrigger aria-label="Toggle sidebar" />
       <Link to="/" className="ml-1 font-semibold text-foreground">
-        OpenSEO
+        <BrandWordmark className="text-sm" />
       </Link>
     </div>
   );
