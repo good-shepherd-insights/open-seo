@@ -21,7 +21,7 @@ export interface ErrorDef {
 
 export const insufficientCredits: ErrorDef = {
   code: "INSUFFICIENT_CREDITS",
-  message: "You've run out of usage credits. Go to Billing to add more and keep using OpenSEO.",
+  message: "You've run out of usage credits. Go to Billing to add more and keep using Maryland Insights SEO.",
 };
 
 export const paymentRequired: ErrorDef = {

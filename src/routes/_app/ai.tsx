@@ -84,7 +84,7 @@ function AiPage() {
       <div className="mx-auto max-w-7xl">
         <PageHeader
           title="Agent setup"
-          description="The most powerful way to use OpenSEO is through the AI agent you already use. Set it up once, then ask it anything."
+          description="The most powerful way to use Maryland Insights SEO is through the AI agent you already use. Set it up once, then ask it anything."
         />
 
         <Tabs
@@ -109,7 +109,7 @@ function AiPage() {
                     <h2>Set up your agent</h2>
                   </CardTitle>
                   <CardDescription>
-                    Paste the setup prompt into your agent to connect OpenSEO
+                    Paste the setup prompt into your agent to connect Maryland Insights SEO
                     and install its SEO skills. It will guide you through any
                     manual steps.
                   </CardDescription>

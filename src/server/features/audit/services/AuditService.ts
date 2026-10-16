@@ -50,14 +50,11 @@ async function resolveAuditLimitTier(
 ): Promise<AuditLimitTier> {
   if (!(await isHostedServerAuthMode())) return "self_hosted";
   await getOrCreateOrganizationCustomer(customer);
-  const [hasManagedAccess, hasPaidPlan] = await Promise.all([
-    hasManagedAccess(customer.organizationId),
-    customerHasPaidPlan(customer.organizationId),
-  ]);
-  if (!hasManagedAccess) {
+  const hasPaidPlan = await customerHasPaidPlan(customer.organizationId);
+  if (!hasPaidPlan) {
     throw new AppError(paymentRequired.code, paymentRequired.message);
   }
-  return hasPaidPlan ? "paid" : "free";
+  return "paid";
 }
 
 async function startAudit(input: {
