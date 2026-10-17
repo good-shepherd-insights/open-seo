@@ -10,7 +10,6 @@ import {
   Link2,
   MessageSquare,
   Search,
-  TrendingUp,
 } from "lucide-react";
 import { linkOptions } from "@tanstack/react-router";
 import { GoogleGlyphMuted } from "@/client/features/gsc/GoogleGlyph";
@@ -34,11 +33,12 @@ const projectNavItems = [
     label: "Saved Keywords",
     icon: Bookmark,
   },
-  {
-    to: "/p/$projectId/rank-tracking" as const,
-    label: "Rank Tracking",
-    icon: TrendingUp,
-  },
+  // Rank Tracking is temporarily hidden from navigation; its route still works.
+  // {
+  //   to: "/p/$projectId/rank-tracking" as const,
+  //   label: "Rank Tracking",
+  //   icon: TrendingUp,
+  // },
   {
     to: "/p/$projectId/search-performance" as const,
     label: "GSC Insights",
@@ -144,7 +144,7 @@ export function getProjectNavGroups(projectId: string) {
       label: "My Site",
       items: [
         byPath("/p/$projectId/search-performance"),
-        byPath("/p/$projectId/rank-tracking"),
+        // byPath("/p/$projectId/rank-tracking"),
         byPath("/p/$projectId/saved"),
         byPath("/p/$projectId/audit"),
       ],
