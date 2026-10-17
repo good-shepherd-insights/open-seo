@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AppBanner } from "@/client/layout/AppBanner";
 import { BASE_PLAN_OFFER } from "@/client/features/billing/plan-offers";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
@@ -50,7 +51,8 @@ export function FreePlanBanner() {
         {isFreePlan ? (
           <>
             You&rsquo;ve used your free credits. {creditsActionLink} to get $
-            {BASE_PLAN_OFFER.monthlyCreditsUsd} of credits every month.
+            {BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of credits every
+            month.
           </>
         ) : (
           <>
@@ -67,7 +69,7 @@ export function FreePlanBanner() {
     return (
       <AppBanner variant="warning">
         You&rsquo;re running low on credits. {creditsActionLink} to keep using
-        OpenSEO.
+        {PRODUCT_NAME}.
       </AppBanner>
     );
   }
@@ -75,7 +77,7 @@ export function FreePlanBanner() {
   if (isFreePlan) {
     return (
       <AppBanner variant="info">
-        We hope you&rsquo;re enjoying OpenSEO!{" "}
+        We hope you&rsquo;re enjoying {PRODUCT_NAME}!{" "}
         <Link
           to={SUBSCRIBE_ROUTE}
           search={{ upgrade: true }}

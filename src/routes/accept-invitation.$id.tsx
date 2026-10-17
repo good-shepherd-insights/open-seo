@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { Spinner } from "@/client/components/Spinner";
 import { Alert, AlertDescription } from "@/client/components/ui/alert";
 import { Button } from "@/client/components/ui/button";
@@ -45,8 +46,9 @@ function SignedOutInvitationCard({ invitationId }: { invitationId: string }) {
   return (
     <AuthPageCard title="You&rsquo;re invited">
       <p className="text-sm text-muted-foreground">
-        You&rsquo;ve been invited to join an organization on OpenSEO. Sign in
-        with the email address that received the invitation to accept it.
+        You&rsquo;ve been invited to join an organization on {PRODUCT_NAME}.
+        Sign in with the email address that received the invitation to accept
+        it.
       </p>
       <div className="space-y-2">
         <Button
@@ -234,7 +236,7 @@ function InvitationCard({
         <span className="font-medium">
           {invitationQuery.data.organizationName}
         </span>{" "}
-        on OpenSEO.
+        on {PRODUCT_NAME}.
       </p>
       {actionError ? (
         <Alert variant="destructive">

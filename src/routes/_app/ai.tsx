@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME, UPSTREAM_DOCS_URL } from "@/shared/branding";
 import { z } from "zod";
 import {
   Tabs,
@@ -11,7 +12,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/client/components/ui/card";
@@ -26,8 +26,7 @@ import {
 import { CopyButton } from "@/client/components/CopyButton";
 import { AgentList } from "@/client/features/ai-mcp/AgentList";
 
-const DOCS_URL = "https://openseo.so/docs/agent-setup";
-const COACH_DOCS_URL = "https://openseo.so/docs/skills/seo-coach";
+const AGENT_DOCS_URL = `${UPSTREAM_DOCS_URL}/agent-setup`;
 const LINK_CLASS =
   "text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-foreground";
 const MUTED_LINK_CLASS =
@@ -84,7 +83,7 @@ function AiPage() {
       <div className="mx-auto max-w-7xl">
         <PageHeader
           title="Agent setup"
-          description="The most powerful way to use Maryland Insights SEO is through the AI agent you already use. Set it up once, then ask it anything."
+          description={`The most powerful way to use ${PRODUCT_NAME} is through the AI agent you already use. Set it up once, then ask it anything.`}
         />
 
         <Tabs
@@ -109,9 +108,9 @@ function AiPage() {
                     <h2>Set up your agent</h2>
                   </CardTitle>
                   <CardDescription>
-                    Paste the setup prompt into your agent to connect Maryland Insights SEO
-                    and install its SEO skills. It will guide you through any
-                    manual steps.
+                    Paste the setup prompt into your agent to connect Maryland
+                    Insights SEO and install its SEO skills. It will guide you
+                    through any manual steps.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -126,7 +125,7 @@ function AiPage() {
                       onCopy={() => captureClientEvent("mcp:setup_prompt_copy")}
                     />
                     <a
-                      href={`${DOCS_URL}#set-up-your-agent`}
+                      href={`${AGENT_DOCS_URL}#set-up-your-agent`}
                       target="_blank"
                       rel="noreferrer"
                       className={MUTED_LINK_CLASS}
@@ -136,20 +135,6 @@ function AiPage() {
                     </a>
                   </div>
                 </CardContent>
-                <CardFooter className="text-muted-foreground">
-                  <p>
-                    Once connected, ask your agent to use{" "}
-                    <a
-                      href={COACH_DOCS_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={LINK_CLASS}
-                    >
-                      SEO Coach
-                    </a>{" "}
-                    to help you choose what to do next.
-                  </p>
-                </CardFooter>
               </Card>
 
               <Card size="lg">
@@ -159,8 +144,8 @@ function AiPage() {
                   </CardTitle>
                   <CardDescription>
                     Already connected? Paste the update prompt into your agent
-                    to get the latest OpenSEO skills while preserving your
-                    connection settings and personal edits.
+                    to get the latest {PRODUCT_NAME} skills while preserving
+                    your connection settings and personal edits.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -172,15 +157,6 @@ function AiPage() {
                     successMessage="Update prompt copied"
                     onCopy={() => captureClientEvent("mcp:update_prompt_copy")}
                   />
-                  <a
-                    href={`${DOCS_URL}#update-your-skills`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={MUTED_LINK_CLASS}
-                  >
-                    Update instructions
-                    <ArrowUpRight className="size-3.5" />
-                  </a>
                 </CardContent>
               </Card>
             </div>
@@ -193,7 +169,7 @@ function AiPage() {
                   connect until Managed OAuth is enabled on your Access
                   application.{" "}
                   <a
-                    href="https://openseo.so/docs/self-hosting/cloudflare#connect-the-mcp-server-through-cloudflare-access"
+                    href={`${UPSTREAM_DOCS_URL}/self-hosting/cloudflare#connect-the-mcp-server-through-cloudflare-access`}
                     target="_blank"
                     rel="noreferrer"
                     className="font-medium"
@@ -229,7 +205,7 @@ function AiPage() {
                     className="flex flex-col gap-0.5 sm:flex-row sm:gap-3"
                   >
                     <a
-                      href={`https://openseo.so/docs/skills/${name}`}
+                      href={`${UPSTREAM_DOCS_URL}/skills/${name}`}
                       target="_blank"
                       rel="noreferrer"
                       className={`shrink-0 font-mono text-[13px] sm:w-48 ${LINK_CLASS}`}

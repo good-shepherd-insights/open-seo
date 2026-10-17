@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { CopyButton } from "@/client/components/CopyButton";
 import { PageHeader } from "@/client/components/PageHeader";
 import {
@@ -73,7 +74,8 @@ export function SecretHelpPage({
             <ol className="list-decimal space-y-2 pl-5">
               <li>
                 In Cloudflare, go to <code>Compute</code> -&gt;{" "}
-                <code>Workers &amp; Pages</code> and open your OpenSEO Worker.
+                <code>Workers &amp; Pages</code> and open your {PRODUCT_NAME}{" "}
+                Worker.
               </li>
               <li>
                 Open <code>Settings</code>.

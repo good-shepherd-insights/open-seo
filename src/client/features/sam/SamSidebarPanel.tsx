@@ -1,4 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Archive, Plus, X } from "lucide-react";
@@ -48,8 +49,8 @@ function BetaNotice() {
         </Button>
       </div>
       <p className="mt-1.5 text-xs text-muted-foreground">
-        For more powerful AI workflows, use the OpenSEO MCP with your own agent
-        like Claude Code or Hermes.
+        For more powerful AI workflows, use the {PRODUCT_NAME} MCP with your own
+        agent like Claude Code or Hermes.
       </p>
       <Link
         to="/ai"

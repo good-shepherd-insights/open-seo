@@ -2,6 +2,56 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/onest-latin-600.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+.brand-wordmark {
+  --brand-wordmark-font-size: calc(25px * var(--brand-logo-scale));
+  gap: calc(8px * var(--brand-logo-scale));
+}
+
+.brand-standalone-icon,
+.brand-lockup-icon {
+  width: var(--brand-mark-mobile);
+  height: var(--brand-mark-mobile);
+}
+
+.brand-wordmark-text,
+.brand-wordmark-seo {
+  font-family: "Onest", sans-serif;
+  font-size: var(--brand-wordmark-font-size);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.brand-wordmark-seo {
+  white-space: nowrap;
+}
+
+.brand-wordmark-divider {
+  flex: none;
+  width: 1px;
+  height: calc(var(--brand-wordmark-font-size) * 2.1);
+  margin-inline: calc(8px * var(--brand-logo-scale));
+  background-color: currentColor;
+}
+
+@media (min-width: 768px) {
+  .brand-wordmark {
+    --brand-wordmark-font-size: calc(29px * var(--brand-logo-scale));
+  }
+  .brand-lockup-icon {
+    width: var(--brand-mark-desktop);
+    height: var(--brand-mark-desktop);
+  }
+}
+
 /* shadcn components here are built on Base UI. The shadcn variables below are
    the source of truth for theme colors. */
 

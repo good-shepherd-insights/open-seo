@@ -1,8 +1,9 @@
 import { Package } from "lucide-react";
+import { UPSTREAM_DOCS_URL } from "@/shared/branding";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { CopyButton } from "@/client/components/CopyButton";
 
-export const AGENT_SETUP_DESCRIPTION =
-  "Paste this prompt into your agent to automatically configure OpenSEO for you.";
+export const AGENT_SETUP_DESCRIPTION = `Paste this prompt into your agent to automatically configure ${PRODUCT_NAME} for you.`;
 
 export function AgentSetupPanel({
   prompt,
@@ -19,7 +20,7 @@ export function AgentSetupPanel({
             <Package className="size-5 text-muted-foreground" />
           </span>
           <div>
-            <p className="text-sm font-medium">OpenSEO plugin</p>
+            <p className="text-sm font-medium">{PRODUCT_NAME} plugin</p>
             <p className="mt-1 text-xs text-muted-foreground">
               MCP connection + SEO skills
             </p>
@@ -37,7 +38,7 @@ export function AgentSetupPanel({
       </div>
       <div className="mt-4 text-center">
         <a
-          href="https://openseo.so/docs/agent-setup"
+          href={`${UPSTREAM_DOCS_URL}/agent-setup`}
           target="_blank"
           rel="noreferrer"
           className="text-xs text-muted-foreground underline decoration-muted-foreground/25 underline-offset-4 hover:text-foreground"

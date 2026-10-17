@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/client/components/ui/button";
 import {
@@ -116,8 +117,9 @@ export function GscReEngagementModal({
             New: Connect Google Search Console
           </DialogTitle>
           <DialogDescription>
-            Bring your real clicks, impressions, and rankings into OpenSEO and
-            query them from Claude or Codex over MCP. It never uses credits.
+            Bring your real clicks, impressions, and rankings into{" "}
+            {PRODUCT_NAME} and query them from Claude or Codex over MCP. It
+            never uses credits.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

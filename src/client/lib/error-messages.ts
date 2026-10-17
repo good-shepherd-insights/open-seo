@@ -1,4 +1,5 @@
 import { FREE_MAX_AUDIT_PAGES } from "@/shared/audit-limits";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { isErrorCode, type ErrorCode } from "@/shared/error-codes";
 import { isHostedClientAuthMode } from "@/lib/auth-mode";
 
@@ -12,10 +13,8 @@ export const UNEXPECTED_ERROR_MESSAGE = isHostedClientAuthMode()
 
 const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   UNAUTHENTICATED: "Please sign in and try again.",
-  AUTH_CONFIG_MISSING:
-    "OpenSEO auth is not configured. Follow the README setup steps for Cloudflare Access.",
-  PAYMENT_REQUIRED:
-    "An active hosted subscription is required before you can use OpenSEO.",
+  AUTH_CONFIG_MISSING: `${PRODUCT_NAME} auth is not configured. Follow the README setup steps for Cloudflare Access.`,
+  PAYMENT_REQUIRED: `An active hosted subscription is required before you can use ${PRODUCT_NAME}.`,
   INSUFFICIENT_CREDITS:
     "You don't have enough credits for this. Upgrade your plan or buy more credits to keep going.",
   AUDIT_RENDERING_UNAVAILABLE:

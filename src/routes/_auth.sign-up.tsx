@@ -1,4 +1,6 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { PRIVACY_URL, TERMS_URL } from "@/shared/branding";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useState } from "react";
 import { useAppForm } from "@/client/components/form/useAppForm";
 import { Button } from "@/client/components/ui/button";
@@ -91,7 +93,7 @@ function SignUpPage() {
           );
         }
         const result = await authClient.signUp.email({
-          name: email.split("@")[0] || "OpenSEO User",
+          name: email.split("@")[0] || `${PRODUCT_NAME} User`,
           email,
           password: value.password,
           callbackURL: verificationCallbackURL.toString(),
@@ -157,7 +159,7 @@ function SignUpPage() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 By signing up, you agree to our{" "}
                 <a
-                  href="https://openseo.so/terms-and-conditions"
+                  href={TERMS_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="text-foreground underline underline-offset-2 hover:text-foreground/80 transition-colors"
@@ -166,7 +168,7 @@ function SignUpPage() {
                 </a>{" "}
                 and{" "}
                 <a
-                  href="https://openseo.so/privacy"
+                  href={PRIVACY_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="text-foreground underline underline-offset-2 hover:text-foreground/80 transition-colors"

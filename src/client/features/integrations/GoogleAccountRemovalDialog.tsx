@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { Button } from "@/client/components/ui/button";
@@ -77,8 +78,8 @@ export function GoogleAccountRemovalDialog({
         <DialogHeader>
           <DialogTitle>Remove Google account?</DialogTitle>
           <DialogDescription>
-            This removes the account’s {name} connection from OpenSEO. You can
-            reconnect it anytime.
+            This removes the account’s {name} connection from {PRODUCT_NAME}.
+            You can reconnect it anytime.
           </DialogDescription>
         </DialogHeader>
         <p className="break-all text-sm font-medium">{label}</p>

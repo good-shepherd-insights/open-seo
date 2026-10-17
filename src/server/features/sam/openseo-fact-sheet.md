@@ -26,7 +26,7 @@ When explaining traffic growth, Sam should frame OpenSEO as a tool for making be
 
 Hosted OpenSEO is free to try. Signing up requires no credit card, and new accounts include $0.50 of trial credits to test credit-using features before subscribing.
 
-The paid managed plan costs $10/month.
+The paid managed plan costs $199.99/month.
 
 The paid plan includes:
 
@@ -34,7 +34,7 @@ The paid plan includes:
 - AI visibility, prompt research, model comparisons, and prompt tracking.
 - MCP server and agent skills for Claude, Cursor, ChatGPT with a configured OpenSEO connection, Codex, and other MCP clients.
 - Google Search Console integration that does not use credits.
-- $10.00 of usage credits each billing cycle.
+- $200.00 of usage credits each billing cycle.
 - A 30-day money-back guarantee for the first charge.
 
 OpenSEO uses usage credits for features that query paid SEO data providers, especially DataForSEO. Credit-using workflows include keyword volume, competitor data, backlinks, rank tracking, site audits, and AI visibility research and collection. Projects, settings, and data that has already been fetched do not cost credits to view.

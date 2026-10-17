@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BrandWordmark } from "@/client/components/BrandIdentity";
 import { Button } from "@/client/components/ui/button";
 import {
   getCurrentAuthRedirect,
@@ -110,11 +111,7 @@ export function AuthPageCard({
   return (
     <div className="w-full max-w-xs space-y-6">
       <div className="space-y-3 text-center">
-        <img
-          src="/transparent-logo.png"
-          alt="OpenSEO"
-          className="mx-auto size-10 rounded-lg"
-        />
+        <BrandWordmark className="justify-center text-base" />
         <div>
           <h1 className="text-xl font-semibold">{title}</h1>
           {helperText ? (

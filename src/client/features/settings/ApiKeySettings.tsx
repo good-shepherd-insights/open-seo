@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DASHBOARD_MCP_URL, UPSTREAM_DOCS_URL } from "@/shared/branding";
 import { QueryState } from "@/client/components/QueryState";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -49,7 +50,7 @@ export function ApiKeySettings() {
 
   const mcpUrl =
     typeof window === "undefined"
-      ? "https://app.openseo.so/mcp"
+      ? DASHBOARD_MCP_URL
       : `${window.location.origin}/mcp`;
 
   const apiKeysQuery = useQuery({
@@ -129,7 +130,7 @@ export function ApiKeySettings() {
           <p className="mt-1 text-sm">
             <a
               className="text-primary underline-offset-4 hover:underline"
-              href="https://openseo.so/docs/mcp"
+              href={`${UPSTREAM_DOCS_URL}/mcp`}
               target="_blank"
               rel="noreferrer"
             >

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "cn";
 import { Spinner } from "@/client/components/Spinner";
+import { BrandIcon } from "@/client/components/BrandIdentity";
 
 const WIDTHS = {
   sm: "max-w-xs",
@@ -22,7 +23,7 @@ export function StatusScreen({
   footer,
   size = "md",
 }: {
-  /** Show the OpenSEO logo, for screens outside the app shell. */
+  /** Show the product logo, for screens outside the app shell. */
   logo?: boolean;
   title?: ReactNode;
   description?: ReactNode;
@@ -44,13 +45,7 @@ export function StatusScreen({
           WIDTHS[size],
         )}
       >
-        {logo ? (
-          <img
-            src="/transparent-logo.png"
-            alt="OpenSEO"
-            className="size-10 rounded-lg"
-          />
-        ) : null}
+        {logo ? <BrandIcon /> : null}
         {title ? (
           <h1 className="text-center text-xl font-semibold">{title}</h1>
         ) : null}

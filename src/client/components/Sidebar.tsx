@@ -28,6 +28,7 @@ import { ThemePreferenceRadio } from "@/client/components/ThemePreferenceMenuIte
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { signOutAndRedirect, useSession } from "@/lib/auth-client";
 import { BILLING_ROUTE } from "@/shared/billing";
+import { BrandWordmark } from "@/client/components/BrandIdentity";
 import {
   Sidebar as UiSidebar,
   SidebarContent,
@@ -145,7 +146,7 @@ export function Sidebar({
           onClick={() => setOpenMobile(false)}
           className="px-1 pb-2 text-base font-semibold text-sidebar-foreground"
         >
-          OpenSEO
+          <BrandWordmark />
         </Link>
         <ProjectSwitcher
           activeProjectId={projectId}
