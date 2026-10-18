@@ -94,6 +94,7 @@ export const {
   rankSnapshots,
   organizationActivationState,
   projectActivationState,
+  dashboardCardPositions,
   dashboardStepDismissals,
   backlinkSnapshots,
   dataRefreshClaims,

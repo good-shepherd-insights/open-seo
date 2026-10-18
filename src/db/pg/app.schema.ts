@@ -419,6 +419,25 @@ export const backlinkSnapshots = pgTable(
   ],
 );
 
+// Personal card positions for the Overview view of one project.
+export const dashboardCardPositions = pgTable(
+  "dashboard_card_positions",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    cardId: text("card_id").notNull(),
+    position: integer("position").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.projectId, table.cardId] }),
+    index("dashboard_card_positions_project_idx").on(table.projectId),
+  ],
+);
+
 // Personal checklist preferences; completion remains derived from product state.
 export const dashboardStepDismissals = pgTable(
   "dashboard_step_dismissals",

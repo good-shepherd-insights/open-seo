@@ -12,11 +12,10 @@ import { DashboardKeywords } from "./DashboardKeywords";
 import { DashboardBacklinks } from "./DashboardBacklinks";
 import { DashboardNewQueries } from "./DashboardNewQueries";
 import { DashboardLinkActivity } from "./DashboardLinkActivity";
+import { OverviewCardGrid, type OverviewCard } from "./OverviewCardGrid";
 import { dashboardSiteTabSchema } from "@/types/schemas/dashboard";
 import type { z } from "zod";
-import { Fragment } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { sort } from "remeda";
 import { DashboardOnboarding } from "./DashboardOnboarding";
 import {
   AuditHealthCard,
@@ -92,20 +91,24 @@ export function DashboardPage({
 
   // Search Console always renders: connected shows the report, otherwise the
   // connect pitch. It sits ahead of the optional GA4 pitch.
-  const cards = [
+  const cards: OverviewCard[] = [
+    ...(gscConnected
+      ? [
+          {
+            key: "newQueries" as const,
+            hasData: true,
+            node: (
+              <DashboardNewQueries
+                projectId={projectId}
+                connected={gscConnected}
+                siteUrl={activation.gsc.siteUrl}
+              />
+            ),
+          },
+        ]
+      : []),
     {
-      key: "newQueries",
-      hasData: gscConnected,
-      node: (
-        <DashboardNewQueries
-          projectId={projectId}
-          connected={gscConnected}
-          siteUrl={activation.gsc.siteUrl}
-        />
-      ),
-    },
-    {
-      key: "gsc",
+      key: "gsc" as const,
       hasData: gscConnected,
       node: (
         <GscCard
@@ -118,7 +121,7 @@ export function DashboardPage({
     ...(ga4Connected || !activation.ga4.cardDismissedAt
       ? [
           {
-            key: "ga4",
+            key: "ga4" as const,
             hasData: ga4Connected,
             node: <Ga4Card projectId={projectId} connected={ga4Connected} />,
           },
@@ -127,7 +130,7 @@ export function DashboardPage({
     ...(overview
       ? [
           {
-            key: "audit",
+            key: "audit" as const,
             hasData: overview.audit != null,
             node: (
               <AuditHealthCard
@@ -142,7 +145,7 @@ export function DashboardPage({
     ...(showBacklinks
       ? [
           {
-            key: "backlinks",
+            key: "backlinks" as const,
             hasData: true,
             node: (
               <DashboardLinkActivity
@@ -229,16 +232,8 @@ export function DashboardPage({
           </TabsList>
 
           {/* Base UI unmounts inactive panels, so paid detail queries load only on opening their tab. */}
-          <TabsContent
-            value="overview"
-            className="grid gap-5 lg:grid-cols-2"
-            keepMounted={false}
-          >
-            {sort(cards, (a, b) => Number(b.hasData) - Number(a.hasData)).map(
-              (card) => (
-                <Fragment key={card.key}>{card.node}</Fragment>
-              ),
-            )}
+          <TabsContent value="overview" className="min-w-0" keepMounted={false}>
+            <OverviewCardGrid projectId={projectId} cards={cards} />
           </TabsContent>
 
           <TabsContent value="keywords" keepMounted={false}>

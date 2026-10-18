@@ -24,6 +24,23 @@ export const dashboardStepDismissalSchema = dashboardProjectInputSchema.extend({
   dismissed: z.boolean(),
 });
 
+export const overviewCardIdSchema = z.enum([
+  "newQueries",
+  "gsc",
+  "ga4",
+  "audit",
+  "backlinks",
+]);
+export type OverviewCardId = z.infer<typeof overviewCardIdSchema>;
+export const overviewCardOrderInputSchema = dashboardProjectInputSchema.extend({
+  order: z
+    .array(overviewCardIdSchema)
+    .length(overviewCardIdSchema.options.length)
+    .refine((order) => new Set(order).size === order.length, {
+      message: "Each overview card must appear exactly once.",
+    }),
+});
+
 export const dashboardSiteTabSchema = z.enum([
   "overview",
   "keywords",

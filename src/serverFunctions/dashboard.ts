@@ -3,13 +3,34 @@ import { AppError } from "@/server/lib/errors";
 import { createServerFn } from "@tanstack/react-start";
 import { ActivationRepository } from "@/server/features/activation/repositories/ActivationRepository";
 import { DashboardService } from "@/server/features/dashboard/services/DashboardService";
+import { OverviewCardOrderRepository } from "@/server/features/dashboard/repositories/OverviewCardOrderRepository";
 import { requireProjectContext } from "@/serverFunctions/middleware";
 import {
   dashboardProjectInputSchema,
   dashboardBacklinksInputSchema,
   dashboardStepClickSchema,
   dashboardStepDismissalSchema,
+  overviewCardOrderInputSchema,
 } from "@/types/schemas/dashboard";
+
+export const getOverviewCardOrder = createServerFn({ method: "POST" })
+  .middleware(requireProjectContext)
+  .validator(dashboardProjectInputSchema)
+  .handler(({ context }) =>
+    OverviewCardOrderRepository.get(context.userId, context.projectId),
+  );
+
+export const saveOverviewCardOrder = createServerFn({ method: "POST" })
+  .middleware(requireProjectContext)
+  .validator(overviewCardOrderInputSchema)
+  .handler(async ({ context, data }) => {
+    await OverviewCardOrderRepository.save(
+      context.userId,
+      context.projectId,
+      data.order,
+    );
+    return { order: data.order };
+  });
 
 export const getDashboardActivation = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)
