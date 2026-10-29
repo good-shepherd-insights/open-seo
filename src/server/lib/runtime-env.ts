@@ -37,7 +37,10 @@ export function getEnvValueSync(
 export async function getRequiredEnvValue(name: string): Promise<string> {
   const value = await getOptionalEnvValue(name);
   if (!value) {
-    throw new AppError("INTERNAL_ERROR", `Missing required environment variable: ${name}`);
+    throw new AppError(
+      "INTERNAL_ERROR",
+      `Missing required environment variable: ${name}`,
+    );
   }
   return value;
 }

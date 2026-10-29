@@ -1,6 +1,21 @@
 /* eslint-disable max-lines -- one client module per Google integration (gscClient precedent); GA4 spans the Admin and Data APIs */
 import { z } from "zod";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { getGoogleAccessToken } from "@/server/features/google/googleOAuth";
 import { getGoogleAccessMode } from "@/server/features/google/googleAccess";
 import { getGatewayGoogleFetch } from "@/server/features/google/gatewayGoogle";
@@ -256,7 +271,7 @@ export function createGa4AdminClient(opts: {
         if (!pageToken) return properties;
       }
 
-      throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+      throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
     },
 
     async getProperty(propertyId: string): Promise<Ga4Property> {

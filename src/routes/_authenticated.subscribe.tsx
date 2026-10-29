@@ -292,30 +292,30 @@ function SubscribePage() {
       </div>
 
       {annualOffered ? (
-      <ToggleGroup
-        variant="outline"
-        spacing={0}
-        value={[yearly ? "yearly" : "monthly"]}
-        onValueChange={(next) => {
-          // A press on the active item empties the group. Keep one item on.
-          if (next[0]) setYearly(next[0] === "yearly");
-        }}
-        className="mx-auto"
-        aria-label="Billing period"
-      >
-        <ToggleGroupItem
-          value="monthly"
-          className="px-4 aria-pressed:bg-primary/15 aria-pressed:text-primary"
+        <ToggleGroup
+          variant="outline"
+          spacing={0}
+          value={[yearly ? "yearly" : "monthly"]}
+          onValueChange={(next) => {
+            // A press on the active item empties the group. Keep one item on.
+            if (next[0]) setYearly(next[0] === "yearly");
+          }}
+          className="mx-auto"
+          aria-label="Billing period"
         >
-          Monthly
-        </ToggleGroupItem>
-        <ToggleGroupItem
-          value="yearly"
-          className="px-4 aria-pressed:bg-primary/15 aria-pressed:text-primary"
-        >
-          Yearly (2 months free)
-        </ToggleGroupItem>
-      </ToggleGroup>
+          <ToggleGroupItem
+            value="monthly"
+            className="px-4 aria-pressed:bg-primary/15 aria-pressed:text-primary"
+          >
+            Monthly
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="yearly"
+            className="px-4 aria-pressed:bg-primary/15 aria-pressed:text-primary"
+          >
+            Yearly (2 months free)
+          </ToggleGroupItem>
+        </ToggleGroup>
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-3">

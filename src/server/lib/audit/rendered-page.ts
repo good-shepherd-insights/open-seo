@@ -74,7 +74,8 @@ function usableHtml(url: string, finalUrl: string, html: string) {
   if (normalizeUrl(finalUrl, url) !== normalizeUrl(url, url)) {
     throw new AppError(renderInvalidTarget.code, renderInvalidTarget.message);
   }
-  if (!html.trim()) throw new AppError(renderEmptyResponse.code, renderEmptyResponse.message);
+  if (!html.trim())
+    throw new AppError(renderEmptyResponse.code, renderEmptyResponse.message);
   return truncateToBytes(html, MAX_HTML_BYTES);
 }
 
@@ -152,7 +153,8 @@ async function renderWithContext(
     creditsUsed = usage.success
       ? (usage.data.key_metadata?.credits_consumed ?? null)
       : null;
-    if (!response.ok) throw new AppError(renderFailed.code, renderFailed.message);
+    if (!response.ok)
+      throw new AppError(renderFailed.code, renderFailed.message);
     const data = contextSchema.parse(json);
     html = usableHtml(url, data.metadata.finalUrl, data.html);
   } catch {

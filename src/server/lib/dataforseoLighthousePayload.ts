@@ -1,7 +1,23 @@
 import { z } from "zod";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { AppError } from "@/server/lib/errors";
-import {   buildStoredLighthouseIssues,
+import {
+  buildStoredLighthouseIssues,
   buildStoredLighthouseMetrics,
   type RawLighthouseAudit,
   type RawLighthouseCategory,
@@ -66,25 +82,28 @@ export function parseDataforseoLighthousePayload(
   // size instead of multi-megabyte.
   const parsed = dataforseoLighthouseResponseSchema.safeParse(payload);
   if (!parsed.success) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   if (parsed.data.status_code !== 20000) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   const task = parsed.data.tasks?.[0];
   if (!task) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   if (task.status_code !== 20000) {
-    throw new AppError("INTERNAL_ERROR", task.status_message ?? "DataForSEO Lighthouse task failed");
+    throw new AppError(
+      "INTERNAL_ERROR",
+      task.status_message ?? "DataForSEO Lighthouse task failed",
+    );
   }
 
   const result = task.result?.[0];
   if (!result) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   const fetchedAt = new Date().toISOString();
@@ -119,7 +138,7 @@ export function parseDataforseoLighthousePayload(
     (score) => score == null,
   );
   if (allScoresMissing) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   // Without this, an off-spec provider field (a numeric audit title, say) would
@@ -127,7 +146,7 @@ export function parseDataforseoLighthousePayload(
   // whole Lighthouse view instead of failing the check.
   const validated = storedLighthousePayloadSchema.safeParse(storedPayload);
   if (!validated.success) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   return storedPayload;

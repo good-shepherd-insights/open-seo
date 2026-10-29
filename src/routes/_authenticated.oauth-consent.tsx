@@ -125,7 +125,8 @@ function OAuthConsentPage() {
           <h1>Authorize MCP access</h1>
         </CardTitle>
         <p className="mt-2 text-sm text-muted-foreground">
-          An MCP client is requesting access to your Maryland Insights SEO workspace.
+          An MCP client is requesting access to your Maryland Insights SEO
+          workspace.
         </p>
       </CardHeader>
       <CardContent>

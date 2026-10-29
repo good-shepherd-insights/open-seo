@@ -1,9 +1,6 @@
 import { normalizeBacklinksTarget } from "@/server/lib/dataforseoBacklinksTarget";
 import { AppError } from "@/server/lib/errors";
-import {
-  nameRequired,
-  urlInvalid,
-} from "@/shared/errors";
+import { nameRequired, urlInvalid } from "@/shared/errors";
 import {
   CUSTOM_SECTION_KEY_PREFIX,
   PROSE_MAX_CHARS,

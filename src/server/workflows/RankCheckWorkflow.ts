@@ -24,7 +24,8 @@ import { withPgClient } from "@/db";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import { failRunIfActive } from "@/server/features/rank-tracking/services/rankCheckRunGuards";
-import {   runLiveCheck,
+import {
+  runLiveCheck,
   runQueuedCheck,
 } from "@/server/workflows/rankCheckPaths";
 import { retryRankChecks } from "@/server/workflows/rankCheckRetries";
@@ -34,10 +35,12 @@ import { captureServerEvent } from "@/server/lib/posthog";
 import { sendCreditsExhaustedEvent } from "@/server/email/onboarding-drip";
 import { describeError } from "@/server/lib/errors";
 import { autumn } from "@/server/billing/autumn";
-import {   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
+import {
+  AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
 } from "@/shared/billing";
-import {   estimateRankCheckCredits,
+import {
+  estimateRankCheckCredits,
   rankCheckCostApprovalError,
 } from "@/shared/rank-tracking";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";

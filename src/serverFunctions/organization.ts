@@ -13,7 +13,16 @@ import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { sendHostedInvitationEmail } from "@/server/email/loops";
 import { AppError } from "@/server/lib/errors";
 import { requireAuthenticatedContext } from "@/serverFunctions/middleware";
-import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
+import {
+  unauthenticated,
+  notFound,
+  rateLimited,
+  forbidden,
+  projectDefault,
+  serviceUnavailable,
+  crawlTargetBlocked,
+  authConfigMissing,
+} from "@/shared/errors";
 
 /** Teams, invitations and ownership live on the Every App gateway. */
 function refuseBehindEveryAppGateway() {

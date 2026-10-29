@@ -79,7 +79,10 @@ async function startAudit(input: {
   const limits = AUDIT_LIMITS[input.limitTier];
   const maxPages = clampAuditMaxPages(input.maxPages);
   if (maxPages > limits.maxPagesPerAudit) {
-    throw new AppError(auditPageLimitExceeded.code, auditPageLimitExceeded.message);
+    throw new AppError(
+      auditPageLimitExceeded.code,
+      auditPageLimitExceeded.message,
+    );
   }
 
   const lighthouseStrategy = input.lighthouseStrategy ?? "auto";
@@ -133,7 +136,10 @@ async function startAudit(input: {
       throw new AppError(auditAlreadyRunning.code, auditAlreadyRunning.message);
     }
     if (usage.capacityUnits > limits.maxCapacityUnits) {
-      throw new AppError(auditCapacityReached.code, auditCapacityReached.message);
+      throw new AppError(
+        auditCapacityReached.code,
+        auditCapacityReached.message,
+      );
     }
     // Holds the worst-case rendering cost for the whole audit. Refused here,
     // the audit never runs; the workflow settles the hold when it ends.
@@ -185,8 +191,7 @@ async function startAudit(input: {
 
 async function getStatus(auditId: string, projectId: string) {
   let audit = await AuditRepository.getAuditForProject(auditId, projectId);
-  if (!audit)
-    throw new AppError(auditNotFound.code, auditNotFound.message);
+  if (!audit) throw new AppError(auditNotFound.code, auditNotFound.message);
 
   // Self-heal audits whose workflow died without reaching the mark-failed
   // step (instance terminated/errored, instance expired from retention, ...).

@@ -88,10 +88,9 @@ function AuthConfigErrorCard({ message, onRetry }: CardProps) {
         {clientAuthMode === "everyapp" ? (
           <p className="text-muted-foreground">
             {PRODUCT_NAME} runs behind an Every App gateway, which signs people
-            in.
-            Install it with <code className="mx-1">pnpm everyapp install</code>{" "}
-            so it gets the gateway&apos;s identity keys, and open it through the
-            gateway.
+            in. Install it with{" "}
+            <code className="mx-1">pnpm everyapp install</code> so it gets the
+            gateway&apos;s identity keys, and open it through the gateway.
           </p>
         ) : null}
         {clientAuthMode === "cloudflare_access" ? (

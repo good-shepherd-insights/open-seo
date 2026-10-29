@@ -214,7 +214,6 @@ async function updateConfig(
   await RankTrackingRepository.updateConfig(configId, projectId, updates);
 }
 
-
 // ---------------------------------------------------------------------------
 // Trigger a manual check
 // ---------------------------------------------------------------------------

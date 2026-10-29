@@ -118,8 +118,8 @@ function AiPage() {
                       </CardTitle>
                       <CardDescription>
                         Paste the setup prompt into your agent to connect
-                        {PRODUCT_NAME} and install its SEO skills. It will guide you
-                        through any manual steps.
+                        {PRODUCT_NAME} and install its SEO skills. It will guide
+                        you through any manual steps.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -155,8 +155,8 @@ function AiPage() {
                       </CardTitle>
                       <CardDescription>
                         Already connected? Paste the update prompt into your
-                        agent to get the latest {PRODUCT_NAME} skills while preserving
-                        your connection settings and personal edits.
+                        agent to get the latest {PRODUCT_NAME} skills while
+                        preserving your connection settings and personal edits.
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -270,8 +270,8 @@ function EveryAppAgentSetup() {
             <h2>Connect your agent to Every App</h2>
           </CardTitle>
           <CardDescription>
-            Every App has one address for your agent, and it covers {PRODUCT_NAME} and
-            your other apps. Connect it once.
+            Every App has one address for your agent, and it covers{" "}
+            {PRODUCT_NAME} and your other apps. Connect it once.
           </CardDescription>
         </CardHeader>
         {gatewayUrl ? (

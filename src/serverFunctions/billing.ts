@@ -1,6 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { z } from "zod";
 import {
   autoReloadSettingsSchema,

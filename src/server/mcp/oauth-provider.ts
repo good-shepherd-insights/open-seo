@@ -33,7 +33,16 @@ import { normalizeClientRegistrationRequest } from "@/server/mcp/oauth-registrat
 import { getPublicOrigin } from "@/server/mcp/public-origin";
 import { resolveHostedContext } from "@/middleware/ensure-user/hosted";
 import { handleMcpApiKeyRequest } from "@/server/mcp/api-key-auth";
-import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
+import {
+  unauthenticated,
+  notFound,
+  rateLimited,
+  forbidden,
+  projectDefault,
+  serviceUnavailable,
+  crawlTargetBlocked,
+  authConfigMissing,
+} from "@/shared/errors";
 
 const OAUTH_TOKEN_PATH = "/api/auth/oauth2/token";
 const OAUTH_REGISTER_PATH = "/api/auth/oauth2/register";

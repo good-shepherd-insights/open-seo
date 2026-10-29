@@ -17,7 +17,8 @@ import {
   renderUsageCredits,
   type RenderUsage,
 } from "@/shared/audit-rendering";
-import {   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
+import {
+  AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
 } from "@/shared/billing";
 

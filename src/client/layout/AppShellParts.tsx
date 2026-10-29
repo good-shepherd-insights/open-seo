@@ -77,8 +77,7 @@ function LegacyDockerBanner() {
   return (
     <AppBanner variant="info" icon={<Info className="size-4 shrink-0" />}>
       A new {PRODUCT_NAME} Docker setup starts in seconds and supports accounts.
-      This
-      image keeps getting updates, and moving keeps your data.{" "}
+      This image keeps getting updates, and moving keeps your data.{" "}
       <a
         href={DOCKER_MOVE_URL}
         target="_blank"
