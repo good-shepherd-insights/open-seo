@@ -3,6 +3,7 @@ import type { rankTrackingKeywords } from "@/db/schema";
 import { AppError } from "@/server/lib/errors";
 import {
   nameRequired,
+  rankKeywordCostApproval,
   rankConfigNotFound,
   rankNoKeywords,
 } from "@/shared/errors";
@@ -203,7 +204,10 @@ function scheduledApprovalError(
   scheduleInterval: "daily" | "weekly" | "monthly",
   estimate: ReturnType<typeof estimateScheduledRankCheckCredits>,
 ) {
-  return new AppError(nameRequired.code, nameRequired.message);
+  const approval = rankKeywordCostApproval(
+    `Adding these keywords would make each ${scheduleInterval} scheduled check cost up to ${estimate.costCredits} credits including retries (~$${estimate.costUsd.toFixed(4)} per check; up to ~${estimate.monthlyCostCredits} credits/month). Call estimate_rank_tracker_cost with additionalKeywords, show the recurring estimate to the user, then retry with maxEstimatedScheduledCheckCredits set to the approved per-check estimate.`,
+  );
+  return new AppError(approval.code, approval.message);
 }
 
 export const RankTrackingKeywordService = {

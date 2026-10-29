@@ -66,6 +66,18 @@ export const nameRequired: ErrorDef = {
   message: "Give this a name so you can find it later.",
 };
 
+export const rankTrackerDuplicate = (hasLocationName: boolean): ErrorDef => ({
+  code: "VALIDATION_ERROR",
+  message: hasLocationName
+    ? "This domain + city + language combination is already being tracked"
+    : "This domain + country + language combination is already being tracked",
+});
+
+export const rankKeywordCostApproval = (detail: string): ErrorDef => ({
+  code: "VALIDATION_ERROR",
+  message: detail,
+});
+
 export const jsonRequired: ErrorDef = {
   code: "VALIDATION_ERROR",
   message: "Something got mixed up with that request. Please try again.",

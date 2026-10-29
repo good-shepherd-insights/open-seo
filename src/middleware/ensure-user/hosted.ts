@@ -1,4 +1,4 @@
-import { getAuth, hasHostedAuthConfig } from "@/lib/auth";
+import { getAuth, hasBetterAuthConfig } from "@/lib/auth";
 import { getActiveOrganizationId } from "@/lib/auth-session";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { resolveActiveHostedOrganization } from "@/server/auth/default-hosted-organization";
@@ -7,7 +7,7 @@ import { authConfigMissing, unauthenticated } from "@/shared/errors";
 import type { EnsuredUserContext } from "./types";
 
 async function requireHostedSession(headers: Headers) {
-  if (!hasHostedAuthConfig()) {
+  if (!hasBetterAuthConfig()) {
     throw new AppError(authConfigMissing.code, authConfigMissing.message);
   }
 
