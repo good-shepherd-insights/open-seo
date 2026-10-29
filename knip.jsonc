@@ -31,6 +31,11 @@
     "scripts/**",
     // shadcn components are copied in whole; pages use only some exports
     "src/client/components/ui/**",
+    // Fork-only branding catalog: a deliberate full set of constants that
+    // callers consume selectively, same rationale as the shadcn block above.
+    // Deleting the currently-unreferenced ones would break the centralization
+    // this fork exists to maintain.
+    "src/shared/branding.ts",
   ],
   // tests/badseo/ is the standalone broken-SEO fixture worker (own deps/config),
   // like web/ it isn't part of the app's module graph.
