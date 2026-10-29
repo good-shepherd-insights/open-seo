@@ -30,8 +30,10 @@ export const PRIVACY_URL = "https://openseo.so/privacy";
 export const UPSTREAM_DOCS_URL = "https://openseo.so/docs";
 export const UPSTREAM_SKILLS_NAME = "OpenSEO";
 export const CHATGPT_UPDATE_GUIDE_URL = `${UPSTREAM_DOCS_URL}/chatgpt#update-openseo`;
-export const GSC_SETUP_GUIDE_URL =
-  "https://openseo.so/blogs/google-search-console-setup";
+export const UPSTREAM_BLOGS_URL = "https://openseo.so/blogs";
+export const GSC_SETUP_GUIDE_URL = `${UPSTREAM_BLOGS_URL}/google-search-console-setup`;
+export const RANK_TRACKING_CHANGES_URL = `${UPSTREAM_BLOGS_URL}/rank-tracking-changes`;
+export const CRAWLER_DOCS_URL = `${UPSTREAM_DOCS_URL}/crawler`;
 
 // ── URLs ────────────────────────────────────────────────────────────────────
 

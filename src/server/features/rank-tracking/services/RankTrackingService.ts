@@ -13,6 +13,7 @@ import { AppError } from "@/server/lib/errors";
 import {
   domainInvalid,
   nameRequired,
+  rankTrackerDuplicate,
   paymentRequired,
   rankConfigNotFound,
   rankNoKeywords,
@@ -65,10 +66,7 @@ async function createConfig(input: {
     input.projectMarket,
   );
   const scheduleInterval = input.scheduleInterval ?? "weekly";
-  const nextCheckAt = await resolveNextCheckAt(
-    scheduleInterval,
-    input.scheduleTime,
-  );
+  const nextCheckAt = resolveNextCheckAt(scheduleInterval, input.scheduleTime);
 
   const locationName = input.locationName ?? null;
   // Before the duplicate/limit checks so an unusable location name is the
@@ -81,20 +79,23 @@ async function createConfig(input: {
     });
   }
 
-  const existing =
-    await RankTrackingRepository.getConfigByProjectDomainLocation(
-      input.projectId,
-      normalizedDomain,
-      locationCode,
-      locationName,
-    );
-  // The (project, domain, location) row still exists when a domain is
+  const existing = await RankTrackingRepository.getConfigByProjectDomainMarket(
+    input.projectId,
+    normalizedDomain,
+    locationCode,
+    languageCode,
+    locationName,
+  );
+  // The (project, domain, location, language) row still exists when a domain is
   // archived — archiving only flips isActive to false. So re-adding an
   // archived domain reactivates that row (keeping its keyword/ranking
   // history) with the freshly chosen settings, rather than colliding with
   // the unique index. An already-active row is a genuine duplicate.
   if (existing?.isActive) {
-    throw new AppError(nameRequired.code, nameRequired.message);
+    {
+      const dup = rankTrackerDuplicate(Boolean(locationName));
+      throw new AppError(dup.code, dup.message);
+    }
   }
 
   // Enforced for reactivations too, not just new rows — otherwise archiving
@@ -109,7 +110,6 @@ async function createConfig(input: {
   if (existing) {
     await RankTrackingRepository.updateConfig(existing.id, input.projectId, {
       isActive: true,
-      languageCode,
       devices: input.devices ?? "both",
       serpDepth: input.serpDepth,
       scheduleInterval,
@@ -208,15 +208,11 @@ async function updateConfig(
     (scheduleInterval !== "manual" && !existing.nextCheckAt)
   ) {
     updates.scheduleInterval = scheduleInterval;
-    updates.nextCheckAt = await resolveNextCheckAt(
-      scheduleInterval,
-      scheduleTime,
-    );
+    updates.nextCheckAt = resolveNextCheckAt(scheduleInterval, scheduleTime);
   }
 
   await RankTrackingRepository.updateConfig(configId, projectId, updates);
 }
-
 
 // ---------------------------------------------------------------------------
 // Trigger a manual check

@@ -11,7 +11,13 @@ import {
   lighthouseAuditExportSchema,
   lighthouseAuditIssueSchema,
 } from "@/types/schemas/lighthouse";
-import { forbidden, notFound, rateLimited, serviceUnavailable, unauthenticated } from "@/shared/errors";
+import {
+  forbidden,
+  notFound,
+  rateLimited,
+  serviceUnavailable,
+  unauthenticated,
+} from "@/shared/errors";
 
 async function getAuditLighthouseData(input: {
   projectId: string;

@@ -1,8 +1,6 @@
 import { ReportTemplateRepository } from "@/server/features/reports/repositories/ReportTemplateRepository";
 import { AppError } from "@/server/lib/errors";
-import {
-  nameRequired,
-} from "@/shared/errors";
+import { nameRequired } from "@/shared/errors";
 import { formatCount } from "@/shared/format";
 import {
   REPORT_TEMPLATE_MAX_DESCRIPTION_CHARS,
@@ -42,7 +40,10 @@ async function getReportTemplate(
 }
 
 function notFound(templateId: string) {
-  return new AppError("NOT_FOUND", "We couldn't find that. It may have been moved or deleted.");
+  return new AppError(
+    "NOT_FOUND",
+    "We couldn't find that. It may have been moved or deleted.",
+  );
 }
 
 type SaveParams = {

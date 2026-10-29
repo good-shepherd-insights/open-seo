@@ -1,9 +1,26 @@
 import { AppError } from "@/server/lib/errors";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
-import {   resolveBacklinksScope,
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
+import {
+  resolveBacklinksScope,
   type BacklinksScopeWithLegacy,
 } from "@/types/schemas/backlinks";
-import {   parseResearchTarget,
+import {
+  parseResearchTarget,
   type ResearchScope,
 } from "@/shared/researchScope";
 
@@ -59,7 +76,7 @@ export function normalizeBacklinksTarget(
   // Query strings and fragments would target a different page than the one
   // the user sees, so a page lookup rejects them rather than dropping them.
   if (/[?#]/.test(trimmed)) {
-    throw new AppError(domainInvalid.code, domainInvalid.message)
+    throw new AppError(domainInvalid.code, domainInvalid.message);
   }
 
   const protocol = /^http:\/\//i.test(trimmed) ? "http" : "https";

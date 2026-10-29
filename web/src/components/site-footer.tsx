@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
+import { PrivacyChoicesLink } from "@/components/privacy-choices";
 import { featureGroups } from "@/lib/feature-pages";
 import { freeToolList } from "@/lib/free-tools/tool-pages";
 
@@ -17,6 +18,9 @@ export function SiteFooter({ className }: { className?: string }) {
         <Logo size="md" />
         <span className="text-sm font-semibold text-neutral-900">Maryland Insights</span>
       </Link>
+      <p className="mt-1">
+        Part of <a href="https://everyapp.com">EveryApp</a>
+      </p>
 
       <div className="mt-6 grid grid-cols-2 gap-8 md:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
         <div>
@@ -68,6 +72,9 @@ export function SiteFooter({ className }: { className?: string }) {
             <Link to="/support">Support</Link>
             <Link to="/roadmap">Roadmap</Link>
             <Link to="/pricing">Pricing</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms-and-conditions">Terms</Link>
+            <PrivacyChoicesLink />
           </div>
         </div>
       </div>

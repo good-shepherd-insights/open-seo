@@ -1,3 +1,4 @@
+import type { ComponentProps, ReactNode } from "react";
 import { Package } from "lucide-react";
 import { UPSTREAM_DOCS_URL } from "@/shared/branding";
 import { PRODUCT_NAME } from "@/shared/branding";
@@ -8,9 +9,17 @@ export const AGENT_SETUP_DESCRIPTION = `Paste this prompt into your agent to aut
 export function AgentSetupPanel({
   prompt,
   onCopy,
+  copyVariant = "default",
+  actions,
+  children,
 }: {
   prompt: string;
   onCopy?: () => void;
+  copyVariant?: ComponentProps<typeof CopyButton>["variant"];
+  /** Buttons shown side by side under the copy button, e.g. one-click installs. */
+  actions?: ReactNode;
+  /** Shown under the copy button, e.g. what to do after copying. */
+  children?: ReactNode;
 }) {
   return (
     <>
@@ -26,15 +35,21 @@ export function AgentSetupPanel({
             </p>
           </div>
         </div>
-        <CopyButton
-          variant="default"
-          size="lg"
-          className="w-full"
-          value={prompt}
-          label="Copy setup prompt"
-          successMessage="Setup prompt copied"
-          onCopy={onCopy}
-        />
+        <div className="flex flex-col gap-2">
+          <CopyButton
+            variant={copyVariant}
+            size="lg"
+            className="w-full"
+            value={prompt}
+            label="Copy setup prompt"
+            successMessage="Setup prompt copied"
+            onCopy={onCopy}
+          />
+          {actions ? (
+            <div className="grid grid-cols-2 gap-2">{actions}</div>
+          ) : null}
+        </div>
+        {children}
       </div>
       <div className="mt-4 text-center">
         <a

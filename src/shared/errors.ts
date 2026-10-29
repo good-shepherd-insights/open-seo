@@ -21,27 +21,32 @@ export interface ErrorDef {
 
 export const insufficientCredits: ErrorDef = {
   code: "INSUFFICIENT_CREDITS",
-  message: "You've run out of usage credits. Go to Billing to add more and keep using Maryland Insights SEO.",
+  message:
+    "You've run out of usage credits. Go to Billing to add more and keep using Maryland Insights SEO.",
 };
 
 export const paymentRequired: ErrorDef = {
   code: "PAYMENT_REQUIRED",
-  message: "This feature needs a paid plan. Go to Billing to upgrade and unlock it.",
+  message:
+    "This feature needs a paid plan. Go to Billing to upgrade and unlock it.",
 };
 
 export const balanceIssue: ErrorDef = {
   code: "PAYMENT_REQUIRED",
-  message: "Your payment method was declined. Go to Billing to update it and try again.",
+  message:
+    "Your payment method was declined. Go to Billing to update it and try again.",
 };
 
 export const billingCustomerMissing: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't load your billing info. Email ${ERROR_SUPPORT_EMAIL} and we'll sort it out.",
+  message:
+    "We couldn't load your billing info. Email ${ERROR_SUPPORT_EMAIL} and we'll sort it out.",
 };
 
 export const authConfigMissing: ErrorDef = {
   code: "AUTH_CONFIG_MISSING",
-  message: "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
+  message:
+    "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
 };
 
 // ── Validation ───────────────────────────────────────────────────────────────
@@ -58,13 +63,26 @@ export const domainInvalid: ErrorDef = {
 
 export const urlInvalid: ErrorDef = {
   code: "VALIDATION_ERROR",
-  message: "That link doesn't look right. Try a full URL like https://example.com/page.",
+  message:
+    "That link doesn't look right. Try a full URL like https://example.com/page.",
 };
 
 export const nameRequired: ErrorDef = {
   code: "VALIDATION_ERROR",
   message: "Give this a name so you can find it later.",
 };
+
+export const rankTrackerDuplicate = (hasLocationName: boolean): ErrorDef => ({
+  code: "VALIDATION_ERROR",
+  message: hasLocationName
+    ? "This domain + city + language combination is already being tracked"
+    : "This domain + country + language combination is already being tracked",
+});
+
+export const rankKeywordCostApproval = (detail: string): ErrorDef => ({
+  code: "VALIDATION_ERROR",
+  message: detail,
+});
 
 export const jsonRequired: ErrorDef = {
   code: "VALIDATION_ERROR",
@@ -75,7 +93,8 @@ export const jsonRequired: ErrorDef = {
 
 export const auditNotFound: ErrorDef = {
   code: "NOT_FOUND",
-  message: "We couldn't find that audit in this project. It may have been deleted.",
+  message:
+    "We couldn't find that audit in this project. It may have been deleted.",
 };
 
 export const chatSessionNotFound: ErrorDef = {
@@ -85,7 +104,8 @@ export const chatSessionNotFound: ErrorDef = {
 
 export const rankConfigNotFound: ErrorDef = {
   code: "NOT_FOUND",
-  message: "Rank tracking isn't set up for this project yet. Add keywords to get started.",
+  message:
+    "Rank tracking isn't set up for this project yet. Add keywords to get started.",
 };
 
 export const notFound: ErrorDef = {
@@ -102,14 +122,16 @@ export const unauthenticated: ErrorDef = {
 
 export const authMissingEnv: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
+  message:
+    "Sign-in isn't set up right now. Email ${ERROR_SUPPORT_EMAIL} and we'll get it working.",
 };
 
 // ── Audit ────────────────────────────────────────────────────────────────────
 
 export const auditAlreadyRunning: ErrorDef = {
   code: "AUDIT_ALREADY_RUNNING",
-  message: "An audit is already running on this project. Wait for it to finish or stop it first.",
+  message:
+    "An audit is already running on this project. Wait for it to finish or stop it first.",
 };
 
 export const auditCapacityReached: ErrorDef = {
@@ -119,29 +141,34 @@ export const auditCapacityReached: ErrorDef = {
 
 export const auditPageLimitExceeded: ErrorDef = {
   code: "AUDIT_PAGE_LIMIT_EXCEEDED",
-  message: "This audit would scan more pages than your plan allows. Upgrade to cover the whole site.",
+  message:
+    "This audit would scan more pages than your plan allows. Upgrade to cover the whole site.",
 };
 
 export const auditContextMismatch: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
+  message:
+    "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
 };
 
 export const auditProjectMismatch: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
+  message:
+    "We lost track of that audit mid-run. Email ${ERROR_SUPPORT_EMAIL} if this keeps happening.",
 };
 
 export const auditConfigInvalid: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "That audit's settings are mixed up. Email ${ERROR_SUPPORT_EMAIL} and we'll fix it.",
+  message:
+    "That audit's settings are mixed up. Email ${ERROR_SUPPORT_EMAIL} and we'll fix it.",
 };
 
 // ── Upstream / service ───────────────────────────────────────────────────────
 
 export const serviceTaskMissing: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't start that scan. Please try again — if it keeps happening, email ${ERROR_SUPPORT_EMAIL}.",
+  message:
+    "We couldn't start that scan. Please try again — if it keeps happening, email ${ERROR_SUPPORT_EMAIL}.",
 };
 
 export const serviceUnavailable: ErrorDef = {
@@ -163,7 +190,8 @@ export const crawlTargetBlocked: ErrorDef = {
 
 export const crawlFailed: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't scan that site. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
+  message:
+    "We couldn't scan that site. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 export const crawlTimeout: ErrorDef = {
@@ -180,12 +208,14 @@ export const renderInvalidTarget: ErrorDef = {
 
 export const renderEmptyResponse: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "That page came back blank. It may be blocking us — try a different URL.",
+  message:
+    "That page came back blank. It may be blocking us — try a different URL.",
 };
 
 export const renderFailed: ErrorDef = {
   code: "INTERNAL_ERROR",
-  message: "We couldn't load that page. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
+  message:
+    "We couldn't load that page. Please try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 // ── Rank tracking ────────────────────────────────────────────────────────────
@@ -199,12 +229,14 @@ export const rankNoKeywords: ErrorDef = {
 
 export const projectArchiveOnly: ErrorDef = {
   code: "CONFLICT",
-  message: "You need at least one project. Create a new one before archiving this.",
+  message:
+    "You need at least one project. Create a new one before archiving this.",
 };
 
 export const projectStopAudit: ErrorDef = {
   code: "CONFLICT",
-  message: "We couldn't stop that audit. Refresh and try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
+  message:
+    "We couldn't stop that audit. Refresh and try again — email ${ERROR_SUPPORT_EMAIL} if it keeps happening.",
 };
 
 export const projectDefault: ErrorDef = {

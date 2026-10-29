@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c5c519c7-ebce-44a1-9d06-332aff153315",
+  "id": "dba70580-b733-44f0-8fec-d75562571307",
   "prevId": "c72ff8c9-f504-4876-a543-7008dceee65d",
   "tables": {
     "backlink_snapshots": {
@@ -216,88 +216,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "dashboard_card_positions": {
-      "name": "dashboard_card_positions",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "card_id": {
-          "name": "card_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "position": {
-          "name": "position",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "dashboard_card_positions_project_idx": {
-          "name": "dashboard_card_positions_project_idx",
-          "columns": [
-            "project_id"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "dashboard_card_positions_user_id_user_id_fk": {
-          "name": "dashboard_card_positions_user_id_user_id_fk",
-          "tableFrom": "dashboard_card_positions",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "dashboard_card_positions_project_id_projects_id_fk": {
-          "name": "dashboard_card_positions_project_id_projects_id_fk",
-          "tableFrom": "dashboard_card_positions",
-          "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "dashboard_card_positions_user_id_project_id_card_id_pk": {
-          "columns": [
-            "user_id",
-            "project_id",
-            "card_id"
-          ],
-          "name": "dashboard_card_positions_user_id_project_id_card_id_pk"
-        }
-      },
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -3806,9 +3724,16 @@
           "notNull": false,
           "autoincrement": false
         },
-        "agent_id": {
-          "name": "agent_id",
+        "terms_accepted_version": {
+          "name": "terms_accepted_version",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "terms_accepted_at": {
+          "name": "terms_accepted_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

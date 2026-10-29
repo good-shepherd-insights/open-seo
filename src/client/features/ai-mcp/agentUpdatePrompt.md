@@ -1,6 +1,6 @@
 Update my installed {{PRODUCT_NAME}} skills using {{UPSTREAM_DOCS_URL}}/agent-setup#update-your-skills.
 
-If this is ChatGPT on the web or a regular desktop chat, use {{CHATGPT_UPDATE_GUIDE_URL}}. For a public directory plugin, start a new chat to load the available tools and skills; reconnect only if sign-in needs attention. For a custom MCP connection, select Refresh in its details, then start a new chat. Refreshing a custom connection updates tools, not skill files. Do not run local Codex commands to update ChatGPT web.
+If this is ChatGPT on the web or a regular desktop chat, use {{CHATGPT_UPDATE_GUIDE_URL}}. For a public directory plugin, start a new chat to load the latest tools and skills; reconnect only if sign-in needs attention. For a custom MCP connection, select Refresh in its details, then start a new chat. Refreshing a custom connection updates tools, not skill files. Do not run local Codex commands to update ChatGPT web.
 
 Identify this agent and how the underlying {{UPSTREAM_SKILLS_NAME}} package was installed. Use the matching plugin or skills installer, checking the installed client's help before running commands. Update only {{UPSTREAM_SKILLS_NAME}} in its existing scope. Preserve my MCP endpoint, sign-in, and personal skill edits; ask before replacing conflicting edits. Avoid duplicate skills and do not install internal repository skills.
 

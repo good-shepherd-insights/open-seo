@@ -1,32 +1,53 @@
 import { waitUntil } from "cloudflare:workers";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
-import {   type CreditFeature,
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
+import {
+  type CreditFeature,
   mapDataforseoPathToCreditFeature,
 } from "@/shared/billing-credit-features";
 import { creditsForProviderUsd } from "@/shared/billing";
-import {   getOrCreateOrganizationCustomer,
+import {
+  getOrCreateOrganizationCustomer,
   reserveUsageCredits,
   settleUsageCredits,
 } from "@/server/billing/subscription";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
-import {   DataforseoChargedTaskError,
+import {
+  DataforseoChargedTaskError,
   type DataforseoApiCallCost,
   type DataforseoApiResponse,
 } from "@/server/lib/dataforseo/envelope";
 import { dataforseoPricing } from "@/server/lib/dataforseo/pricing";
-import {   fetchBusinessListingsSearch,
+import {
+  fetchBusinessListingsSearch,
   fetchMyBusinessInfo,
   fetchQuestionsAnswers,
   postGoogleReviewsTask,
   postMyBusinessUpdatesTask,
 } from "@/server/lib/dataforseo/business";
-import {   fetchBacklinksHistory,
+import {
+  fetchBacklinksHistory,
   fetchBacklinksRows,
   fetchBacklinksSummary,
   fetchDomainPagesSummary,
   fetchReferringDomains,
 } from "@/server/lib/dataforseo/backlinks";
-import {   fetchDomainRankOverview,
+import {
+  fetchDomainRankOverview,
   fetchKeywordIdeas,
   fetchKeywordOverview,
   fetchKeywordSuggestions,
@@ -35,26 +56,31 @@ import {   fetchDomainRankOverview,
   fetchRelevantPages,
   fetchSerpCompetitors,
 } from "@/server/lib/dataforseo/labs";
-import {   fetchAdsKeywordIdeas,
+import {
+  fetchAdsKeywordIdeas,
   fetchAdsSearchVolume,
 } from "@/server/lib/dataforseo/google-ads";
-import {   fetchLiveSerp,
+import {
+  fetchLiveSerp,
   fetchLocalSerp,
   fetchRankCheckSerp,
   postLocalSerpTasks,
   postRankCheckTasks,
 } from "@/server/lib/dataforseo/serp";
 import { fetchLighthouseResult } from "@/server/lib/dataforseo/lighthouse";
-import {   fetchLlmAggregatedMetrics,
+import {
+  fetchLlmAggregatedMetrics,
   fetchLlmCrossAggregatedMetrics,
   fetchLlmMentionsSearch,
   fetchLlmResponse,
   fetchLlmTopPages,
 } from "@/server/lib/dataforseo/ai";
+import { fetchAiTrackingLiveAnswer } from "@/server/lib/dataforseo/ai-tracking";
 import {
-  fetchAiTrackingLiveAnswer,
-  postAiTrackingTasks,
-} from "@/server/lib/dataforseo/ai-tracking";
+  postAiTrackingTasksOnHold,
+  settleAiTrackingHold,
+  type AiTrackingHold,
+} from "@/server/lib/dataforseo/ai-tracking-billing";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { AppError } from "@/server/lib/errors";
 
@@ -225,6 +251,17 @@ export function createDataforseoClient(customer: BillingCustomerContext) {
         dataforseoPricing.serp.local,
         "local_seo",
       ),
+      // Live Maps searches for a Local SEO check, one per grid point; one
+      // credit hold covers the batch.
+      localBatch: (inputs: Parameters<typeof fetchLocalSerp>[0][]) =>
+        meterDataforseoCalls(
+          customer,
+          inputs.map((input) => () => fetchLocalSerp(input)),
+          inputs.map((input) =>
+            creditsForProviderUsd(dataforseoPricing.serp.local(input)),
+          ),
+          "local_seo",
+        ),
       // One queued Maps task per rank grid point; one metered charge covers
       // them all (DataForSEO bills task_post, collection is free).
       localTaskPost: meter(
@@ -283,14 +320,18 @@ export function createDataforseoClient(customer: BillingCustomerContext) {
         fetchLlmResponse,
         dataforseoPricing.aiSearch.llmResponse,
       ),
-      // Posts up to 100 tracked prompts for one engine; one metered charge
-      // covers the batch (DataForSEO bills task_post, collection is free).
-      trackingTaskPost: meter(
-        customer,
-        postAiTrackingTasks,
-        dataforseoPricing.aiSearch.trackingTaskPost,
-        "ai_prompt_responses",
-      ),
+      // Posts up to 100 tracked prompts for one engine on an open credit
+      // hold. DataForSEO bills task_post, but the customer pays only for the
+      // answers that arrive: the caller settles the hold with
+      // settleTrackingHold once collection ends.
+      trackingTaskPost: (
+        input: Parameters<typeof postAiTrackingTasksOnHold>[1],
+      ) => postAiTrackingTasksOnHold(customer, input),
+      settleTrackingHold: (input: {
+        hold: AiTrackingHold;
+        /** One per task whose answer arrived. */
+        costs: number[];
+      }) => settleAiTrackingHold(customer, input),
       // A manual run's live answers share one credit hold and one settle (see
       // meterDataforseoCalls). Resolves per call, in order.
       trackingLiveBatch: (
@@ -366,7 +407,10 @@ async function meterDataforseoCalls<T>(
           // DataForSEO still billed us (costUsd > 0), charge that cost so the
           // spend stays metered and visible instead of silently eaten.
           if (error.isInvalidField && error.billing.costUsd <= 0) {
-            throw new AppError(serviceTaskMissing.code, serviceTaskMissing.message);
+            throw new AppError(
+              serviceTaskMissing.code,
+              serviceTaskMissing.message,
+            );
           }
           billed[index] = error.billing;
           throw error;

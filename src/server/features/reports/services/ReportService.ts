@@ -1,9 +1,7 @@
 import { ReportRepository } from "@/server/features/reports/repositories/ReportRepository";
 import { sharesEnabled } from "@/server/features/reports/shareAccess";
 import { AppError } from "@/server/lib/errors";
-import {
-  nameRequired,
-} from "@/shared/errors";
+import { nameRequired } from "@/shared/errors";
 import { captureServerEvent } from "@/server/lib/posthog";
 import { formatCount } from "@/shared/format";
 import { mintShareToken } from "@/shared/report-share";
@@ -288,7 +286,10 @@ async function unshareReport(params: ShareParams): Promise<ReportMetadata> {
 // so no "omit reportId" hint here; that one belongs to save_report, which has
 // its own message above.
 function notFound(reportId: string) {
-  return new AppError("NOT_FOUND", "We couldn't find that. It may have been moved or deleted.");
+  return new AppError(
+    "NOT_FOUND",
+    "We couldn't find that. It may have been moved or deleted.",
+  );
 }
 
 export const ReportService = {

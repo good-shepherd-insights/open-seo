@@ -1,8 +1,26 @@
 /* eslint-disable max-lines -- one client module per Google integration (gscClient precedent); GA4 spans the Admin and Data APIs */
 import { z } from "zod";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { getGoogleAccessToken } from "@/server/features/google/googleOAuth";
-import {   Ga4AdminApiError,
+import { getGoogleAccessMode } from "@/server/features/google/googleAccess";
+import { getGatewayGoogleFetch } from "@/server/features/google/gatewayGoogle";
+import {
+  Ga4AdminApiError,
   Ga4DataApiError,
   Ga4MalformedResponseError,
   Ga4TokenError,
@@ -156,12 +174,35 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === "AbortError";
 }
 
-function memoizedGa4AccessToken(opts: {
+type Authenticated = { fetch: typeof fetch; headers: Record<string, string> };
+
+/**
+ * The fetch and headers that reach Google Analytics authenticated, resolved
+ * once per client: behind the gateway, the gateway's fetch with the
+ * member's token on it (gatewayGoogle.ts); otherwise OpenSEO's own grant.
+ */
+async function authenticateGa4(opts: {
   userId: string;
   ga4AccountId: string;
-}) {
-  let accessTokenPromise: Promise<string> | undefined;
-  return () => (accessTokenPromise ??= getGa4AccessToken(opts));
+}): Promise<Authenticated> {
+  if ((await getGoogleAccessMode()) === "gateway") {
+    const gatewayFetch = await getGatewayGoogleFetch();
+    if (!gatewayFetch) {
+      throw new Ga4TokenError(
+        "Google isn't reachable through the Every App gateway here.",
+      );
+    }
+    return { fetch: gatewayFetch, headers: {} };
+  }
+  return {
+    fetch,
+    headers: { Authorization: `Bearer ${await getGa4AccessToken(opts)}` },
+  };
+}
+
+function memoizedGa4Access(opts: { userId: string; ga4AccountId: string }) {
+  let authenticated: Promise<Authenticated> | undefined;
+  return () => (authenticated ??= authenticateGa4(opts));
 }
 
 /** Read-only Admin API client used only for account/property discovery. */
@@ -169,15 +210,13 @@ export function createGa4AdminClient(opts: {
   userId: string;
   ga4AccountId: string;
 }) {
-  const accessToken = memoizedGa4AccessToken(opts);
+  const access = memoizedGa4Access(opts);
 
   async function request(url: string): Promise<unknown> {
-    const token = await accessToken();
+    const { fetch: send, headers } = await access();
     let response: Response;
     try {
-      response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      response = await send(url, { headers });
     } catch (error) {
       if (isAbortError(error)) throw error;
       throw new Ga4AdminApiError(
@@ -232,7 +271,7 @@ export function createGa4AdminClient(opts: {
         if (!pageToken) return properties;
       }
 
-      throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+      throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
     },
 
     async getProperty(propertyId: string): Promise<Ga4Property> {
@@ -410,19 +449,19 @@ export function createGa4DataClient(opts: {
   propertyId: string;
 }) {
   const propertyId = propertyIdSchema.parse(opts.propertyId);
-  const accessToken = memoizedGa4AccessToken(opts);
+  const access = memoizedGa4Access(opts);
 
   return {
     async runReport(
       request: Ga4RunReportRequest,
     ): Promise<Ga4RunReportResponse> {
-      const token = await accessToken();
+      const { fetch: send, headers } = await access();
       let response: Response;
       try {
-        response = await fetch(`${GA4_DATA_API_BASE}/${propertyId}:runReport`, {
+        response = await send(`${GA4_DATA_API_BASE}/${propertyId}:runReport`, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            ...headers,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(request),

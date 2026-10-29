@@ -1,12 +1,29 @@
 import { symmetricDecrypt, symmetricEncrypt } from "better-auth/crypto";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { CrawlerCredentialRepository } from "@/server/features/audit/repositories/CrawlerCredentialRepository";
-import {   checkShopifySignature,
+import {
+  checkShopifySignature,
   type ShopifySignatureProblem,
 } from "@/server/features/audit/services/shopifySignature";
 import { AppError } from "@/server/lib/errors";
 import { getOptionalEnvValue } from "@/server/lib/runtime-env";
-import {   isCrawlerAccessExpired,
+import {
+  isCrawlerAccessExpired,
   parseSignatureExpiry,
   shopifyCrawlerHeaders,
   type CrawlerAccess,
@@ -27,9 +44,25 @@ export interface SealedCrawlerAccess {
 
 // A key used only for these signatures. The audit worker that replays them
 // crawls untrusted sites, so it must not hold BETTER_AUTH_SECRET.
-async function getEncryptionKey(): Promise<string> {
+async function readEncryptionKey(): Promise<string | null> {
   const secret = (await getOptionalEnvValue("CRAWLER_ACCESS_SECRET"))?.trim();
-  if (!secret || secret.length < MIN_BETTER_AUTH_SECRET_LENGTH) {
+  return secret && secret.length >= MIN_BETTER_AUTH_SECRET_LENGTH
+    ? secret
+    : null;
+}
+
+/**
+ * Whether crawler access can be saved and replayed here: the optional
+ * CRAWLER_ACCESS_SECRET is set. The crawler-access form asks before it
+ * offers to save a signature.
+ */
+async function hasEncryptionKey(): Promise<boolean> {
+  return (await readEncryptionKey()) !== null;
+}
+
+async function getEncryptionKey(): Promise<string> {
+  const secret = await readEncryptionKey();
+  if (!secret) {
     throw new AppError(
       "AUTH_CONFIG_MISSING",
       `Set CRAWLER_ACCESS_SECRET to at least ${MIN_BETTER_AUTH_SECRET_LENGTH} characters to store crawler access signatures. It encrypts them.`,
@@ -112,7 +145,8 @@ async function saveCrawlerCredential(input: {
   const saved = (
     await CrawlerCredentialRepository.listForOrganization(input.organizationId)
   ).find((row) => row.projectId === input.projectId && row.host === input.host);
-  if (!saved) throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
+  if (!saved)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   return { credential: toSummary(saved) };
 }
 
@@ -179,6 +213,7 @@ async function openCrawlerAccess(
 }
 
 export const CrawlerCredentialService = {
+  hasEncryptionKey,
   listCrawlerCredentials,
   saveCrawlerCredential,
   deleteCrawlerCredential,

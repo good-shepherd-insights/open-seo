@@ -11,7 +11,10 @@ import {
   prefetchBillingAccount,
 } from "@/client/features/billing/billingAccountQuery";
 import { PlanPageAccountMenu } from "@/client/features/billing/PlanPageAccountMenu";
-import { PlanOfferCard } from "@/client/features/billing/PlanOfferCard";
+import {
+  PlanGuarantee,
+  PlanOfferCard,
+} from "@/client/features/billing/PlanOfferCard";
 import {
   YC_PLAN_OFFER,
   monthlyCreditsFeature,
@@ -106,7 +109,9 @@ function YcPlanPage() {
           alt="Maryland Insights SEO"
           className="mx-auto size-10 rounded-lg"
         />
-        <h1 className="text-xl font-semibold">Maryland Insights SEO for YC founders</h1>
+        <h1 className="text-xl font-semibold">
+          Maryland Insights SEO for YC founders
+        </h1>
         <p className="text-sm text-muted-foreground">
           A bigger monthly credit pool for teams doing serious SEO work, with
           your first month free through the YC deal.
@@ -171,6 +176,8 @@ function YcPlanPage() {
             this organization to the {YC_PLAN_OFFER.name}.
           </p>
         )}
+
+        <PlanGuarantee />
       </PlanOfferCard>
 
       <div className="text-center space-y-2">
