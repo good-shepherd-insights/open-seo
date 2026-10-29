@@ -8,5 +8,4 @@ CREATE TABLE `dashboard_card_positions` (
 	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `dashboard_card_positions_project_idx` ON `dashboard_card_positions` (`project_id`);--> statement-breakpoint
-ALTER TABLE `user` ADD `agent_id` text;
+CREATE INDEX `dashboard_card_positions_project_idx` ON `dashboard_card_positions` (`project_id`);

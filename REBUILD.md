@@ -70,25 +70,34 @@ taking upstream's journals orphaned the fork's `user_agent_id` files (no journal
 entry, so drizzle ignored them) and they were deleted. Both directories now have
 no duplicate prefixes. See 2.4 — this has a deploy consequence.
 
-### 2.4 `agent_id` is re-added by the new migration — **BLOCKED (deploy blocker)**
-The regenerated migrations (`drizzle/pg/0041_dry_alex_power.sql`,
-`drizzle/sqlite/0063_tired_colleen_wing.sql`) each contain:
+### 2.4 `agent_id` migration collision — **DONE (verified against live data)**
+The regenerated `0063` re-added `ALTER TABLE user ADD agent_id`, which would have
+failed on the live D1 database. Resolved and proven:
 
-    ALTER TABLE "user" ADD COLUMN "agent_id" text;
+Read-only inspection of the live `d1_migrations` table (57 rows, tip
+`0055_chief_centennial`) showed **both** `0051_rank_keyword_pins.sql` (id 52) and
+`0051_user_agent_id.sql` (id 53) already applied, and `user.agent_id` present.
 
-That is correct for a **fresh** database. It will **fail on the live database**,
-which already has the column (applied through the fork's old
-`0051_user_agent_id` journal entry, which upstream's journal replaced).
+Fix: `drizzle/sqlite/0051_user_agent_id.sql` was restored, and the `agent_id`
+statement removed from `0063_tired_colleen_wing.sql`. `wrangler d1 migrations
+apply` matches by **filename** against `d1_migrations`, so production skips
+`0051_user_agent_id` as applied while a fresh D1 still gets the column in
+sequence. `0063` now only creates `dashboard_card_positions`.
 
-The live D1 `d1_migrations` table also records `0051_user_agent_id` as applied
-while the new journal expects `0051_rank_keyword_pins`, so wrangler will attempt
-`0051`–`0063` and hit the duplicate-column error.
+Verified by replaying all pending migrations against a **copy** of the live
+database (the live DB was never written to). All 8 applied cleanly:
 
-Before any deploy, someone must inspect the live `d1_migrations` table and
-reconcile it — e.g. mark the already-applied migrations as applied, or split the
-`agent_id` statement out of `0063`. This needs Nerdy's approval; it was not
-attempted here. Do not run `db:migrate:prod` against the live DB until it is
-resolved.
+    0056_flowery_misty_knight · 0057_heavy_johnny_storm · 0058_flaky_devos
+    0059_thankful_aaron_stack · 0060_reflective_wrecker · 0061_bumpy_fat_cobra
+    0062_bind_api_keys_to_organization · 0063_tired_colleen_wing
+
+Post-migration: `agent_id`, `terms_accepted_version`, `product_updates_opt_in`
+all present, `dashboard_card_positions` created, existing user rows preserved.
+
+The duplicate `0051` filename prefix is therefore **intentional** — it mirrors
+what production has actually applied. The pg side keeps `agent_id` in `0041`
+(correct for a fresh Postgres install via drizzle's journal); any pre-existing
+Postgres deployment would need the same reconciliation.
 
 ---
 
@@ -199,8 +208,8 @@ This PR is not deployed. The live container still runs
 `127.0.0.1:5000/gsi/open-seo:0.1.37` (built 2026-10-16 from `597f001d`).
 
 Deploying needs Nerdy's explicit approval because it involves:
-- new DB migrations on both PG and SQLite (irreversible), **including the
-  unresolved `agent_id` collision in 2.4**,
+- new DB migrations on both PG and SQLite (irreversible); the D1 path is now
+  verified against a copy of live data (2.4),
 - three major dependency bumps (Vite 8, Vitest 5, zod 4.6),
 - auth-mode restructuring on a live hosted-auth deployment,
 - billing/checkout changes.
