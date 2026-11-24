@@ -94,12 +94,12 @@ function count(keywords: number) {
  */
 export function keywordLimitMessage(limit: number): string {
   const reached = `This tracker is at its limit of ${count(limit)} keywords.`;
-  const agency = `the Agency plan ${count(MAX_KEYWORDS_PER_CONFIG)}`;
+  const agency = `the Ultimate plan ${count(MAX_KEYWORDS_PER_CONFIG)}`;
   if (limit < PRO_KEYWORDS_PER_CONFIG) {
-    return `${reached} The Pro plan allows ${count(PRO_KEYWORDS_PER_CONFIG)} per tracker and ${agency}.`;
+    return `${reached} The Growth plan allows ${count(PRO_KEYWORDS_PER_CONFIG)} per tracker and ${agency}.`;
   }
   if (limit < MAX_KEYWORDS_PER_CONFIG) {
-    return `${reached} The Agency plan allows ${count(MAX_KEYWORDS_PER_CONFIG)} per tracker.`;
+    return `${reached} The Ultimate plan allows ${count(MAX_KEYWORDS_PER_CONFIG)} per tracker.`;
   }
   return reached;
 }
