@@ -2,6 +2,7 @@
 import { env } from "cloudflare:workers";
 import type { EnsuredUserContext } from "@/middleware/ensure-user/types";
 import {
+  AUTUMN_MANAGED_ACCESS_FEATURE_ID,
   AUTUMN_PAID_PLAN_FEATURE_ID,
   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
@@ -66,9 +67,27 @@ export async function getOrCreateOrganizationCustomer(
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function customerHasPaidPlan(
+/** Whether the organization pays for a plan. Features don't ask this: Starter
+ *  opens all of them (see customerHasFeatureAccess). */
+export function customerHasPaidPlan(
   customerId: string,
   opts: { retryDenied?: boolean } = {},
+) {
+  return customerHasFlag(customerId, AUTUMN_PAID_PLAN_FEATURE_ID, opts);
+}
+
+/** Whether the organization's plan, Starter included, opens the features. */
+export function customerHasFeatureAccess(
+  customerId: string,
+  opts: { retryDenied?: boolean } = {},
+) {
+  return customerHasFlag(customerId, AUTUMN_MANAGED_ACCESS_FEATURE_ID, opts);
+}
+
+async function customerHasFlag(
+  customerId: string,
+  featureId: string,
+  opts: { retryDenied?: boolean },
 ) {
   // The Autumn customer is created lazily, on an org's first billed action,
   // so an org that only set up a rank tracker has none yet. No customer has
@@ -78,7 +97,7 @@ export async function customerHasPaidPlan(
   try {
     result = await autumn.check({
       customerId,
-      featureId: AUTUMN_PAID_PLAN_FEATURE_ID,
+      featureId,
     });
   } catch (error) {
     if (errorBodyIncludes(error, "customer_not_found")) return false;
@@ -94,7 +113,7 @@ export async function customerHasPaidPlan(
   await sleep(300);
   const retry = await autumn.check({
     customerId,
-    featureId: AUTUMN_PAID_PLAN_FEATURE_ID,
+    featureId,
   });
   return retry.allowed;
 }

@@ -2,13 +2,12 @@ import { useEffect, type ReactElement } from "react";
 import { Link } from "@tanstack/react-router";
 import { ErrorState } from "@/client/components/ErrorState";
 import { Button } from "@/client/components/ui/button";
-import { BASE_PLAN_OFFER } from "@/client/features/billing/plan-offers";
 import { billingAccountQueryOptions } from "@/client/features/billing/billingAccountQuery";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { queryClient } from "@/client/tanstack-db";
-import { BILLING_ROUTE, SUBSCRIBE_ROUTE } from "@/shared/billing";
+import { BILLING_ROUTE } from "@/shared/billing";
 
 /**
  * An out-of-credits failure that says how to get more: a free plan upgrades,
@@ -45,7 +44,6 @@ export function GetCreditsButton() {
 function useCreditsOffer(surface: "card" | "button") {
   const {
     accountQuery,
-    isFreePlan,
     isOutOfCredits,
     refillDate,
     autoReload,
@@ -72,14 +70,6 @@ function useCreditsOffer(surface: "card" | "button") {
     message = getStandardErrorMessage(new Error("INSUFFICIENT_CREDITS"));
     action = (
       <CreditsButton link={<Link to={BILLING_ROUTE} />} label="Go to Billing" />
-    );
-  } else if (isFreePlan) {
-    message = `You don't have enough credits for this. Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of credits every month.`;
-    action = (
-      <CreditsButton
-        link={<Link to={SUBSCRIBE_ROUTE} search={{ upgrade: true }} />}
-        label="Upgrade plan"
-      />
     );
   } else if (autoReloadState === "on" && isOutOfCredits && autoReload) {
     // The refused call is what told Autumn to reload; the credits are coming.

@@ -46,6 +46,7 @@ import {
   SUBSCRIBE_ROUTE,
   TOP_UP_MAX_USD,
   TOP_UP_MIN_USD,
+  topUpPrice,
 } from "@/shared/billing";
 import { pageHead } from "@/client/lib/pageHead";
 
@@ -74,7 +75,10 @@ export const Route = createFileRoute("/_app/billing")({
   component: BillingPage,
 });
 
-const TOP_UP_PRESETS = ["20", "50", "99"];
+const TOP_UP_PRESETS = ["20", "100", "500", "1000", "5000"];
+
+const formatUsd = (usd: number) =>
+  `$${usd.toLocaleString("en-US", { minimumFractionDigits: usd % 1 ? 2 : 0 })}`;
 
 type BillingAction = "plan" | "topUp";
 
@@ -102,6 +106,7 @@ function BillingPage() {
 
   const { isValid: isValidTopUp, parsed: parsedTopUpAmount } =
     parseTopUpAmount(topUpAmount);
+  const { percentOff, priceUsd } = topUpPrice(parsedTopUpAmount);
   const showTopUpError = topUpAmount.trim() !== "" && !isValidTopUp;
 
   // Each action ends by sending the browser to Stripe, so the button stays
@@ -190,26 +195,16 @@ function BillingPage() {
           ) : null}
 
           <div className="grid gap-6 has-[#auto-reload-amount]:items-start has-data-[slot=alert]:items-start lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
-            {/* Buying is owner-only and needs a paid plan; free plans see what
-                one adds, so the base plan's credits aren't read as a cap. */}
+            {/* Buying is owner-only. */}
             <CreditsCard>
-              {!canManageBilling ? null : isFreePlan ? (
-                <>
-                  <h3 className="font-medium">Need more?</h3>
-                  <p className="text-muted-foreground">
-                    A paid plan lets you buy credits whenever you need them, or
-                    have them added automatically when you run low. They never
-                    expire.
-                  </p>
-                </>
-              ) : (
+              {!canManageBilling ? null : (
                 <>
                   <h3 className="font-medium">Buy credits</h3>
                   <div className="flex flex-wrap items-center gap-2.5">
                     <div
                       role="group"
                       aria-label="Amount"
-                      className="flex gap-2"
+                      className="flex flex-wrap gap-2"
                     >
                       {TOP_UP_PRESETS.map((preset) => (
                         <Button
@@ -219,12 +214,12 @@ function BillingPage() {
                           className="min-w-14 aria-pressed:border-primary aria-pressed:bg-muted"
                           onClick={() => setTopUpAmount(preset)}
                         >
-                          ${preset}
+                          {formatUsd(Number(preset))}
                         </Button>
                       ))}
                     </div>
                     <span className="text-muted-foreground">or</span>
-                    <Field data-invalid={showTopUpError} className="w-24">
+                    <Field data-invalid={showTopUpError} className="w-32">
                       <InputGroup>
                         <InputGroupAddon>$</InputGroupAddon>
                         <InputGroupInput
@@ -241,7 +236,6 @@ function BillingPage() {
                       </InputGroup>
                     </Field>
                     <Button
-                      className="ml-auto"
                       pending={pendingAction === "topUp"}
                       disabled={
                         !isValidTopUp || pendingAction !== null || budgetSpent
@@ -256,12 +250,25 @@ function BillingPage() {
                     >
                       {pendingAction === "topUp"
                         ? "Redirecting to Stripe..."
-                        : `Buy $${parsedTopUpAmount} of credits`}
+                        : percentOff > 0
+                          ? `Pay ${formatUsd(priceUsd)}`
+                          : `Buy ${formatUsd(parsedTopUpAmount)} of credits`}
                     </Button>
                   </div>
+                  {isValidTopUp && percentOff > 0 ? (
+                    <p role="status">
+                      {formatUsd(parsedTopUpAmount)} of credits for{" "}
+                      {formatUsd(priceUsd)}. You save {percentOff}%.
+                    </p>
+                  ) : null}
+                  <p className="text-sm text-muted-foreground">
+                    Save 5% from $100, 10% from $500, 15% from $1,000, 20% from
+                    $2,500 and 25% from $5,000.
+                  </p>
                   {showTopUpError ? (
                     <p className="text-sm text-destructive">
-                      Enter between ${TOP_UP_MIN_USD}–${TOP_UP_MAX_USD}.
+                      Enter between {formatUsd(TOP_UP_MIN_USD)} and{" "}
+                      {formatUsd(TOP_UP_MAX_USD)}.
                     </p>
                   ) : null}
                   {budgetSpent ? (
@@ -285,7 +292,7 @@ function BillingPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <p className="text-xl font-medium tracking-tight">
-                      {account.paidPlanId ? account.paidPlanName : "Free Plan"}
+                      {account.paidPlanId ? account.paidPlanName : "Starter"}
                     </p>
                     {account.paidPlanId ? (
                       <p className="text-muted-foreground">
@@ -294,7 +301,7 @@ function BillingPage() {
                       </p>
                     ) : canManageBilling ? (
                       <p className="text-muted-foreground">
-                        Upgrade to access every feature and more credits each
+                        Includes every feature. Upgrade for more credits each
                         month
                       </p>
                     ) : null}
@@ -338,13 +345,7 @@ function BillingPage() {
                 </CardContent>
               </Card>
 
-              {/* The sync turns auto-reload off when a plan ends; until that
-                  lands, an owner who left the plan still sees it, so they can
-                  turn it off. */}
-              {canManageBilling &&
-              (!isFreePlan || account.autoReload?.enabled) ? (
-                <AutoReloadSettings />
-              ) : null}
+              {canManageBilling ? <AutoReloadSettings /> : null}
             </div>
           </div>
         </>

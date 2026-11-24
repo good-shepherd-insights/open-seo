@@ -34,8 +34,8 @@ import {
   AUTO_RELOAD_MAX_MONTHLY_USD,
   AUTO_RELOAD_THRESHOLD_USD,
   isAutoReloadBudgetSpent,
-  TOP_UP_MAX_USD,
-  TOP_UP_MIN_USD,
+  AUTO_RELOAD_MAX_USD,
+  AUTO_RELOAD_MIN_USD,
   type AutoReloadSettings as AutoReloadValues,
 } from "@/shared/billing";
 
@@ -215,7 +215,7 @@ export function AutoReloadSettings() {
                 error={
                   amount.isValid
                     ? undefined
-                    : `Enter between $${TOP_UP_MIN_USD}–$${TOP_UP_MAX_USD}.`
+                    : `Enter between $${AUTO_RELOAD_MIN_USD}–$${AUTO_RELOAD_MAX_USD}.`
                 }
                 onChange={(value) =>
                   setFields((prev) => ({ ...prev, amountUsd: value }))

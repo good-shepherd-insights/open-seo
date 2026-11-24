@@ -64,8 +64,7 @@ export function canUpgradePlan(fromPlanId: string | null, toPlanId: string) {
 export const AUTUMN_SEO_DATA_TOP_UP_PLAN_ID = "credit-top-up";
 export const AUTUMN_PAID_PLAN_FEATURE_ID = "paid_plan";
 // Granted by both the free plan (now the Autumn Default, so every non-paid
-// user gets it) and the paid base plan. It's the floor for using the managed
-// service at all — paid-only features gate on AUTUMN_PAID_PLAN_FEATURE_ID.
+// user gets it) and the paid plans. It opens every feature.
 export const AUTUMN_MANAGED_ACCESS_FEATURE_ID = "managed_service_access";
 // The shared usage-credit pool. Both DataForSEO and agent-LLM spend deduct
 // from these (monthly usage_credits first, then rolled-over topup_credits).
@@ -75,15 +74,32 @@ export const AUTUMN_SEO_DATA_CREDITS_PER_USD = 1000;
 const SEO_DATA_COST_MARKUP = 1.28;
 export const LOW_CREDITS_THRESHOLD_USD = 0.25;
 
+export const TOP_UP_MIN_USD = 5;
+export const TOP_UP_MAX_USD = 100_000;
+// What a bulk top-up saves. Autumn charges the price: these mirror the volume
+// tiers on its credit-top-up plan, so change both together.
+export const TOP_UP_DISCOUNTS = [
+  { minUsd: 5000, percent: 25 },
+  { minUsd: 2500, percent: 20 },
+  { minUsd: 1000, percent: 15 },
+  { minUsd: 500, percent: 10 },
+  { minUsd: 100, percent: 5 },
+] as const;
+
+export function topUpPrice(creditsUsd: number) {
+  const percentOff =
+    TOP_UP_DISCOUNTS.find((tier) => creditsUsd >= tier.minUsd)?.percent ?? 0;
+  return { percentOff, priceUsd: (creditsUsd * (100 - percentOff)) / 100 };
+}
+
 // Auto-reload: Autumn buys top-up credits with the saved card whenever the
 // top-up balance is at or below the threshold, and a monthly budget caps
 // what the organization spends on top-up credits per billing cycle. The
 // threshold is fixed: it only needs to cover the largest single hold, and a
 // user-set one that reached the reload amount would make every reload
-// trigger the next. The reload amount shares the one-off top-up bounds
-// because both buy through the same Autumn plan.
-export const TOP_UP_MIN_USD = 10;
-export const TOP_UP_MAX_USD = 99;
+// trigger the next.
+export const AUTO_RELOAD_MIN_USD = 10;
+export const AUTO_RELOAD_MAX_USD = 99;
 export const AUTO_RELOAD_THRESHOLD_USD = 5;
 // Reloads are charged off-session, without Stripe Checkout's confirmation,
 // and only happen as top-up credits are spent, so the budget bounds what a
@@ -115,13 +131,17 @@ export const AUTO_RELOAD_CARD_FAILURE_REASONS: ReadonlySet<string> = new Set([
 
 export const autoReloadSettingsSchema = z
   .object({
-    amountUsd: z.number().int().min(TOP_UP_MIN_USD).max(TOP_UP_MAX_USD),
+    amountUsd: z
+      .number()
+      .int()
+      .min(AUTO_RELOAD_MIN_USD)
+      .max(AUTO_RELOAD_MAX_USD),
     /** The most the organization spends on top-up credits per billing
      *  cycle, in USD. Every top-up credit counts, not only reloaded ones. */
     monthlyLimitUsd: z
       .number()
       .int()
-      .min(TOP_UP_MIN_USD)
+      .min(AUTO_RELOAD_MIN_USD)
       .max(AUTO_RELOAD_MAX_MONTHLY_USD),
   })
   .refine((settings) => settings.monthlyLimitUsd >= settings.amountUsd, {

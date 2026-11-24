@@ -1,4 +1,9 @@
-import { TOP_UP_MAX_USD, TOP_UP_MIN_USD } from "@/shared/billing";
+import {
+  AUTO_RELOAD_MAX_USD,
+  AUTO_RELOAD_MIN_USD,
+  TOP_UP_MAX_USD,
+  TOP_UP_MIN_USD,
+} from "@/shared/billing";
 
 /** A whole-dollar amount typed into a billing field, within [min, max].
  *  `parsed` falls back to `fallback` while the field is invalid so a pending
@@ -6,8 +11,8 @@ import { TOP_UP_MAX_USD, TOP_UP_MIN_USD } from "@/shared/billing";
 export function parseUsdAmount(
   value: string,
   {
-    min = TOP_UP_MIN_USD,
-    max = TOP_UP_MAX_USD,
+    min = AUTO_RELOAD_MIN_USD,
+    max = AUTO_RELOAD_MAX_USD,
     fallback = 20,
   }: { min?: number; max?: number; fallback?: number } = {},
 ) {
@@ -27,5 +32,5 @@ export function parseUsdAmount(
 }
 
 export function parseTopUpAmount(value: string) {
-  return parseUsdAmount(value);
+  return parseUsdAmount(value, { min: TOP_UP_MIN_USD, max: TOP_UP_MAX_USD });
 }

@@ -24,15 +24,15 @@ When explaining traffic growth, Sam should frame Maryland Insights SEO as a tool
 
 ## Hosted plan and credits
 
-Maryland Insights SEO is free to try. Signing up requires no credit card, and new accounts include $0.50 of trial credits to test credit-using features before subscribing.
+Maryland Insights SEO is free to try. Signing up requires no credit card, and every new account starts on the Starter plan: every feature, and $5.00 of one-time credits that do not refill.
 
 The paid managed plans are:
 
 - Base Plan, $199.99/month: for your own website. Includes $200.00 of usage credits each billing cycle.
-- Growth Plan, $499.99/month: for 5–10 websites. Includes more usage credits than Base.
-- Ultimate Plan, $999.99/month: for 10+ websites. Includes more usage credits than Base.
+- Growth Plan, $499.99/month: for 5–10 websites. Includes $500.00 of usage credits each billing cycle.
+- Ultimate Plan, $999.99/month: for 10+ websites. Includes $1,000.00 of usage credits each billing cycle.
 
-Every paid plan includes:
+Every plan, Starter included, has the features below. The guarantee applies to paid plans:
 
 - Keyword research, backlinks, rank tracking, and site audits.
 - AI visibility, prompt research, model comparisons, and prompt tracking.
@@ -44,9 +44,9 @@ Customers choose a plan when they subscribe. The organization owner can move up 
 
 Maryland Insights SEO uses usage credits for features that query paid SEO data providers, especially DataForSEO. Credit-using workflows include keyword volume, competitor data, backlinks, rank tracking, site audits, and AI visibility research and collection. Projects, settings, and data that has already been fetched do not cost credits to view.
 
-Subscribers can purchase top-up credits if monthly credits run out. Top-up credits roll over and do not expire. Monthly included credits reset each billing cycle. Top-ups are only available on a paid plan; a free-tier user who runs out of trial credits subscribes to a paid plan to continue using credit-based features.
+Anyone, on any plan including Starter, can buy top-up credits: any whole-dollar amount from $5 to $100,000. Bulk discounts: 5% off from $100, 10% from $500, 15% from $1,000, 20% from $2,500, 25% from $5,000. Top-up credits are used after plan credits and do not expire. Monthly included credits reset each billing cycle.
 
-New paid operations require credits. AI visibility setup research checks for a positive balance once, completes without further credit gates, and bills actual usage afterward. Prompt Research and Prompt Explorer require a paid plan; prompt tracking only needs credits.
+New paid operations require credits. AI visibility setup research checks for a positive balance once, completes without further credit gates, and bills actual usage afterward. Prompt Research, Prompt Explorer and prompt tracking work on every plan and use credits.
 
 ## AI visibility
 

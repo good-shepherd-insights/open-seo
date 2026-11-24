@@ -11,7 +11,7 @@ import {
 } from "@/server/lib/audit/rendering-billing";
 import { env } from "cloudflare:workers";
 import {
-  customerHasPaidPlan,
+  customerHasFeatureAccess,
   getOrCreateOrganizationCustomer,
   type BillingCustomerContext,
 } from "@/server/billing/subscription";
@@ -54,7 +54,7 @@ async function resolveAuditLimitTier(
 ): Promise<AuditLimitTier> {
   if (!(await isHostedServerAuthMode())) return "self_hosted";
   await getOrCreateOrganizationCustomer(customer);
-  const hasPaidPlan = await customerHasPaidPlan(customer.organizationId);
+  const hasPaidPlan = await customerHasFeatureAccess(customer.organizationId);
   if (!hasPaidPlan) {
     throw new AppError(paymentRequired.code, paymentRequired.message);
   }

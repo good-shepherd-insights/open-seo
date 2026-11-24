@@ -1,9 +1,5 @@
 import {
   applyBillingMarkupUsd,
-  AUTUMN_AGENCY_ANNUAL_PLAN_ID,
-  AUTUMN_AGENCY_PLAN_ID,
-  AUTUMN_PRO_ANNUAL_PLAN_ID,
-  AUTUMN_PRO_PLAN_ID,
   creditsForProviderUsd,
   roundUsdForBilling,
 } from "./billing";
@@ -53,55 +49,26 @@ export function isRankCheckDelayed(run: {
 }
 
 /**
- * Keywords one tracker holds on the base plan, the free plan, and any plan
- * not named in KEYWORDS_PER_CONFIG_BY_PLAN.
- */
-export const BASE_KEYWORDS_PER_CONFIG = 1000;
-
-/** Keywords one tracker holds on the Pro plan. */
-const PRO_KEYWORDS_PER_CONFIG = 2500;
-
-/**
- * The most keywords any plan lets one tracker hold: the Agency plan's limit,
- * and the limit of a deployment without billing. The check pipeline is sized
+ * The most keywords one tracker holds, on every plan. The check pipeline is sized
  * for this on both devices (see TASK_GET_BATCH_MS in rankCheckPaths.ts and
  * MAX_TASK_UNITS_IN_FLIGHT in scheduledRankChecks.ts), so raise them together.
  */
 export const MAX_KEYWORDS_PER_CONFIG = 5000;
 
-const KEYWORDS_PER_CONFIG_BY_PLAN: Record<string, number> = {
-  [AUTUMN_PRO_PLAN_ID]: PRO_KEYWORDS_PER_CONFIG,
-  [AUTUMN_PRO_ANNUAL_PLAN_ID]: PRO_KEYWORDS_PER_CONFIG,
-  [AUTUMN_AGENCY_PLAN_ID]: MAX_KEYWORDS_PER_CONFIG,
-  [AUTUMN_AGENCY_ANNUAL_PLAN_ID]: MAX_KEYWORDS_PER_CONFIG,
-};
+/** Every plan allows the most. */
+export const BASE_KEYWORDS_PER_CONFIG = MAX_KEYWORDS_PER_CONFIG;
 
-/** How many keywords one tracker holds on the given paid plan, or on none. */
-export function keywordsPerConfigForPlan(paidPlanId: string | null): number {
-  return (
-    (paidPlanId && KEYWORDS_PER_CONFIG_BY_PLAN[paidPlanId]) ||
-    BASE_KEYWORDS_PER_CONFIG
-  );
+export function keywordsPerConfigForPlan(_paidPlanId: string | null): number {
+  return MAX_KEYWORDS_PER_CONFIG;
 }
 
 function count(keywords: number) {
   return keywords.toLocaleString("en-US");
 }
 
-/**
- * What to tell someone whose tracker is full. Below the highest limit it
- * names the plans that allow more.
- */
+/** What to tell someone whose tracker is full. */
 export function keywordLimitMessage(limit: number): string {
-  const reached = `This tracker is at its limit of ${count(limit)} keywords.`;
-  const agency = `the Ultimate plan ${count(MAX_KEYWORDS_PER_CONFIG)}`;
-  if (limit < PRO_KEYWORDS_PER_CONFIG) {
-    return `${reached} The Growth plan allows ${count(PRO_KEYWORDS_PER_CONFIG)} per tracker and ${agency}.`;
-  }
-  if (limit < MAX_KEYWORDS_PER_CONFIG) {
-    return `${reached} The Ultimate plan allows ${count(MAX_KEYWORDS_PER_CONFIG)} per tracker.`;
-  }
-  return reached;
+  return `This tracker is at its limit of ${count(limit)} keywords.`;
 }
 
 /** Maximum length of a single tracked keyword */

@@ -12,8 +12,7 @@ export type PlanOffer = {
   planId: CheckoutPlanId;
   name: string;
   priceUsd: number;
-  /** Null until the plan's credits are decided. */
-  monthlyCreditsUsd: number | null;
+  monthlyCreditsUsd: number;
 };
 
 export const BASE_PLAN_OFFER = {
@@ -27,18 +26,19 @@ export const GROWTH_PLAN_OFFER: PlanOffer = {
   planId: AUTUMN_PRO_PLAN_ID,
   name: "Growth Plan",
   priceUsd: 499.99,
-  monthlyCreditsUsd: null,
+  monthlyCreditsUsd: 500,
 };
 
 export const ULTIMATE_PLAN_OFFER: PlanOffer = {
   planId: AUTUMN_AGENCY_PLAN_ID,
   name: "Ultimate Plan",
   priceUsd: 999.99,
-  monthlyCreditsUsd: null,
+  monthlyCreditsUsd: 1000,
 };
 
 export function monthlyCreditsFeature(offer: PlanOffer) {
-  return offer.monthlyCreditsUsd === null
-    ? "Includes more Usage Credits each month"
-    : `Includes $${offer.monthlyCreditsUsd.toFixed(2)} of Usage Credits each month`;
+  const usd = offer.monthlyCreditsUsd.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+  });
+  return `Includes $${usd} of Usage Credits each month`;
 }

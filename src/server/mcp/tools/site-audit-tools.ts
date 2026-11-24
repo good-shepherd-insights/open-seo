@@ -55,7 +55,6 @@ import {
 } from "@/shared/audit-exclude-paths";
 import {
   DEFAULT_AUDIT_PAGES,
-  FREE_MAX_AUDIT_PAGES,
   RENDERED_CRAWL_TIME_LIMIT_HOURS,
 } from "@/shared/audit-limits";
 import { BILLING_ROUTE } from "@/shared/billing";
@@ -139,9 +138,7 @@ const runInputSchema = {
     .min(10)
     .max(10_000)
     .optional()
-    .describe(
-      `Page budget for the crawl (default ${DEFAULT_AUDIT_PAGES}). Free plans audit at most ${FREE_MAX_AUDIT_PAGES} pages: a larger budget runs at ${FREE_MAX_AUDIT_PAGES} and the reply says so.`,
-    ),
+    .describe(`Page budget for the crawl (default ${DEFAULT_AUDIT_PAGES}).`),
   renderJavaScript: z
     .boolean()
     .optional()

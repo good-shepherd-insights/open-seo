@@ -1,7 +1,7 @@
 import { PRIMARY_DOMAIN } from "@/shared/branding";
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import { beginRankCheckRun } from "@/server/features/rank-tracking/services/rankCheckRunGuards";
-import { customerHasPaidPlan } from "@/server/billing/subscription";
+import { customerHasFeatureAccess } from "@/server/billing/subscription";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { FeatureFlag, isFeatureFlagOn } from "@/server/lib/featureFlags";
 import {
@@ -83,7 +83,7 @@ export async function runScheduledRankChecks(env: Env) {
   const checkPaidPlan = (organizationId: string) => {
     let check = paidPlanChecks.get(organizationId);
     if (!check) {
-      check = customerHasPaidPlan(organizationId, { retryDenied: true });
+      check = customerHasFeatureAccess(organizationId, { retryDenied: true });
       paidPlanChecks.set(organizationId, check);
     }
     return check;

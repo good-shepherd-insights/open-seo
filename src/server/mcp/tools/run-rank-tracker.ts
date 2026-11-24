@@ -32,7 +32,7 @@ export const runRankTrackerTool = {
   config: {
     title: "Run rank tracker",
     description:
-      "Start a rank check now for every keyword and device in a tracker. This spends credits: call estimate_rank_tracker_cost, show the estimate to the user, and pass the approved credit amount as maxCostCredits; a fresh estimate above that ceiling is rejected. Hosted accounts need a paid plan. If a check is already running, its run ID is reported without starting or charging another. The schedule is unchanged. The check runs in the background: poll get_rank_tracker for the updated positions.",
+      "Start a rank check now for every keyword and device in a tracker. This spends credits: call estimate_rank_tracker_cost, show the estimate to the user, and pass the approved credit amount as maxCostCredits; a fresh estimate above that ceiling is rejected. If a check is already running, its run ID is reported without starting or charging another. The schedule is unchanged. The check runs in the background: poll get_rank_tracker for the updated positions.",
     inputSchema,
     outputSchema: z
       .object({

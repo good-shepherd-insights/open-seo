@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { sortBy } from "remeda";
 import {
-  customerHasPaidPlan,
+  customerHasFeatureAccess,
   type BillingCustomerContext,
 } from "@/server/billing/subscription";
 import {
@@ -428,7 +428,7 @@ async function getPositionHistory(input: {
 
 async function requireRankCheckAccess(organizationId: string) {
   if (!(await isHostedServerAuthMode())) return;
-  if (await customerHasPaidPlan(organizationId)) return;
+  if (await customerHasFeatureAccess(organizationId)) return;
   throw new AppError(paymentRequired.code, paymentRequired.message);
 }
 

@@ -80,13 +80,8 @@ export async function setOrganizationAutoReload(
     customerId,
     expand: ["payment_method"],
   });
-  // Top-ups are for paid plans (the page offers them to no one else), and a
-  // reload is a card charge without a checkout, so there has to be a card.
-  // The organization that pays the subscription has one; a plan granted by
-  // hand may not.
-  if (!customer.flags[AUTUMN_PAID_PLAN_FEATURE_ID]) {
-    throw new AppError("PAYMENT_REQUIRED", "Auto-reload needs a paid plan");
-  }
+  // A reload is a card charge without a checkout, so there has to be a card.
+  // Starter and a plan granted by hand may not have one.
   if (!customer.paymentMethod) {
     throw new AppError(
       "PAYMENT_METHOD_REQUIRED",
@@ -169,9 +164,9 @@ async function buyFirstReload(customerId: string, amountUsd: number) {
   );
 }
 
-/** Turns auto-reload off for a customer who no longer holds a paid plan, so
- *  a canceled subscription stops the card charges with it. Called from the
- *  billing.updated sync. */
+/** Turns auto-reload off for a customer whose paid plan ended, so a canceled
+ *  subscription stops the card charges with it. They can turn it back on.
+ *  Called from the billing.updated sync. */
 export async function disableAutoReloadIfUnpaid(customerId: string) {
   const customer = await autumn.customers.get({ customerId });
   const current = readAutoReload(customer);

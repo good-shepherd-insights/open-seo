@@ -20,8 +20,6 @@ export async function syncAutumnCustomerStatus(customerId: string) {
     expand: ["subscriptions.plan"],
   });
   const snapshot = deriveBillingCustomerStatusSnapshot(customer);
-  // Auto-reload charges the saved card; a plan that ended must not keep it.
-  await disableAutoReloadIfUnpaid(customerId);
 
   // Lifecycle emails are the diff between the last stored customer and this
   // one. Loops is called before the row is written: an outage fails the
@@ -33,6 +31,11 @@ export async function syncAutumnCustomerStatus(customerId: string) {
   // pay), so a missing row is a customer from before the table existed, whose
   // next renewal or top-up must not read as a new subscription.
   const previous = await getPreviousSnapshot(customerId);
+  // Auto-reload charges the saved card; a plan that ended must not keep it.
+  // Before the row is written, so a failed webhook's retry still sees the end.
+  if (previous?.paidPlanId && !snapshot.paidPlanId) {
+    await disableAutoReloadIfUnpaid(customerId);
+  }
   const events = previous
     ? deriveBillingLifecycleEvents(previous, snapshot)
     : [];

@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/client/components/ui/card";
-import { BASE_PLAN_OFFER } from "@/client/features/billing/plan-offers";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
 
 /** What is left to spend: the total, then a bar of the monthly credits and
@@ -40,7 +39,7 @@ export function CreditsCard({ children }: { children?: ReactNode }) {
           <p className="flex gap-1.5 text-red-700 dark:text-destructive">
             <CircleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
             {isFreePlan
-              ? "You’ve used your free credits. Upgrade your plan to continue."
+              ? "You’ve used your Starter credits. Buy more below or upgrade your plan to keep going."
               : `You’ve used this month’s credits. Buy more below to keep going${
                   refillDate
                     ? `, or wait for them to refill on ${refillDate}`
@@ -53,52 +52,50 @@ export function CreditsCard({ children }: { children?: ReactNode }) {
             <span>
               You&rsquo;re running low on credits.{" "}
               {isFreePlan
-                ? `Upgrade to get $${BASE_PLAN_OFFER.monthlyCreditsUsd}/month.`
+                ? "Buy more credits below or upgrade your plan."
                 : "Buy more credits below."}
             </span>
           </p>
-        ) : isFreePlan ? (
-          <p className="text-muted-foreground">
-            Your free credits don&rsquo;t refill.
-          </p>
         ) : null}
 
-        {isFreePlan ? null : (
-          <>
-            <div
-              aria-hidden
-              className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-foreground/10"
-            >
-              <div
-                className="bg-primary"
-                style={{ width: share(monthlyRemaining) }}
-              />
-              <div
-                className="bg-foreground/60"
-                style={{ width: share(topUpRemaining) }}
-              />
-            </div>
-            <div className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
-              <Balance
-                swatch="bg-primary"
-                label="Monthly credits"
-                note={refillDate ? `Refills ${refillDate}` : null}
-              >
-                ${monthlyRemaining.toFixed(2)}
-                {monthlyCreditsUsd > 0
-                  ? ` of $${monthlyCreditsUsd.toFixed(2)}`
-                  : ""}
-              </Balance>
-              <Balance
-                swatch="bg-foreground/60"
-                label="Top-up credits"
-                note="Used after monthly credits. Never expire."
-              >
-                ${topUpRemaining.toFixed(2)}
-              </Balance>
-            </div>
-          </>
-        )}
+        <div
+          aria-hidden
+          className="flex h-3 gap-0.5 overflow-hidden rounded-full bg-foreground/10"
+        >
+          <div
+            className="bg-primary"
+            style={{ width: share(monthlyRemaining) }}
+          />
+          <div
+            className="bg-foreground/60"
+            style={{ width: share(topUpRemaining) }}
+          />
+        </div>
+        <div className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+          <Balance
+            swatch="bg-primary"
+            label={isFreePlan ? "Starter credits" : "Monthly credits"}
+            note={
+              isFreePlan
+                ? "Don’t refill"
+                : refillDate
+                  ? `Refills ${refillDate}`
+                  : null
+            }
+          >
+            ${monthlyRemaining.toFixed(2)}
+            {monthlyCreditsUsd > 0
+              ? ` of $${monthlyCreditsUsd.toFixed(2)}`
+              : ""}
+          </Balance>
+          <Balance
+            swatch="bg-foreground/60"
+            label="Top-up credits"
+            note={`Used after ${isFreePlan ? "Starter" : "monthly"} credits. Never expire.`}
+          >
+            ${topUpRemaining.toFixed(2)}
+          </Balance>
+        </div>
         {children ? (
           <div className="space-y-3 border-t border-border pt-5">
             {children}

@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { PRODUCT_NAME } from "@/shared/branding";
 import { AppBanner } from "@/client/layout/AppBanner";
-import { BASE_PLAN_OFFER } from "@/client/features/billing/plan-offers";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
@@ -108,9 +107,22 @@ export function FreePlanBanner() {
       <AppBanner variant="destructive">
         {isFreePlan ? (
           <>
-            You&rsquo;ve used your free credits. {creditsActionLink} to get $
-            {BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of credits every
-            month.
+            You&rsquo;ve used your Starter credits.{" "}
+            <Link
+              to={BILLING_ROUTE}
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Buy more credits
+            </Link>{" "}
+            or{" "}
+            <Link
+              to={SUBSCRIBE_ROUTE}
+              search={{ upgrade: true }}
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              upgrade your plan
+            </Link>{" "}
+            to keep going.
           </>
         ) : autoReloadState === "card_failed" ? (
           <>
@@ -143,7 +155,7 @@ export function FreePlanBanner() {
   if (isLowCredits) {
     return (
       <AppBanner variant="warning">
-        You&rsquo;re running low on credits. {creditsActionLink} to keep using
+        You&rsquo;re running low on credits. {creditsActionLink} to keep using{" "}
         {PRODUCT_NAME}.
       </AppBanner>
     );
