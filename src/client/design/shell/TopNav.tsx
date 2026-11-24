@@ -1,4 +1,4 @@
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { cn } from "cn";
 import {
@@ -7,16 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/client/components/ui/dropdown-menu";
-import {
-  connectNavGroup,
-  getProjectNavGroups,
-} from "@/client/navigation/items";
+import { useNavGroups } from "./useNavGroups";
 
 const tabClass =
-  "flex min-h-11 items-center gap-2 border-b-2 border-transparent text-[15px] whitespace-nowrap text-muted-foreground outline-none hover:text-foreground focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50";
-const activeTabClass = "border-primary font-medium text-foreground";
+  "flex min-h-11 items-center gap-1.5 border-b-2 border-transparent text-[15px] whitespace-nowrap text-muted-foreground outline-none hover:text-foreground focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50";
 
-/** The grouped menu, from the same list as the phone menu. */
+/** The centered menu under the logo. */
 export function TopNav({
   projectId,
   placeholder,
@@ -25,83 +21,50 @@ export function TopNav({
   /** The project is not known yet: show the groups without links. */
   placeholder: boolean;
 }) {
-  const matchRoute = useMatchRoute();
-  const groups =
-    projectId !== null || placeholder
-      ? getProjectNavGroups(projectId ?? "")
-      : [connectNavGroup];
-  const isActive = (item: (typeof groups)[number]["items"][number]) => {
-    if (placeholder) return false;
-    const exact = "activeOptions" in item && item.activeOptions.exact;
-    const params = "params" in item ? item.params : {};
-    if (matchRoute({ to: item.to, params, fuzzy: !exact })) return true;
-    // A prompt's history page belongs to Prompt Tracking.
-    return (
-      item.to === "/p/$projectId/ai-visibility" &&
-      Boolean(
-        matchRoute({
-          to: "/p/$projectId/ai-visibility/prompts/$promptId",
-          fuzzy: true,
-        }),
-      )
-    );
-  };
-
+  const groups = useNavGroups(projectId, placeholder);
   return (
     <nav
       aria-label="Main navigation"
       aria-busy={placeholder || undefined}
-      className="flex flex-wrap gap-x-7"
+      className="-mb-px flex justify-center gap-7"
     >
-      {groups.map((group) => {
-        const active = group.items.some(isActive);
-        const [only] = group.items;
+      {groups.map(({ label, items }) => {
+        const className = cn(
+          tabClass,
+          items.some((item) => item.active) && "border-primary text-foreground",
+        );
+        const [only] = items;
         if (placeholder) {
           return (
-            <span key={group.label} aria-disabled className={tabClass}>
-              {group.items.length === 1 ? only.label : group.label}
+            <span key={label} aria-disabled className={className}>
+              {items.length === 1 ? only.name : label}
             </span>
           );
         }
-        if (group.items.length === 1) {
-          const { icon: _icon, label, ...link } = only;
+        if (items.length === 1) {
           return (
-            <Link
-              key={group.label}
-              {...link}
-              className={cn(tabClass, active && activeTabClass)}
-            >
-              {label}
+            <Link key={label} {...only.link} className={className}>
+              {only.name}
             </Link>
           );
         }
         return (
-          <DropdownMenu key={group.label}>
-            <DropdownMenuTrigger
-              className={cn(
-                tabClass,
-                "cursor-pointer",
-                active && activeTabClass,
-              )}
-            >
-              {group.label}
-              <ChevronDown className="size-3.5" aria-hidden />
+          <DropdownMenu key={label}>
+            <DropdownMenuTrigger className={cn(className, "cursor-pointer")}>
+              {label}
+              <ChevronDown className="size-3" aria-hidden />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 p-1.5">
-              {group.items.map((item) => {
-                const { icon: _icon, label, ...link } = item;
-                const current = isActive(item);
-                return (
-                  <DropdownMenuItem
-                    key={item.to}
-                    render={<Link {...link} />}
-                    aria-current={current ? "page" : undefined}
-                    className={current ? "font-medium text-primary" : undefined}
-                  >
-                    {label}
-                  </DropdownMenuItem>
-                );
-              })}
+            <DropdownMenuContent className="w-auto min-w-52 p-1.5">
+              {items.map((item) => (
+                <DropdownMenuItem
+                  key={item.link.to}
+                  render={<Link {...item.link} />}
+                  aria-current={item.active ? "page" : undefined}
+                  className={item.active ? "text-primary" : undefined}
+                >
+                  {item.name}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         );

@@ -1,77 +1,150 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown } from "lucide-react";
-import { ThemePreferenceRadio } from "@/client/components/ThemePreferenceMenuItems";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/client/components/ui/dropdown-menu";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/client/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/client/components/ui/select";
+import { type ThemePreference, useThemePreference } from "@/client/lib/theme";
 import { BILLING_ROUTE } from "@/shared/billing";
 import type { AccountMenuData } from "./useAccountMenu";
 
-export function AccountMenu({ account }: { account: AccountMenuData }) {
+const THEMES: { value: ThemePreference; label: string }[] = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
+
+const rowClass =
+  "flex min-h-11 w-full cursor-pointer items-center rounded-lg px-3 text-left text-[15px] outline-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50";
+
+function Field({
+  label,
+  value,
+  items,
+  disabled,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  items: { value: string; label: string }[];
+  disabled?: boolean;
+  onChange: (value: string) => void;
+}) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label="Open account menu"
-        className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-lg px-2 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+    <div className="px-2.5 py-2">
+      <div className="mb-1 text-[13px] text-muted-foreground">{label}</div>
+      <Select
+        items={items}
+        value={value}
+        disabled={disabled}
+        onValueChange={(next) => {
+          if (next) onChange(next);
+        }}
       >
-        <span className="max-w-56 truncate" data-ph-mask>
-          {account.email ?? "Account"}
-        </span>
-        <ChevronDown className="size-3.5 shrink-0" aria-hidden />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 p-1.5">
-        {account.organizations.length > 1 ? (
-          <>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Organization</DropdownMenuLabel>
-              {account.organizations.map((organization) => (
-                <DropdownMenuItem
-                  key={organization.id}
-                  disabled={account.isSwitching}
-                  onClick={() => account.onSwitchOrganization(organization.id)}
-                >
-                  <span className="truncate">{organization.name}</span>
-                  {organization.active ? (
-                    <Check className="ml-auto size-4 text-primary" />
-                  ) : null}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-          </>
+        <SelectTrigger aria-label={label} className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent alignItemWithTrigger={false}>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export function AccountFields({ account }: { account: AccountMenuData }) {
+  const { themePreference, setThemePreference } = useThemePreference();
+  const active = account.organizations.find(({ active: on }) => on);
+  return (
+    <>
+      {account.organizations.length > 1 ? (
+        <Field
+          label="Organization"
+          value={active?.id ?? ""}
+          disabled={account.isSwitching}
+          items={account.organizations.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          }))}
+          onChange={account.onSwitchOrganization}
+        />
+      ) : null}
+      <Field
+        label="Theme"
+        value={themePreference}
+        items={THEMES}
+        onChange={(next) => {
+          const theme = THEMES.find(({ value }) => value === next);
+          if (theme) setThemePreference(theme.value);
+        }}
+      />
+    </>
+  );
+}
+
+export function AccountLinks({
+  account,
+  onNavigate,
+}: {
+  account: AccountMenuData;
+  onNavigate: () => void;
+}) {
+  return (
+    <>
+      <Link to="/settings" className={rowClass} onClick={onNavigate}>
+        Settings
+      </Link>
+      {account.hasAccount && account.hasBilling ? (
+        <Link to={BILLING_ROUTE} className={rowClass} onClick={onNavigate}>
+          Billing
+        </Link>
+      ) : null}
+      <Link to="/support" className={rowClass} onClick={onNavigate}>
+        Help &amp; Community
+      </Link>
+      {account.hasAccount ? (
+        <button type="button" className={rowClass} onClick={account.onSignOut}>
+          Sign out
+        </button>
+      ) : null}
+    </>
+  );
+}
+
+export function AccountMenu({ account }: { account: AccountMenuData }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        aria-label="Open account menu"
+        className="min-h-11 cursor-pointer text-[15px] text-muted-foreground outline-none hover:text-foreground focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        Account
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-64 gap-0 p-1.5">
+        {account.email ? (
+          <p
+            className="px-2.5 py-2 text-sm wrap-anywhere text-muted-foreground"
+            data-ph-mask
+          >
+            {account.email}
+          </p>
         ) : null}
-        <DropdownMenuItem render={<Link to="/settings" />}>
-          Settings
-        </DropdownMenuItem>
-        {account.hasAccount && account.hasBilling ? (
-          <DropdownMenuItem render={<Link to={BILLING_ROUTE} />}>
-            Billing
-          </DropdownMenuItem>
-        ) : null}
-        <DropdownMenuItem render={<Link to="/support" />}>
-          Help &amp; Community
-        </DropdownMenuItem>
-        {account.hasAccount ? (
-          <>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <div className="px-1 pb-1">
-                <ThemePreferenceRadio />
-              </div>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={account.onSignOut}>
-              Sign out
-            </DropdownMenuItem>
-          </>
-        ) : null}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <AccountFields account={account} />
+        <AccountLinks account={account} onNavigate={() => setOpen(false)} />
+      </PopoverContent>
+    </Popover>
   );
 }

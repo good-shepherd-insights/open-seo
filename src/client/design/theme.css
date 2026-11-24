@@ -151,7 +151,7 @@ html[data-theme="openseo"] [data-slot="card"] {
 }
 [data-slot="combobox-item"] > span:last-child > svg,
 [data-slot="select-item"] > span:last-child > svg {
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 [data-slot="combobox-item"][data-selected],
 [data-slot="select-item"][data-selected] {
@@ -163,12 +163,6 @@ html[data-theme="openseo"] [data-slot="card"] {
   background-color: var(--primary);
 }
 
-/* The phone menu fills the screen. */
-[data-slot="sidebar"][data-mobile="true"] {
-  width: 100% !important;
-  max-width: none;
-}
-
 /* Search fields line up with 44px buttons. */
 [data-slot="input-group"].h-10 {
   height: 2.75rem;
@@ -177,12 +171,4 @@ html[data-theme="openseo"] [data-slot="card"] {
 /* Every page lines up with the header's 1200px column. */
 [data-slot="sidebar-inset"] .max-w-7xl {
   max-width: 75rem;
-}
-
-/* The project switcher and phone menu rows. */
-[data-slot="combobox-trigger"][aria-label="Switch project"] {
-  min-height: 2.75rem;
-}
-[data-slot="sidebar"][data-mobile="true"] .peer\/menu-button {
-  min-height: 2.75rem;
 }
