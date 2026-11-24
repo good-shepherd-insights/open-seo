@@ -23,7 +23,7 @@ type SavedPrivacyChoices = Omit<PrivacyChoices, "advertising"> & {
   advertising?: boolean;
 };
 
-const PRIVACY_COOKIE = "openseo_privacy";
+const PRIVACY_COOKIE = "mi_privacy";
 const PRIVACY_COOKIE_MAX_AGE_SECONDS = 180 * 24 * 60 * 60;
 
 // For visitors from these countries nothing optional runs until they opt in.

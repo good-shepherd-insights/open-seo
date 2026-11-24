@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
@@ -63,9 +64,7 @@ function StripeProjectsLoginPage() {
           helperText="Sign-in links work once and last ten minutes."
         >
           <Alert>
-            <AlertDescription>
-              Run <code>stripe projects open openseo</code> again for a new one.
-            </AlertDescription>
+            <AlertDescription>Open a new link to sign in.</AlertDescription>
           </Alert>
           <Button
             nativeButton={false}
@@ -83,7 +82,7 @@ function StripeProjectsLoginPage() {
   return (
     <AuthPageShell>
       <AuthPageCard
-        title="Sign in to OpenSEO"
+        title={`Sign in to ${PRODUCT_NAME}`}
         helperText={`You opened this from Stripe Projects. You'll be signed in as ${account.email}.`}
       >
         <Button className="w-full" disabled={pending} onClick={signIn}>

@@ -73,7 +73,10 @@ export async function checkGuestEligibility(
   if (!sendsCodeToAgent(redirectUri)) {
     return { eligible: false, reason: "redirect_uri" };
   }
-  if (readCookie(request.headers, RETURNING_BROWSER_COOKIE)) {
+  if (
+    readCookie(request.headers, RETURNING_BROWSER_COOKIE) ??
+    readCookie(request.headers, "openseo_has_account")
+  ) {
     return { eligible: false, reason: "returning_browser" };
   }
   if (await isFeatureFlagOn(FeatureFlag.PauseMcpGuestAccounts)) {

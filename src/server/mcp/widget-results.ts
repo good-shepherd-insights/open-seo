@@ -103,6 +103,6 @@ export async function displayWidgetResult(
   });
   return {
     ...result,
-    _meta: { ...result._meta, openSeoWidget: snapshot.data },
+    _meta: { ...result._meta, researchWidget: snapshot.data },
   };
 }

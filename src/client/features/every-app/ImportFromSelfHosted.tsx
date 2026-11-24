@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CopyButton } from "@/client/components/CopyButton";
@@ -35,10 +36,10 @@ export function ImportFromSelfHosted() {
     <>
       <div className="flex items-start justify-between gap-6">
         <div>
-          <p className="text-sm">Import from self-hosted OpenSEO</p>
+          <p className="text-sm">Import from self-hosted {PRODUCT_NAME}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Bring over the projects, history and chats from an OpenSEO you host
-            yourself.
+            Bring over the projects, history and chats from a {PRODUCT_NAME} you
+            host yourself.
           </p>
         </div>
         <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
@@ -61,7 +62,7 @@ function ImportDialog({ onClose }: { onClose: () => void }) {
     <Dialog open onOpenChange={(next) => !next && onClose()}>
       <DialogContent className="grid-cols-1 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Import from self-hosted OpenSEO</DialogTitle>
+          <DialogTitle>Import from self-hosted {PRODUCT_NAME}</DialogTitle>
           <DialogDescription>
             Copies its projects and their history here.
           </DialogDescription>
@@ -69,7 +70,7 @@ function ImportDialog({ onClose }: { onClose: () => void }) {
         <ol className="space-y-4">
           <Step
             number={1}
-            title={`Update your self-hosted OpenSEO to v${version}`}
+            title={`Update your self-hosted ${PRODUCT_NAME} to v${version}`}
           />
           <Step number={2} title="Create a transfer code">
             {code ? (
@@ -113,7 +114,10 @@ function ImportDialog({ onClose }: { onClose: () => void }) {
               </p>
             ) : null}
           </Step>
-          <Step number={3} title="Paste it in your self-hosted OpenSEO">
+          <Step
+            number={3}
+            title={`Paste it in your self-hosted ${PRODUCT_NAME}`}
+          >
             <p className="text-sm text-muted-foreground">
               Settings → Move to Every App → I have a Gateway
             </p>

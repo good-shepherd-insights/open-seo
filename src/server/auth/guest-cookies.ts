@@ -3,14 +3,14 @@ import { z } from "zod";
 // Guest-account cookies and request parsing, kept free of database imports so
 // the sign-up hook and its tests can use them.
 
-export const GUEST_CLAIM_COOKIE = "openseo_guest_claim";
+export const GUEST_CLAIM_COOKIE = "mi_guest_claim";
 // Long enough that someone who connects an agent and signs up a few weeks
 // later still brings the guest's work along.
 const GUEST_CLAIM_COOKIE_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
 // Set at every real sign-in (auth.ts). A browser that has signed in before
 // belongs to someone with an account, so it gets the sign-in page instead of
 // an empty guest workspace when their session has lapsed.
-export const RETURNING_BROWSER_COOKIE = "openseo_has_account";
+export const RETURNING_BROWSER_COOKIE = "mi_has_account";
 const claimTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 
 /**
@@ -45,7 +45,11 @@ export function readCookie(headers: Headers | undefined, cookieName: string) {
 }
 
 export function readClaimCookie(headers: Headers | undefined) {
-  return parseClaimToken(readCookie(headers, GUEST_CLAIM_COOKIE));
+  return parseClaimToken(
+    readCookie(headers, GUEST_CLAIM_COOKIE) ??
+      // Set before the rename; safe to drop 30 days after it ships.
+      readCookie(headers, "openseo_guest_claim"),
+  );
 }
 
 /**

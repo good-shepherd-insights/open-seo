@@ -51,7 +51,7 @@ export function useMcpHost(): WidgetHost {
             throw new Error(
               resultText(result) || `${PRODUCT_NAME} request failed.`,
             );
-          setSnapshot(widgetSnapshotSchema.parse(result._meta?.openSeoWidget));
+          setSnapshot(widgetSnapshotSchema.parse(result._meta?.researchWidget));
           setHostError(undefined);
         } catch (cause) {
           setHostError(

@@ -136,7 +136,7 @@ export function McpConnectionsSettings() {
         >
           {disconnecting.kind === "oauth"
             ? `It will have to sign in to ${PRODUCT_NAME} again.`
-            : "Stripe can't create new keys, and the keys it created stop working. Run stripe projects add openseo/api to connect again."}
+            : "Stripe can't create new keys, and the keys it created stop working."}
         </ConfirmDialog>
       ) : null}
     </section>

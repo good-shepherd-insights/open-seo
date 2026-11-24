@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AUTH_MODES } from "@/lib/auth-mode";
 import {
   looksLikeDataForSeoKey,
@@ -229,8 +230,7 @@ function checkOptionalFeatures(env: EnvRecord, items: PreflightItem[]): void {
       key: "gsc",
       name: "Search Console",
       level: "info",
-      message:
-        "Held by the Every App gateway: an owner or admin adds a Google OAuth client once (pasted in Manage workspace → Providers, or `pnpm everyapp secret set GOOGLE_WORKSPACE_CLIENT_ID GOOGLE_WORKSPACE_CLIENT_SECRET`; redirect URI https://<gateway>/connect/google-workspace/callback), and Search Console and Analytics connect through it. OpenSEO's own Google client and callbacks are off in this mode.",
+      message: `Held by the Every App gateway: an owner or admin adds a Google OAuth client once (pasted in Manage workspace → Providers, or \`pnpm everyapp secret set GOOGLE_WORKSPACE_CLIENT_ID GOOGLE_WORKSPACE_CLIENT_SECRET\`; redirect URI https://<gateway>/connect/google-workspace/callback), and Search Console and Analytics connect through it. ${PRODUCT_NAME}'s own Google client and callbacks are off in this mode.`,
     });
   } else if (clientId || clientSecret) {
     if (!clientId || !clientSecret) {

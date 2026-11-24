@@ -203,7 +203,7 @@ function AiPage() {
             <section className="mt-6">
               <p className="text-sm text-muted-foreground">
                 {everyApp
-                  ? "Install them with npx skills add every-app/open-seo."
+                  ? "Install them from /skills/index.md."
                   : "The setup prompt installs these."}{" "}
                 Run one by name when you want a full report instead of a quick
                 answer.
@@ -234,7 +234,7 @@ function AiPage() {
   );
 }
 
-const EVERY_APP_SKILLS_COMMAND = "npx skills add every-app/open-seo";
+const EVERY_APP_SKILLS_COMMAND = "/skills/index.md";
 
 /**
  * Behind Every App the agent connects to the gateway's MCP address, which
@@ -272,15 +272,16 @@ function EveryAppAgentSetup() {
             <h2>Install the SEO skills</h2>
           </CardTitle>
           <CardDescription>
-            Run this in a terminal to add {PRODUCT_NAME}&apos;s skills to your
-            agent. They use {PRODUCT_NAME} through your Every App connection.
+            Give your agent this list to add {PRODUCT_NAME}&apos;s skills to
+            your agent. They use {PRODUCT_NAME} through your Every App
+            connection.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <code className="font-mono text-sm">{EVERY_APP_SKILLS_COMMAND}</code>
           <CopyButton
             value={EVERY_APP_SKILLS_COMMAND}
-            successMessage="Command copied"
+            successMessage="Link copied"
           />
         </CardContent>
       </Card>

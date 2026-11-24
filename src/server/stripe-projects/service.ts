@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { generateRandomString } from "better-auth/crypto";
 import { uniqueBy } from "remeda";
 import { z } from "zod";
@@ -81,7 +82,7 @@ export async function linkAccount(input: {
   if (existing && !existing.user.emailVerified) {
     throw new StripeProjectsError(
       "forbidden",
-      `The OpenSEO account for this email hasn't confirmed its address. Sign in at ${getHostedBaseUrl()} to confirm it, then try again.`,
+      `The ${PRODUCT_NAME} account for this email hasn't confirmed its address. Sign in at ${getHostedBaseUrl()} to confirm it, then try again.`,
       403,
     );
   }
@@ -90,7 +91,7 @@ export async function linkAccount(input: {
     (await internalAdapter
       .createUser({
         email,
-        name: input.name?.trim() || email.split("@")[0] || "OpenSEO",
+        name: input.name?.trim() || email.split("@")[0] || PRODUCT_NAME,
         emailVerified: true,
       })
       .catch((error: unknown) => {

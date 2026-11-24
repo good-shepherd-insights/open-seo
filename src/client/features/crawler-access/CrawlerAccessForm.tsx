@@ -24,10 +24,7 @@ export function CrawlerAccessSetupHint() {
     return (
       <>
         An admin sets <code>CRAWLER_ACCESS_SECRET</code> with{" "}
-        <code>
-          pnpm everyapp secret set CRAWLER_ACCESS_SECRET --app openseo
-        </code>
-        .
+        <code>pnpm everyapp secret set CRAWLER_ACCESS_SECRET</code>.
       </>
     );
   }
