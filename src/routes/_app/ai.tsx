@@ -9,7 +9,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/client/components/ui/tabs";
-import { Alert, AlertDescription } from "@/client/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -18,7 +17,6 @@ import {
   CardTitle,
 } from "@/client/components/ui/card";
 import { PageHeader } from "@/client/components/PageHeader";
-import { Info } from "lucide-react";
 import { getClientAuthMode } from "@/lib/auth-mode";
 import { captureClientEvent } from "@/client/lib/posthog";
 import {
@@ -162,26 +160,6 @@ function AiPage() {
                     </CardContent>
                   </Card>
                 </div>
-
-                {getClientAuthMode() === "cloudflare_access" ? (
-                  <Alert className="mt-8">
-                    <Info />
-                    <AlertDescription>
-                      This instance is behind Cloudflare Access, so MCP clients
-                      connect through Managed OAuth on your Access application.
-                      If a client gets a login page instead of connecting, check
-                      that Managed OAuth is on.{" "}
-                      <a
-                        href="https://github.com/every-app/open-seo/blob/main/docs/SELF_HOSTING_CLOUDFLARE_OPERATIONS.md#through-cloudflare-access"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium"
-                      >
-                        Setup guide
-                      </a>
-                    </AlertDescription>
-                  </Alert>
-                ) : null}
 
                 <div className="mt-10 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border pt-5 text-xs text-muted-foreground">
                   <span>

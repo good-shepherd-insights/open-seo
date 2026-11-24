@@ -80,7 +80,7 @@ async function missingSelfHostedGoogleClientResponse(
   }
 
   return mcpResponse({
-    text: `This self-hosted ${PRODUCT_NAME} deployment is not configured for Search Console yet. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and BETTER_AUTH_SECRET, then reconnect Search Console from the project's settings page. Setup docs: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`,
+    text: `Search Console isn't available in ${PRODUCT_NAME} right now. Please try again later or contact support: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`,
     meta: buildProjectMeta(context, projectId),
     structuredContent: {
       ok: false,
@@ -111,7 +111,7 @@ function describeGscError(error: unknown): string {
   }
   if (error instanceof GscApiError) {
     return error.apiDisabled
-      ? `${GSC_API_DISABLED_MESSAGE} Setup docs: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`
+      ? `${GSC_API_DISABLED_MESSAGE} Support: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`
       : error.message;
   }
   return error instanceof Error ? error.message : String(error);

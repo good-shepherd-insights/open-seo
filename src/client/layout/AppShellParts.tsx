@@ -62,8 +62,7 @@ function SeoApiStatusBanners({
   );
 }
 
-const DOCKER_MOVE_URL =
-  "https://github.com/every-app/open-seo/blob/main/docs/SELF_HOSTING_DOCKER.md#move-from-the-old-docker-image";
+const DOCKER_MOVE_URL = "/support";
 const DOCKER_MOVE_DISMISSED_KEY = "mi:docker-move-dismissed";
 
 // The old single-container Docker image builds the app at startup with this

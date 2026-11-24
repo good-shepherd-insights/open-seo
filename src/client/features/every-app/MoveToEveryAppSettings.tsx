@@ -195,7 +195,7 @@ function MoveSteps({
   return (
     <ol className="space-y-4">
       <Step number={1} title={`Install ${PRODUCT_NAME} on your Gateway`}>
-        <CommandBlock command="everyapp install https://github.com/every-app/open-seo" />
+        <CommandBlock command="everyapp install" />
       </Step>
       <Step number={2} title="Make a transfer code">
         <p className="text-sm text-muted-foreground">
