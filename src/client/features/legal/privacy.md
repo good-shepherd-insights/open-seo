@@ -27,15 +27,15 @@ We do not sell your personal information for money. We do not use your projects,
 
 We run the Service and store its data on our own servers. We share only what each provider needs to do its job:
 
-| Provider | Why |
-|---|---|
-| Autumn and Stripe | Plans, credits and payments |
-| Loops | Account and product emails |
-| Google | Sign-in, and the Google data you connect |
-| DataForSEO | Keyword, ranking, backlink, local and AI answer data |
-| OpenRouter and the AI models it routes to | SAM, website research, summaries and suggestions |
-| Context.dev | Loading pages for audits that render JavaScript |
-| Cloudflare | Network security and bot checks |
+| Provider                                  | Why                                                  |
+| ----------------------------------------- | ---------------------------------------------------- |
+| Autumn and Stripe                         | Plans, credits and payments                          |
+| Loops                                     | Account and product emails                           |
+| Google                                    | Sign-in, and the Google data you connect             |
+| DataForSEO                                | Keyword, ranking, backlink, local and AI answer data |
+| OpenRouter and the AI models it routes to | SAM, website research, summaries and suggestions     |
+| Context.dev                               | Loading pages for audits that render JavaScript      |
+| Cloudflare                                | Network security and bot checks                      |
 
 We may also share information with professional advisers, when the law requires it, to protect people or the Service, or as part of a sale or merger. Members of your organization can see the organization's work. **A report link you turn on can be opened by anyone who has it** until you turn it off.
 

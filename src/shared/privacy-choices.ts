@@ -159,4 +159,4 @@ export function savePrivacyChoices(choices: PrivacyChoices) {
   window.dispatchEvent(new Event(PRIVACY_CHOICES_CHANGED_EVENT));
 }
 
-export const PRIVACY_CHOICES_CHANGED_EVENT = "openseo:privacy-choices-changed";
+export const PRIVACY_CHOICES_CHANGED_EVENT = "mi:privacy-choices-changed";
