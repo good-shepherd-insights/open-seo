@@ -6,7 +6,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { aiVisibilityKey } from "@/client/features/ai-visibility/shared";
-import { toastInitialAudit } from "@/client/features/projects/initialAuditToast";
 import {
   projectContextQueryKey,
   useContextUpdate,
@@ -69,7 +68,7 @@ export function useProjectAnswers(projectId: string) {
       to: ProjectAnswers;
     }) => {
       if (project && settingsChanged(from, to)) {
-        const saved = await updateProject({
+        await updateProject({
           data: {
             projectId,
             name: project.name,
@@ -86,7 +85,6 @@ export function useProjectAnswers(projectId: string) {
               : to.market),
           },
         });
-        toastInitialAudit(saved.initialAudit);
         await Promise.all(
           [
             projectsQueryOptions().queryKey,

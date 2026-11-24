@@ -55,7 +55,7 @@ export function GetStartedStep({
         if (!problem) field.onSubmit(value);
       }}
     >
-      <div className="flex min-h-17 flex-wrap items-center gap-x-7 gap-y-3">
+      <div className="flex min-h-11 flex-wrap items-center gap-x-7 gap-y-3">
         <div className="min-w-0 flex-[1_1_280px]">
           <p className="font-medium">{title}</p>
           <p className="text-sm text-muted-foreground">{hint}</p>
@@ -66,12 +66,12 @@ export function GetStartedStep({
             name="answer"
             aria-label={title}
             aria-invalid={message !== undefined}
-            rows={2}
+            rows={1}
             maxLength={field.maxLength}
             placeholder={field.placeholder}
             defaultValue={field.initial}
             readOnly={busy}
-            className="field-sizing-fixed h-16 min-w-0 flex-[2_1_380px] resize-none"
+            className="max-h-40 min-h-11 min-w-0 placeholder-shown:h-11 placeholder-shown:overflow-hidden placeholder-shown:whitespace-nowrap flex-[2_1_380px] resize-none"
             onChange={() => setInvalid(undefined)}
             onKeyDown={(event) => {
               if (

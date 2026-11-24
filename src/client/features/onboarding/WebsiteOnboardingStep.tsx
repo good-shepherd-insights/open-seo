@@ -27,8 +27,7 @@ import { saveOnboardingWebsite } from "@/serverFunctions/projects";
 
 /**
  * First onboarding step: save the website and country on the user's first
- * project. Saving a new website starts its first site audit in the background,
- * so the dashboard has results by the time the user reaches it.
+ * project.
  */
 export function WebsiteOnboardingStep({
   onNext,
@@ -48,9 +47,6 @@ export function WebsiteOnboardingStep({
         <h1 className="text-2xl font-semibold tracking-tight">
           What’s your website?
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          We’ll start a site audit for you.
-        </p>
       </div>
       {project ? (
         <WebsiteForm

@@ -19,9 +19,7 @@ import {
   clearLastProjectId,
   getLastProjectId,
 } from "@/client/lib/active-project";
-import { toastInitialAudit } from "@/client/features/projects/initialAuditToast";
 import { archiveProject, updateProject } from "@/serverFunctions/projects";
-import { isEveryAppClientAuthMode } from "@/lib/auth-mode";
 import { isDefaultProjectName } from "@/shared/ai-visibility";
 import type { ProjectSummary } from "./types";
 
@@ -75,7 +73,7 @@ function GeneralSection({ project }: { project: ProjectSummary }) {
           ...values.market,
         },
       }),
-    onSuccess: async (saved) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: projectsQueryOptions().queryKey,
       });
@@ -90,7 +88,6 @@ function GeneralSection({ project }: { project: ProjectSummary }) {
       });
       setKeepBrand(false);
       toast.success("Project updated");
-      toastInitialAudit(saved.initialAudit);
     },
   });
 
@@ -146,11 +143,6 @@ function GeneralSection({ project }: { project: ProjectSummary }) {
                       (optional)
                     </span>
                   </>
-                }
-                description={
-                  isEveryAppClientAuthMode()
-                    ? "Adding your website starts a 50-page site audit."
-                    : "Adding your website starts a 50-page scan with JavaScript rendering. Rendering uses your credits."
                 }
                 placeholder="example.com"
                 maxLength={255}

@@ -1,4 +1,3 @@
-import { isEveryAppClientAuthMode } from "@/lib/auth-mode";
 import { parseResearchTarget } from "@/shared/researchScope";
 import type { ProjectMarket } from "@/client/features/projects/types";
 import {
@@ -26,10 +25,6 @@ type TextQuestion = {
   keptIn: "Project settings" | "Context";
 };
 
-const WEBSITE_SCAN_NOTE = isEveryAppClientAuthMode()
-  ? "Adding it starts a 50-page audit."
-  : "Adding it starts a 50-page scan, which uses credits.";
-
 const prose = (
   id: ProjectContextSectionKey,
   hint: string,
@@ -50,7 +45,7 @@ export const TEXT_QUESTIONS: TextQuestion[] = [
     id: "website",
     kind: "line",
     title: "Website",
-    hint: `The site this project is about. ${WEBSITE_SCAN_NOTE}`,
+    hint: "The site this project is about.",
     placeholder: "example.com",
     maxLength: 255,
     keptIn: "Project settings",

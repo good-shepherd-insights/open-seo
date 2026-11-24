@@ -1,5 +1,3 @@
-import { waitUntil } from "cloudflare:workers";
-import { DashboardFirstAuditService } from "@/server/features/dashboard/services/DashboardFirstAuditService";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { requireOrgPermission } from "@/server/auth/org-gate";
@@ -35,11 +33,6 @@ export const createProject = createServerFn({ method: "POST" })
       context.organizationId,
       data,
     );
-    const initialAudit = await DashboardFirstAuditService.start(
-      project.id,
-      project.domain,
-      { ...context, projectId: project.id },
-    );
     if (project.domain) {
       await captureMetaSetupStep(
         MetaSetupEvent.WebsiteAdded,
@@ -47,7 +40,7 @@ export const createProject = createServerFn({ method: "POST" })
         getRequest(),
       );
     }
-    return { ...project, initialAudit };
+    return project;
   });
 
 export const updateProject = createServerFn({ method: "POST" })
@@ -58,14 +51,6 @@ export const updateProject = createServerFn({ method: "POST" })
       context.organizationId,
       data,
     );
-    const initialAudit =
-      project.domain !== context.project.domain
-        ? await DashboardFirstAuditService.start(
-            project.id,
-            project.domain,
-            context,
-          )
-        : null;
     if (project.domain && !context.project.domain) {
       await captureMetaSetupStep(
         MetaSetupEvent.WebsiteAdded,
@@ -73,13 +58,10 @@ export const updateProject = createServerFn({ method: "POST" })
         getRequest(),
       );
     }
-    return { ...project, initialAudit };
+    return project;
   });
 
-// Onboarding's website step. Starting the first audit checks DNS and probes
-// the site, which takes seconds on a slow host, so it runs after the response
-// and the wizard moves on at once. start() skips projects that already have an
-// audit and logs its own failures.
+// Onboarding's website step.
 export const saveOnboardingWebsite = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)
   .validator(setProjectWebsiteSchema)
@@ -90,9 +72,6 @@ export const saveOnboardingWebsite = createServerFn({ method: "POST" })
       name:
         context.project.name === "Default" ? data.domain : context.project.name,
     });
-    waitUntil(
-      DashboardFirstAuditService.start(project.id, project.domain, context),
-    );
     if (!context.project.domain) {
       await captureMetaSetupStep(
         MetaSetupEvent.WebsiteAdded,
