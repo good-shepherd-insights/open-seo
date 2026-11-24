@@ -174,7 +174,7 @@ export function AutoReloadSettings() {
   return (
     <Card size="lg">
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="font-medium text-foreground/80">
           <h2>Auto-reload</h2>
         </CardTitle>
         <CardAction className={STATE_LABELS[autoReloadState].className}>

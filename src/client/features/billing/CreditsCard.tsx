@@ -30,11 +30,11 @@ export function CreditsCard({ children }: { children?: ReactNode }) {
   return (
     <Card size="lg">
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="font-medium text-foreground/80">
           <h2>Credits left</h2>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-4">
+      <CardContent className="flex flex-col gap-4">
         <p className="text-5xl tracking-tight">${totalRemaining.toFixed(2)}</p>
         {isOutOfCredits ? (
           <p className="flex gap-1.5 text-red-700 dark:text-destructive">
@@ -100,7 +100,7 @@ export function CreditsCard({ children }: { children?: ReactNode }) {
           </>
         )}
         {children ? (
-          <div className="mt-auto space-y-3 border-t border-border pt-5">
+          <div className="space-y-3 border-t border-border pt-5">
             {children}
           </div>
         ) : null}

@@ -143,7 +143,7 @@ function BillingPage() {
   }
 
   return (
-    <div className="mx-auto box-content max-w-7xl space-y-6 px-4 py-4 pb-24 md:px-6 md:py-6 md:pb-8">
+    <div className="mx-auto box-content max-w-290 space-y-6 px-4 py-4 pb-24 md:px-6 md:py-6 md:pb-8">
       <PageHeader title="Billing" />
 
       {accountQuery.isPending ? (
@@ -278,7 +278,7 @@ function BillingPage() {
             <div className="flex min-w-0 flex-col gap-6">
               <Card size="lg">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="font-medium text-foreground/80">
                     <h2>Plan</h2>
                   </CardTitle>
                 </CardHeader>

@@ -1,5 +1,5 @@
 import { DataTableTabs } from "@/client/components/table/DataTableToolbar";
-import { TableCard } from "@/client/components/ui/table";
+import { Card } from "@/client/components/ui/card";
 import { TabsTrigger } from "@/client/components/ui/tabs";
 import { BillingInvoices } from "@/client/features/billing/BillingInvoices";
 import { BillingUsage } from "@/client/features/billing/BillingUsage";
@@ -22,7 +22,7 @@ export function BillingTabs({
   const showInvoices = invoiceEmailsEnabled !== null && tab === "invoices";
 
   return (
-    <TableCard>
+    <Card size="lg" className="gap-0 py-0">
       {invoiceEmailsEnabled !== null ? (
         <DataTableTabs
           value={tab}
@@ -32,7 +32,7 @@ export function BillingTabs({
           }}
         >
           {BILLING_TABS.map((item) => (
-            <TabsTrigger key={item.value} value={item.value}>
+            <TabsTrigger key={item.value} value={item.value} className="h-11">
               {item.label}
             </TabsTrigger>
           ))}
@@ -45,6 +45,6 @@ export function BillingTabs({
           <BillingUsage />
         )}
       </div>
-    </TableCard>
+    </Card>
   );
 }
