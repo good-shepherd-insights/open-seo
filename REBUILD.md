@@ -12,17 +12,15 @@ Status key: **TODO** not started · **DONE** completed in this PR ·
 
 ## 1. Blocked on a pricing decision
 
-### 1.1 Pro and Agency tiers are not offered — **BLOCKED**
+### 1.1 Growth and Ultimate tiers — **DONE (confirm in Autumn)**
 
-Upstream now sells three tiers (#1093, #1090, #1106). Its prices are upstream's:
-Pro $30/mo, Agency $200/mo. Maryland Insights has no approved price for either,
-so `TIER_PLAN_OFFERS` was reduced to `[BASE_PLAN_OFFER]` and `TIERS` in
-`subscribe-tiers.ts` to `base` only. `PRO_PLAN_OFFER` / `AGENCY_PLAN_OFFER` were
-removed rather than shipped at upstream prices.
+Maryland Insights sells three monthly plans (`plan-offers.ts`): Base $199.99
+with $200 of credits, Growth $499.99 with $500 and Ultimate $999.99 with $1,000.
+Growth and Ultimate use the upstream constants `AUTUMN_PRO_PLAN_ID`
+(`growth-plan`) and `AUTUMN_AGENCY_PLAN_ID` (`ultimate-plan`).
 
-To rebuild: decide whether MI sells Pro/Agency and at what price, then restore
-the offers and tier entries. Autumn plan IDs (`AUTUMN_PRO_PLAN_ID`,
-`AUTUMN_AGENCY_PLAN_ID`) still exist in `src/shared/billing.ts`.
+Before release: confirm all three plans in the Autumn account match these
+prices and credits.
 
 ### 1.2 Annual billing is hidden — **BLOCKED**
 
@@ -35,11 +33,9 @@ To rebuild: set MI's annual price(s), then the existing UI re-enables itself.
 
 ### 1.3 SAM's fact sheet pricing — **DONE (needs confirmation)**
 
-`src/server/features/sam/openseo-fact-sheet.md` feeds the in-app agent. Upstream
-rewrote it to advertise "plans start at $10/month" with the three-tier list.
-Reverted to MI's single `$199.99/month` + `$200.00` monthly credits. Confirm
-these figures against Autumn before release — the deployment SOP requires
-reading the plan back from the verified Autumn account.
+`src/server/features/sam/product-fact-sheet.md` feeds the in-app agent and lists
+the three plans above. Confirm the figures against Autumn before release — the
+deployment SOP requires reading the plan back from the verified Autumn account.
 
 ---
 
