@@ -20,5 +20,14 @@
       "src/client/features/backlinks/BacklinksPageCharts.tsx"
     ],
     "reviewed": "d0034c32"
+  },
+  {
+    "name": "Get started",
+    "ours": "src/client/design/dashboard",
+    "upstream": [
+      "src/client/features/dashboard/DashboardOnboarding.tsx",
+      "src/client/features/dashboard/DashboardSetupAction.tsx"
+    ],
+    "reviewed": "d0034c32"
   }
 ]

@@ -19,6 +19,7 @@ import { runtimeAuthModeScript } from "@/lib/auth-mode";
 import { NotFound } from "@/client/components/NotFound";
 import { PrivacyBootstrap } from "@/client/components/PrivacyChoices";
 import { TooltipProvider } from "@/client/components/ui/tooltip";
+import { memo } from "react";
 import appCss from "@/client/styles/app.css?url";
 import themeCss from "@/client/design/theme.css?url";
 import { Toaster } from "sonner";
@@ -104,26 +105,42 @@ function AppLayout() {
   return <Outlet />;
 }
 
+// RootDocument re-renders on every navigation; these never need to.
+const DocumentHead = memo(function DocumentHead() {
+  return (
+    <head>
+      <ScriptOnce>{themePreferenceInitScript}</ScriptOnce>
+      <ScriptOnce>{runtimeAuthModeScript()}</ScriptOnce>
+      <ScriptOnce>{zodJitlessScript}</ScriptOnce>
+      <HeadContent />
+    </head>
+  );
+});
+const AppOverlays = memo(function AppOverlays() {
+  return (
+    <>
+      <ExportToSheetsModal />
+      <Toaster position="bottom-right" mobileOffset={{ bottom: 100 }} />
+    </>
+  );
+});
+const StaticPrivacy = memo(PrivacyBootstrap);
+const StaticScripts = memo(Scripts);
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   const showDevtools =
     import.meta.env.DEV && import.meta.env.VITE_SHOW_DEVTOOLS !== "false";
 
   return (
     <html suppressHydrationWarning translate="no">
-      <head>
-        <ScriptOnce>{themePreferenceInitScript}</ScriptOnce>
-        <ScriptOnce>{runtimeAuthModeScript()}</ScriptOnce>
-        <ScriptOnce>{zodJitlessScript}</ScriptOnce>
-        <HeadContent />
-      </head>
+      <DocumentHead />
       <body>
         <ClientOnly>
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
-              <PrivacyBootstrap />
+              <StaticPrivacy />
               {children}
-              <ExportToSheetsModal />
-              <Toaster position="bottom-right" mobileOffset={{ bottom: 100 }} />
+              <AppOverlays />
               {showDevtools ? (
                 <TanStackDevtools
                   config={{ position: "bottom-right" }}
@@ -140,7 +157,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </TooltipProvider>
           </QueryClientProvider>
         </ClientOnly>
-        <Scripts />
+        <StaticScripts />
       </body>
     </html>
   );

@@ -30,7 +30,7 @@ import { listMcpConnections } from "@/serverFunctions/mcp-connections";
 import type { DashboardSetupStep } from "@/types/schemas/dashboard";
 import { parseResearchTarget } from "@/shared/researchScope";
 
-const projectPrompt = `Use ${PRODUCT_NAME} to set up a separate project for each website below. List my existing projects first and reuse matches so you don’t create duplicates. Set the country and language for each site, and ask me about anything missing.
+export const projectPrompt = `Use ${PRODUCT_NAME} to set up a separate project for each website below. List my existing projects first and reuse matches so you don’t create duplicates. Set the country and language for each site, and ask me about anything missing.
 
 Replace this list with my websites:
 - Project name — website — country — language`;
@@ -213,7 +213,7 @@ export function DashboardSetupAction({
   );
 }
 
-function getSkillsSetupPrompt(domain: string | null) {
+export function getSkillsSetupPrompt(domain: string | null) {
   const site = domain ? ` for ${domain}` : "";
   return `Check whether I have the OpenSEO skills set up in this agent. If not, walk me through installing them using https://openseo.so/docs/skills/setup. Then recommend the single most useful OpenSEO skill to try first${site} and show me how to run it.`;
 }
@@ -281,12 +281,12 @@ function DashboardSkillsAction({ domain }: { domain: string | null }) {
   );
 }
 
-function validateDomain(value: string) {
+export function validateDomain(value: string) {
   const parsed = parseResearchTarget(value);
   return parsed.ok ? undefined : parsed.message;
 }
 
-function parseDomain(value: string) {
+export function parseDomain(value: string) {
   const parsed = parseResearchTarget(value);
   return parsed.ok ? parsed.target.hostname : value.trim();
 }

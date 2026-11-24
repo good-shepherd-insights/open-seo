@@ -4,20 +4,20 @@ import { Link2, Settings } from "lucide-react";
 import { EmptyState } from "@/client/components/EmptyState";
 import { Button } from "@/client/components/ui/button";
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/client/components/ui/tabs";
+  DashboardTabList,
+  DashboardTabPanel,
+  DashboardTabs,
+  DashboardTabTrigger,
+} from "@/client/design/dashboard/DashboardTabs";
+import { GetStartedScreen } from "@/client/design/dashboard/GetStartedScreen";
+import { ProjectDetails } from "@/client/design/dashboard/ProjectDetails";
+import { useProjectAnswersPending } from "@/client/design/dashboard/useProjectAnswers";
 import { DashboardKeywords } from "./DashboardKeywords";
 import { DashboardBacklinks } from "./DashboardBacklinks";
 import { DashboardNewQueries } from "./DashboardNewQueries";
 import { DashboardLinkActivity } from "./DashboardLinkActivity";
 import { OverviewCardGrid, type OverviewCard } from "./OverviewCardGrid";
-import { dashboardSiteTabSchema } from "@/types/schemas/dashboard";
-import type { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import { DashboardOnboarding } from "./DashboardOnboarding";
 import { isAgentConnected } from "./dashboardSteps";
 import {
   DashboardAgentCard,
@@ -37,15 +37,7 @@ import {
 import { Skeleton } from "@/client/components/ui/skeleton";
 import { usesBetterAuthClient } from "@/lib/auth-mode";
 
-export function DashboardPage({
-  projectId,
-  tab = "overview",
-  onTabChange,
-}: {
-  projectId: string;
-  tab?: z.infer<typeof dashboardSiteTabSchema>;
-  onTabChange: (tab: z.infer<typeof dashboardSiteTabSchema>) => void;
-}) {
+export function DashboardPage({ projectId }: { projectId: string }) {
   const activationQuery = useQuery({
     queryKey: ["dashboardActivation", projectId],
     queryFn: () => getDashboardActivation({ data: { projectId } }),
@@ -61,6 +53,7 @@ export function DashboardPage({
       query.state.data?.audit?.status === AuditStatus.Running ? 3000 : false,
   });
 
+  const answersPending = useProjectAnswersPending(projectId);
   const activation = activationQuery.data;
   const overview = overviewQuery.data;
 
@@ -81,7 +74,7 @@ export function DashboardPage({
   // flashes their empty states once the real data lands. An overview error
   // falls through so the page still loads, with the error in place of the
   // audit card.
-  if (!activation || overviewQuery.isPending) {
+  if (!activation || overviewQuery.isPending || answersPending) {
     return <DashboardSkeleton />;
   }
 
@@ -176,14 +169,23 @@ export function DashboardPage({
               Search visibility, links and site health in one place.
             </p>
           </div>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to="/p/$projectId/settings" params={{ projectId }} />}
-          >
-            <Settings />
-            Project settings
-          </Button>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <ProjectDetails
+              key={projectId}
+              projectId={projectId}
+              activation={activation}
+            />
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={
+                <Link to="/p/$projectId/settings" params={{ projectId }} />
+              }
+            >
+              <Settings />
+              Project settings
+            </Button>
+          </div>
         </div>
 
         {/* The agent cards are separate from the checklist's agent step:
@@ -220,21 +222,14 @@ export function DashboardPage({
           />
         ) : null}
 
-        <DashboardOnboarding
+        <GetStartedScreen
           key={projectId}
           projectId={projectId}
           activation={activation}
         />
 
-        <Tabs
-          value={tab}
-          onValueChange={(value) => {
-            const parsed = dashboardSiteTabSchema.safeParse(value);
-            if (parsed.success) onTabChange(parsed.data);
-          }}
-          className="gap-4"
-        >
-          <TabsList aria-label="Your website dashboard" className="h-9">
+        <DashboardTabs>
+          <DashboardTabList label="Your website dashboard">
             {(
               [
                 ["overview", "Overview"],
@@ -242,26 +237,26 @@ export function DashboardPage({
                 ["backlinks", "Backlinks"],
               ] as const
             ).map(([value, label]) => (
-              <TabsTrigger key={value} value={value} className="px-3">
+              <DashboardTabTrigger key={value} value={value}>
                 {label}
-              </TabsTrigger>
+              </DashboardTabTrigger>
             ))}
-          </TabsList>
+          </DashboardTabList>
 
-          {/* Base UI unmounts inactive panels, so paid detail queries load only on opening their tab. */}
-          <TabsContent value="overview" className="min-w-0" keepMounted={false}>
+          {/* Panels load on first open, so paid detail queries run only then. */}
+          <DashboardTabPanel value="overview">
             <OverviewCardGrid projectId={projectId} cards={cards} />
-          </TabsContent>
+          </DashboardTabPanel>
 
-          <TabsContent value="keywords" keepMounted={false}>
+          <DashboardTabPanel value="keywords">
             <DashboardKeywords
               key={`${projectId}:${activation.domain}`}
               projectId={projectId}
               connected={gscConnected}
               siteUrl={activation.gsc.siteUrl}
             />
-          </TabsContent>
-          <TabsContent value="backlinks" keepMounted={false}>
+          </DashboardTabPanel>
+          <DashboardTabPanel value="backlinks">
             {activation.domain ? (
               <DashboardBacklinks
                 key={activation.domain}
@@ -289,8 +284,8 @@ export function DashboardPage({
                 }
               />
             )}
-          </TabsContent>
-        </Tabs>
+          </DashboardTabPanel>
+        </DashboardTabs>
       </div>
     </div>
   );

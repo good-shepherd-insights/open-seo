@@ -40,6 +40,7 @@
     // so upstream merges stay clean.
     "src/client/layout/AppShell.tsx",
     "src/client/features/backlinks/BacklinksPage.tsx",
+    "src/client/features/dashboard/DashboardOnboarding.tsx",
   ],
   // tests/badseo/ is the standalone broken-SEO fixture worker (own deps/config),
   // like web/ it isn't part of the app's module graph.

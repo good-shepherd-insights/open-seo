@@ -17,6 +17,7 @@ import {
 import { getLastProjectId } from "@/client/lib/active-project";
 import { PRODUCT_NAME } from "@/shared/branding";
 import { AccountMenu } from "./AccountMenu";
+import { PageScroll } from "./PageScroll";
 import { PhoneMenu } from "./PhoneMenu";
 import { ProjectMenu } from "./ProjectMenu";
 import { TopNav } from "./TopNav";
@@ -156,10 +157,12 @@ function ShellBody({
   children,
 }: ShellProject & { children: ReactNode }) {
   const { isMobile } = useSidebar();
-  const { pathname } = useLocation();
+  const onSam = useLocation({
+    select: ({ pathname }) => pathname.includes("/sam"),
+  });
   // Upstream swaps its sidebar for the chat list on this URL-only page; the
   // phone menu does the same.
-  const showChats = !isMobile && projectId && pathname.includes("/sam");
+  const showChats = !isMobile && projectId && onSam;
   return (
     <div className="flex min-h-0 flex-1">
       {showChats ? (
@@ -174,7 +177,7 @@ function ShellBody({
           )}
         </aside>
       ) : null}
-      <div className="min-h-0 min-w-0 flex-1 overflow-auto">{children}</div>
+      <PageScroll>{children}</PageScroll>
     </div>
   );
 }

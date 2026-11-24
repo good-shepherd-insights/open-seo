@@ -20,14 +20,5 @@ export const Route = createFileRoute("/_app/p/$projectId/")({
 
 function DashboardRoute() {
   const { projectId } = Route.useParams();
-  const search = Route.useSearch();
-  const navigate = Route.useNavigate();
-  return (
-    <DashboardPage
-      key={projectId}
-      projectId={projectId}
-      tab={search.tab}
-      onTabChange={(tab) => void navigate({ search: { tab } })}
-    />
-  );
+  return <DashboardPage key={projectId} projectId={projectId} />;
 }

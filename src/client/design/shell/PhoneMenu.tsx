@@ -26,7 +26,7 @@ export function PhoneMenu({
   onClose: () => void;
 }) {
   const placeholder = projectId === null && projectPending;
-  const groups = useNavGroups(projectId, placeholder);
+  const { groups, activePages } = useNavGroups(projectId, placeholder);
   const { pathname } = useLocation();
   const showChats = projectId && pathname.includes("/sam");
   return (
@@ -74,8 +74,13 @@ export function PhoneMenu({
                   <Link
                     key={item.name}
                     {...item.link}
-                    aria-current={item.active ? "page" : undefined}
-                    className={cn(rowClass, item.active && "text-primary")}
+                    aria-current={
+                      activePages.includes(item.link.to) ? "page" : undefined
+                    }
+                    className={cn(
+                      rowClass,
+                      activePages.includes(item.link.to) && "text-primary",
+                    )}
                     onClick={onClose}
                   >
                     {item.name}

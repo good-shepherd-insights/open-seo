@@ -172,3 +172,15 @@ html[data-theme="openseo"] [data-slot="card"] {
 [data-slot="sidebar-inset"] .max-w-7xl {
   max-width: 75rem;
 }
+
+/* The panel being left keeps its space for a frame, stacked on the new one. */
+[data-slot="tabs-content"][inert] {
+  display: none;
+}
+
+/* One page frame for every page, as designed, scrolled by PageScroll alone.
+   The open report (min-h-0) fills the screen instead. */
+[data-slot="sidebar-inset"] .px-4.py-4.md\:px-6.md\:py-6:not(.min-h-0) {
+  height: auto;
+  padding: 2rem 1.25rem 4.5rem;
+}
