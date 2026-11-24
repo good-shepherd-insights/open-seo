@@ -1,6 +1,6 @@
-**Draft for legal review. Not in effect.** Effective date: [EFFECTIVE DATE]
+Last updated and effective: November 24, 2026
 
-This policy explains what [LEGAL ENTITY NAME] ("Maryland Insights", "we", "us") collects when you use Maryland Insights SEO at seo.marylandinsights.com (the "Service"), why we collect it, and the choices you have.
+This policy explains what Maryland Insights ("we", "us") collects when you use Maryland Insights SEO at seo.marylandinsights.com (the "Service"), why we collect it, and the choices you have.
 
 ## 1. Who this covers
 
@@ -25,7 +25,7 @@ We do not sell your personal information for money. We do not use your projects,
 
 ## 4. Who receives it
 
-We share only what each provider needs to do its job:
+We run the Service and store its data on our own servers. We share only what each provider needs to do its job:
 
 | Provider | Why |
 |---|---|
@@ -36,7 +36,6 @@ We share only what each provider needs to do its job:
 | OpenRouter and the AI models it routes to | SAM, website research, summaries and suggestions |
 | Context.dev | Loading pages for audits that render JavaScript |
 | Cloudflare | Network security and bot checks |
-| [HOSTING AND BACKUP PROVIDERS] | [CONFIRM] |
 
 We may also share information with professional advisers, when the law requires it, to protect people or the Service, or as part of a sale or merger. Members of your organization can see the organization's work. **A report link you turn on can be opened by anyone who has it** until you turn it off.
 
@@ -46,17 +45,17 @@ If you use an AI agent of your own, information you request through it goes to t
 
 If you sign in with Google, we receive your name, email address and profile picture. If you connect Search Console or Google Analytics, we ask for **read-only** access to them. We cannot change either account.
 
-We use this data only to show you reports and insights and to do work you ask for. When you ask SAM or a connected agent to use it, the relevant data is sent to the AI provider that answers. We do not sell it, use it for ads, or use it to train general-purpose AI models. [CONFIRM WITH AI PROVIDER SETTINGS]
+We use this data only to show you reports and insights and to do work you ask for. When you ask SAM or a connected agent to use it, the relevant data is sent to the AI provider that answers. We do not sell it, use it for ads, or use it to train general-purpose AI models.
 
 Our use of information received from Google APIs will adhere to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements. You can disconnect Google in the Service, or remove access in your [Google Account](https://myaccount.google.com/permissions).
 
 ## 6. Cookies and similar storage
 
-We use cookies and browser storage to keep you signed in, protect forms, remember your theme, and save choices such as dismissed steps and privacy settings. Optional analytics or advertising tools would run only under the choices shown in Settings. We honor Global Privacy Control for advertising and referral tracking. [CONFIRM WHICH OPTIONAL TOOLS, IF ANY, ARE ON AT LAUNCH]
+We use cookies and browser storage to keep you signed in, protect forms, remember your theme, and save choices such as dismissed steps and privacy settings. We do not run advertising or third-party analytics tools in the Service today. If we add any, they will follow the choices shown in Settings. We honor Global Privacy Control for advertising and referral tracking.
 
 ## 7. How long we keep it
 
-We keep account information and work while your account is open. When you ask to delete your account, there is a **14-day waiting period** in which you can cancel, and then we delete it from live systems. Copies in backups are removed within [BACKUP RETENTION PERIOD]. We keep billing and security records for as long as the law or a dispute requires.
+We keep account information and work while your account is open. When you ask to delete your account, there is a **14-day waiting period** in which you can cancel, and then we delete it from live systems. Any copies in backups are removed as those backups are replaced. We keep billing and security records for as long as the law or a dispute requires.
 
 ## 8. Security
 
@@ -64,11 +63,11 @@ Connections to the Service are encrypted. Access to stored information is limite
 
 ## 9. Your choices and rights
 
-Depending on where you live, you may have the right to see, correct, download or delete your information, limit or object to some uses, withdraw consent, and appeal a decision we make. You can change some details and delete your account in Settings, or email **[PRIVACY EMAIL]**. We will confirm who you are and answer within the time the law sets. We will not treat you worse for using these rights. You may also complain to your local data protection authority or Attorney General.
+Depending on where you live, you may have the right to see, correct, download or delete your information, limit or object to some uses, withdraw consent, and appeal a decision we make. You can change some details and delete your account in Settings, or email **support@marylandinsights.com**. We will confirm who you are and answer within the time the law sets. We will not treat you worse for using these rights. You may also complain to your local data protection authority or Attorney General.
 
 ## 10. Where information is handled
 
-We are based in the United States, and information is handled there and wherever our providers operate. [CONFIRM TRANSFER TERMS IF SERVING THE EEA, UK OR SWITZERLAND]
+We are based in the United States, and information is handled there and wherever our providers operate. The Service is meant for businesses in the United States. If you use it from elsewhere, your information is handled in the United States.
 
 ## 11. Children
 
@@ -78,4 +77,6 @@ The Service is for people 18 and over. If you believe a child has given us infor
 
 We will post changes here and update the date above. We will tell you before an important change takes effect.
 
-Email: **[PRIVACY EMAIL]**. Mail: **[LEGAL ENTITY NAME], [MAILING ADDRESS]**.
+Email: **support@marylandinsights.com**. Phone: **+1 (240) 441-5259**. Mail: **Maryland Insights, 7375 Executive Pl. Suite 400, Lanham, MD 20706**.
+
+The marylandinsights.com website has its own [Privacy Policy](https://marylandinsights.com/privacy-policy).

@@ -1,6 +1,6 @@
-**Draft for legal review. Not in effect.** Effective date: [EFFECTIVE DATE]
+Last updated and effective: November 24, 2026
 
-These Terms are an agreement between you and [LEGAL ENTITY NAME] ("Maryland Insights", "we", "us") for using Maryland Insights SEO at seo.marylandinsights.com (the "Service"). By creating an account or using the Service, you accept them. If you use the Service for a business, you confirm you may accept them for that business.
+These Terms are an agreement between you and Maryland Insights ("we", "us") for using Maryland Insights SEO at seo.marylandinsights.com (the "Service"). By creating an account or using the Service, you accept them. If you use the Service for a business, you confirm you may accept them for that business.
 
 ## 1. Your account
 
@@ -16,14 +16,14 @@ Data comes from other companies and from public websites. It can be late, estima
 
 - Paid plans renew automatically for the period shown at checkout until you cancel. The price, period and included credits are shown before you pay.
 - You can cancel at any time. Your plan stays active until the end of the period you paid for.
-- Some features use credits. Included credits reset each billing cycle and do not carry over. Top-up credits carry over while your account is open. [CONFIRM]
+- Some features use credits. Included credits reset each billing cycle and do not carry over. Top-up credits carry over while your account is open.
 - If you turn on auto-reload, you authorize us to charge your saved card when your balance falls to the amount you set, until you turn it off.
 - Prices do not include taxes unless we say so. If a payment fails, we may limit paid features.
 - We will tell you before a price increase applies to your renewal.
 
 ## 4. Refunds
 
-If a paid plan is not right for you, email **support@marylandinsights.com** within **30 days of your first subscription charge** and we will refund that charge. Top-up credits are not refundable. Nothing here removes refund rights the law gives you. [CONFIRM: FIRST CHARGE ONLY]
+If a paid plan is not right for you, email **support@marylandinsights.com** within **30 days of your first subscription charge** and we will refund that charge. Top-up credits are not refundable. Nothing here removes refund rights the law gives you.
 
 ## 5. Your content
 
@@ -42,7 +42,7 @@ You must not:
 
 ## 7. Site audits and crawling
 
-You confirm you may ask us to crawl the sites you enter. Our crawler identifies itself and follows robots.txt rules. [CONFIRM] You are responsible for any settings you change on a site so it can be crawled.
+You confirm you may ask us to crawl the sites you enter. Our crawler identifies itself and follows robots.txt rules. You are responsible for any settings you change on a site so it can be crawled.
 
 ## 8. AI features and agents
 
@@ -68,7 +68,7 @@ The Service is provided **"as is" and "as available"**. To the extent the law al
 
 ## 13. Limit of liability
 
-To the extent the law allows, neither of us is liable for indirect or consequential loss, or for lost profits or data. Our total liability for a claim is limited to what you paid us in the **12 months** before it arose, or **[MINIMUM AMOUNT]** if greater. These limits do not apply where the law does not allow them, or to amounts you owe us.
+To the extent the law allows, neither of us is liable for indirect or consequential loss, or for lost profits or data. Our total liability for a claim is limited to what you paid us in the **12 months** before it arose, or **$100** if greater. These limits do not apply where the law does not allow them, or to amounts you owe us.
 
 ## 14. Business users
 
@@ -76,7 +76,7 @@ If you use the Service for a business, you will cover our reasonable losses from
 
 ## 15. Law and disputes
 
-Please contact us first so we can try to fix a problem. These Terms follow the laws of **[STATE]**, and disputes go to the courts of **[COUNTY, STATE]**, unless the law where you live gives you other rights. [LAWYER TO DECIDE WHETHER TO ADD ARBITRATION]
+Please contact us first so we can try to fix a problem. These Terms follow the laws of the **State of Maryland**, and disputes go to the state and federal courts in **Maryland**, unless the law where you live gives you other rights.
 
 ## 16. Changes and other terms
 
@@ -84,4 +84,4 @@ We may change these Terms. For important changes we will notify you and ask for 
 
 ## 17. Contact
 
-Support and cancellation: **support@marylandinsights.com**. Legal notices: **[LEGAL EMAIL]**, **[LEGAL ENTITY NAME], [MAILING ADDRESS]**.
+Support and cancellation: **support@marylandinsights.com**. Legal notices: **support@marylandinsights.com** or **Maryland Insights, 7375 Executive Pl. Suite 400, Lanham, MD 20706**. Phone: **+1 (240) 441-5259**.
