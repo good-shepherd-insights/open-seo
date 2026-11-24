@@ -55,7 +55,11 @@
     "!.agents/**",
     "!.claude/**",
   ],
-  "ignore": ["drizzle/remote-d1.config.ts"],
+  "ignore": [
+    "drizzle/remote-d1.config.ts",
+    // Hidden from users; kept so upstream merges stay clean
+    "src/client/features/settings/ApiKeySettings.tsx",
+  ],
   // GitHub CLI, used by deploy:prod; installed system-wide, not via npm
   "ignoreBinaries": ["gh"],
   // Disable Drizzle plugin - it tries to load drizzle/sqlite.config.ts which imports cloudflare:workers

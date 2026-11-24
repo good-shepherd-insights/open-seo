@@ -7,7 +7,6 @@ import { AuthPageCard, AuthPageShell } from "@/client/features/auth/AuthPage";
 import { clearLastProjectId } from "@/client/lib/active-project";
 import { pageHead } from "@/client/lib/pageHead";
 import { authClient } from "@/lib/auth-client";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
 import { getStripeProjectsLoginAccount } from "@/serverFunctions/stripe-projects";
 
 const loginResultSchema = z.object({ path: z.string() });
@@ -20,7 +19,8 @@ const loginResultSchema = z.object({ path: z.string() });
 export const Route = createFileRoute("/stripe-projects/login")({
   head: () => pageHead("Sign in"),
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) throw notFound();
+    // Not offered on this deployment; the rest stays as upstream wrote it.
+    throw notFound();
   },
   validateSearch: z.object({ token: z.string().optional() }),
   loaderDeps: ({ search }) => ({ token: search.token }),
