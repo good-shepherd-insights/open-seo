@@ -36,7 +36,6 @@ import {
   handleStripeProjectsRequest,
 } from "@/server/stripe-projects/handler";
 import { sweepDubReferredOrganizations } from "@/server/referrals/dub";
-import { maybeSendSelfHostHeartbeat } from "@/server/lib/self-host-telemetry";
 import { handleOperatorRequest } from "@/server/standalone/admin";
 import { handleImport, isLegacyImportActive } from "@/server/standalone/import";
 import { EVERY_APP_TRANSFER_PATH } from "@/server/features/every-app-transfer/protocol";
@@ -212,7 +211,6 @@ async function handleAppRequest(
   setRuntimeAuthMode(env.AUTH_MODE);
   const publicRequest = requestWithPublicOrigin(request);
   const pathname = new URL(publicRequest.url).pathname;
-  ctx.waitUntil(maybeSendSelfHostHeartbeat(pathname));
 
   // Standalone Docker operator tooling (account commands, legacy import).
   // Both handlers answer 404 without the operator secret; the block is also
