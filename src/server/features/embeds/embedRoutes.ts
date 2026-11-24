@@ -78,7 +78,7 @@ export async function renderEmbedPage(
     !(await EmbedService.resolveToken(token, getPublicOrigin(request)))
   )
     return deadLink();
-  const { default: html } = await import("virtual:mcp-widget");
+  const { default: html } = await import("virtual:openseo-mcp-widget");
   const nonce = crypto.randomUUID();
   const page: EmbedPage = { token, widgets };
   // JSON in a data block: `<` is escaped so no value can close the tag.

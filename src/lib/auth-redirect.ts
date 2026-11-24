@@ -71,7 +71,7 @@ export function getCurrentAuthRedirect(
 }
 
 export function getCurrentAuthRedirectFromHref(href: string) {
-  const url = new URL(href, "https://internal.invalid");
+  const url = new URL(href, "https://openseo.local");
   return normalizeAuthRedirect(`${url.pathname}${url.search}${url.hash}`);
 }
 

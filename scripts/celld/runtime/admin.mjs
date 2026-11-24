@@ -32,7 +32,7 @@ const response = await fetch(`${baseUrl}/api/standalone/admin`, {
   method: "POST",
   headers: {
     "content-type": "application/json",
-    "x-operator-secret": operatorSecret,
+    "x-openseo-operator-secret": operatorSecret,
   },
   body: JSON.stringify({
     command,

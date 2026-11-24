@@ -1,4 +1,3 @@
-import { DASHBOARD_URL, PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { getOptionalEnvValue } from "@/server/lib/runtime-env";
 import { captureServerError } from "@/server/lib/posthog";
@@ -29,7 +28,8 @@ const API_VERSION = "0.1d";
 const SERVICES = [
   {
     id: API_SERVICE_ID,
-    description: `${PRODUCT_NAME} MCP server and API key for SEO research: keyword data, SERPs, backlinks, rank tracking, site audits and AI visibility. New accounts start with free credits. Paid plans and credit top-ups are billed by ${PRODUCT_NAME} at ${DASHBOARD_URL}/billing.`,
+    description:
+      "OpenSEO MCP server and API key for SEO research: keyword data, SERPs, backlinks, rank tracking, site audits and AI visibility. New accounts start with free credits. Paid plans and credit top-ups are billed by OpenSEO at https://openseo.so/pricing.",
     categories: ["search", "analytics", "ai"],
     pricing: { type: "free" },
     kind: "deployable",

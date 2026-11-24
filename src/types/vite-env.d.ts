@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-declare module "virtual:mcp-widget" {
+declare module "virtual:openseo-mcp-widget" {
   const html: string;
   export default html;
 }

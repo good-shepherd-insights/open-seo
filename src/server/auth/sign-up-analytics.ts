@@ -104,7 +104,7 @@ async function signUpTarget(ctx: SignUpContext) {
         );
   if (!callbackURL) return null;
   try {
-    const url = new URL(callbackURL, "https://internal.invalid");
+    const url = new URL(callbackURL, "https://openseo.local");
     // Email sign-ups verify first, and carry the destination as `redirect`.
     const redirect =
       url.pathname === "/verify-email"

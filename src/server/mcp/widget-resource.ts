@@ -15,7 +15,7 @@ export function registerWidgetResource(server: McpServer) {
     MCP_WIDGET_URI,
     { mimeType: "text/html;profile=mcp-app", _meta: meta },
     async () => {
-      const { default: html } = await import("virtual:mcp-widget");
+      const { default: html } = await import("virtual:openseo-mcp-widget");
       return {
         contents: [
           {

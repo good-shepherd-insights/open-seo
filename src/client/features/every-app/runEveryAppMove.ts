@@ -1,4 +1,3 @@
-import { PRODUCT_NAME } from "@/shared/branding";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import {
   finishEveryAppMove,
@@ -38,17 +37,17 @@ class MoveStoppedError extends Error {
 function problemMessage({ problem }: MoveFailure) {
   switch (problem) {
     case TransferProblem.InvalidCode:
-      return `That isn't a transfer code. Copy it again from ${PRODUCT_NAME} on your Gateway.`;
+      return "That isn't a transfer code. Copy it again from OpenSEO on your Gateway.";
     case TransferProblem.CodeRejected:
       return "This code expired, was used or was replaced. Make a new one and try again.";
     case TransferProblem.VersionMismatch:
-      return `This install and your Gateway run different ${PRODUCT_NAME} versions. Update both to the latest release, then try again.`;
+      return "This install and your Gateway run different OpenSEO versions. Update both to the latest release, then try again.";
     case TransferProblem.RunningWork:
       return "An audit or check is still running here. Try again once it finishes.";
     case TransferProblem.MultipleOrganizations:
       return "This install has more than one organization, and a move can only take one.";
     case TransferProblem.Unreachable:
-      return `Couldn't reach ${PRODUCT_NAME} on your Gateway. Check it's installed and up to date, then try again.`;
+      return "Couldn't reach OpenSEO on your Gateway. Check it's installed and up to date, then try again.";
   }
 }
 

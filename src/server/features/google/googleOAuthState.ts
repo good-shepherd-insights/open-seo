@@ -40,7 +40,9 @@ export async function getCodeVerifier(input: {
 }) {
   const key = await crypto.subtle.importKey(
     "raw",
-    new TextEncoder().encode(`mi:${input.provider}:pkce:${input.clientSecret}`),
+    new TextEncoder().encode(
+      `openseo:${input.provider}:pkce:${input.clientSecret}`,
+    ),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"],

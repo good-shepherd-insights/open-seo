@@ -1,4 +1,3 @@
-import { PRODUCT_NAME } from "@/shared/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { SectionHeader } from "@/client/components/PageHeader";
@@ -51,7 +50,7 @@ export function MoveToEveryAppSettings() {
             history and chat moves over intact.{" "}
             <a
               className="text-primary underline-offset-4 hover:underline"
-              href="https://everyapp.com/docs"
+              href="https://everyapp.com/docs/apps/openseo"
               target="_blank"
               rel="noreferrer"
             >
@@ -91,8 +90,8 @@ function MoveDialog({ onClose }: { onClose: () => void }) {
         <DialogHeader>
           <DialogTitle>Move to Every App</DialogTitle>
           <DialogDescription>
-            Copies your projects and their history to {PRODUCT_NAME} on your
-            Gateway. Nothing is removed here.
+            Copies your projects and their history to OpenSEO on your Gateway.
+            Nothing is removed here.
           </DialogDescription>
         </DialogHeader>
         {state.status === "moving" ? (
@@ -194,13 +193,13 @@ function MoveSteps({
 
   return (
     <ol className="space-y-4">
-      <Step number={1} title={`Install ${PRODUCT_NAME} on your Gateway`}>
-        <CommandBlock command="everyapp install" />
+      <Step number={1} title="Install OpenSEO on your Gateway">
+        <CommandBlock command="everyapp install https://github.com/every-app/open-seo" />
       </Step>
       <Step number={2} title="Make a transfer code">
         <p className="text-sm text-muted-foreground">
-          In {PRODUCT_NAME} on your Gateway, open Settings and click Import from
-          self-hosted {PRODUCT_NAME}.
+          In OpenSEO on your Gateway, open Settings and click Import from
+          self-hosted OpenSEO.
         </p>
       </Step>
       <Step number={3} title="Paste the code here">
@@ -218,7 +217,7 @@ function MoveSteps({
             id="every-app-transfer-code"
             value={code}
             onChange={(event) => setCode(event.target.value)}
-            placeholder="https://seo.yourdomain.com#…"
+            placeholder="https://openseo.yourdomain.com#…"
             autoComplete="off"
             spellCheck={false}
             data-ph-mask
@@ -288,7 +287,7 @@ function MoveDone({ origin }: { origin: string }) {
         target="_blank"
         rel="noreferrer"
       >
-        Open {PRODUCT_NAME} on your Gateway →
+        Open OpenSEO on your Gateway →
       </a>
     </div>
   );

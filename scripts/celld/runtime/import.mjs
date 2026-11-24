@@ -18,7 +18,7 @@ const { OPENSEO_OPERATOR_SECRET } = JSON.parse(
 );
 const headers = {
   "content-type": "application/json",
-  "x-operator-secret": OPENSEO_OPERATOR_SECRET,
+  "x-openseo-operator-secret": OPENSEO_OPERATOR_SECRET,
 };
 const endpoint = "http://127.0.0.1:8080/api/standalone/import";
 async function command(body) {
@@ -49,7 +49,7 @@ for (const entry of manifest.artifacts) {
   const response = await fetch(`${endpoint}?artifact=1`, {
     method: "POST",
     headers: {
-      "x-operator-secret": OPENSEO_OPERATOR_SECRET,
+      "x-openseo-operator-secret": OPENSEO_OPERATOR_SECRET,
       "x-artifact-sha256": entry.sha256,
       "x-artifact-key": encodeURIComponent(entry.key),
       "x-artifact-metadata": JSON.stringify({

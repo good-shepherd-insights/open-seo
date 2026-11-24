@@ -1,4 +1,3 @@
-import { PRODUCT_NAME } from "@/shared/branding";
 import {
   ToolError,
   defineTools,
@@ -28,7 +27,8 @@ import {
 // person, applies the connection's read-only or read-write choice, and calls
 // a tool here with a verified identity; OpenSEO never speaks MCP for it.
 
-const INSTRUCTIONS = `${PRODUCT_NAME}'s research tools call DataForSEO, which bills this organization's DataForSEO account per request through the gateway. Start with list_projects: most tools take a projectId. Ask before planned batches of more than a few hundred keywords or pages.`;
+const INSTRUCTIONS =
+  "OpenSEO's research tools call DataForSEO, which bills this organization's DataForSEO account per request through the gateway. Start with list_projects: most tools take a projectId. Ask before planned batches of more than a few hundred keywords or pages.";
 
 /**
  * Read or write, never destructive: the gateway hides destructive tools from
