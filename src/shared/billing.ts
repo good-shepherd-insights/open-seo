@@ -75,7 +75,7 @@ const SEO_DATA_COST_MARKUP = 1.28;
 export const LOW_CREDITS_THRESHOLD_USD = 0.25;
 
 export const TOP_UP_MIN_USD = 5;
-export const TOP_UP_MAX_USD = 100_000;
+export const TOP_UP_MAX_USD = 5000;
 // What a bulk top-up saves. Autumn charges the price: these mirror the volume
 // tiers on its credit-top-up plan, so change both together.
 export const TOP_UP_DISCOUNTS = [

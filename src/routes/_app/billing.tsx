@@ -263,7 +263,7 @@ function BillingPage() {
                   ) : null}
                   <p className="text-sm text-muted-foreground">
                     Save 5% from $100, 10% from $500, 15% from $1,000, 20% from
-                    $2,500 and 25% from $5,000.
+                    $2,500 and 25% at $5,000.
                   </p>
                   {showTopUpError ? (
                     <p className="text-sm text-destructive">
