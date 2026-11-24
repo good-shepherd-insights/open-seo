@@ -23,10 +23,12 @@ import {
   renderUsageCredits,
   type RenderUsage,
 } from "@/shared/audit-rendering";
+import type { CRAWL_STOP_ISSUE_TYPES } from "@/shared/audit-issues";
 import type { CrawlerAccess } from "@/shared/crawler-access";
 import { pgStep } from "@/server/workflows/pgStep";
 import { CRAWL_CHUNK_STEP } from "@/server/workflows/auditStepConfigs";
 import { getContextFetch } from "@/server/lib/provider-access";
+import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 
 /**
  * The crawl runs in chunks: each chunk is one durable step that leases up to
@@ -39,6 +41,11 @@ import { getContextFetch } from "@/server/lib/provider-access";
 const CHUNK_TARGET_PAGES = 200;
 /** Stop launching new fetches after this long; leftover leases are released. */
 const CHUNK_SOFT_DEADLINE_MS = 90_000;
+/**
+ * How long past its soft deadline a chunk may keep waiting before it logs the
+ * fetches it is still waiting on. Longer than any single page fetch or render.
+ */
+const STUCK_CHUNK_GRACE_MS = 60_000;
 /** Crawled pages are persisted in sub-batches of this size. */
 const PERSIST_BATCH_SIZE = 25;
 /**
@@ -85,11 +92,11 @@ export type CrawlPhaseResult = {
   pagesCrawled: number;
   /** True when the frontier was exhausted before hitting maxPages. */
   completed: boolean;
-  /** Why the crawl stopped before running out of URLs or pages. */
-  stoppedBy?:
-    | "crawl-rate-limited"
-    | "crawl-time-limit"
-    | "crawl-credits-exhausted";
+  /** The report's issue for a crawl that stopped with URLs left unvisited. */
+  stopIssue?: {
+    issueType: (typeof CRAWL_STOP_ISSUE_TYPES)[number];
+    details?: Record<string, number>;
+  };
 };
 
 export async function runCrawlPhase(
@@ -131,13 +138,17 @@ export async function runCrawlPhase(
       result.renderUsage?.cloudflareAttempts ?? 0;
     params.renderUsage.contextCredits +=
       result.renderUsage?.contextCredits ?? 0;
-    const stoppedBy = result.rateLimited
+    const issueType = result.rateLimited
       ? "crawl-rate-limited"
       : result.timedOut
         ? "crawl-time-limit"
         : result.outOfCredits && "crawl-credits-exhausted";
-    if (stoppedBy) {
-      return { pagesCrawled: attemptedTotal, completed: false, stoppedBy };
+    if (issueType) {
+      return {
+        pagesCrawled: attemptedTotal,
+        completed: false,
+        stopIssue: { issueType },
+      };
     }
     // `?? initial`: an instance in flight across a deploy replays cached
     // step results from before endWindow existed.
@@ -158,17 +169,20 @@ export async function runCrawlPhase(
     if (zeroProgressChunks >= 2) break;
   }
 
+  if (pending > 0 && attemptedTotal >= params.maxPages) {
+    return {
+      pagesCrawled: attemptedTotal,
+      completed: false,
+      stopIssue: {
+        issueType: "crawl-page-limit",
+        details: { pagesCrawled: attemptedTotal, urlsNotCrawled: pending },
+      },
+    };
+  }
   return { pagesCrawled: attemptedTotal, completed: pending === 0 };
 }
 
-async function runCrawlChunk(
-  input: CrawlPhaseParams & {
-    chunkNo: number;
-    attemptedBefore: number;
-    startWindow: number;
-    throttleState?: CrawlThrottleState;
-  },
-): Promise<{
+type CrawlChunkResult = {
   attemptedInChunk: number;
   attempted: number;
   pending: number;
@@ -179,7 +193,16 @@ async function runCrawlChunk(
   throttleState?: CrawlThrottleState;
   resumeAt?: number;
   renderUsage?: RenderUsage;
-}> {
+};
+
+async function runCrawlChunk(
+  input: CrawlPhaseParams & {
+    chunkNo: number;
+    attemptedBefore: number;
+    startWindow: number;
+    throttleState?: CrawlThrottleState;
+  },
+): Promise<CrawlChunkResult> {
   const { auditId, workflowInstanceId, origin, maxPages, robots, chunkNo } =
     input;
   const scratchpad = getAuditScratchpad(auditId);
@@ -187,14 +210,36 @@ async function runCrawlChunk(
   let previousThrottle =
     (await scratchpad.getCrawlThrottle()) ?? input.throttleState;
 
-  const claimLimit = Math.min(
-    CHUNK_TARGET_PAGES,
-    maxPages - input.attemptedBefore,
-  );
+  const pagesLeft = maxPages - input.attemptedBefore;
   const { urls: claimed, isRetry } = await scratchpad.claimChunk(
     chunkNo,
-    claimLimit,
+    Math.min(CHUNK_TARGET_PAGES, pagesLeft),
+    pagesLeft,
   );
+  // One line at each end of a chunk, so a crawl that stops making progress
+  // shows where: inside a chunk, in a cooldown between chunks, or replaying.
+  const startedAt = Date.now();
+  console.info("site_audit:chunk_start", {
+    auditId,
+    chunkNo,
+    claimed: claimed.length,
+    isRetry,
+  });
+  const logChunkEnd = (result: CrawlChunkResult) => {
+    console.info("site_audit:chunk_end", {
+      auditId,
+      chunkNo,
+      attemptedInChunk: result.attemptedInChunk,
+      attempted: result.attempted,
+      pending: result.pending,
+      durationMs: Date.now() - startedAt,
+      rateLimited: result.rateLimited,
+      timedOut: result.timedOut,
+      outOfCredits: result.outOfCredits,
+      resumeAt: result.resumeAt && new Date(result.resumeAt).toISOString(),
+    });
+    return result;
+  };
   const deadlineAt = Math.min(
     Date.now() + CHUNK_SOFT_DEADLINE_MS,
     renderDeadlineAt,
@@ -225,7 +270,7 @@ async function runCrawlChunk(
   );
   if (claimed.length === 0) {
     const stats = await scratchpad.getStats();
-    return {
+    return logChunkEnd({
       attemptedInChunk: 0,
       attempted: stats.attempted,
       pending: stats.pending,
@@ -236,14 +281,14 @@ async function runCrawlChunk(
         throttle.state.pausedUntil > Date.now()
           ? throttle.state.pausedUntil
           : undefined,
-    };
+    });
   }
 
   const depthByUrl = new Map(claimed.map((entry) => [entry.url, entry.depth]));
 
-  // A retry means the previous attempt died mid-crawl (in production almost
-  // always exceededMemory), and it is the chunk's last attempt — so it runs
-  // under drastically reduced limits instead of the profile that just failed.
+  // A retry means the previous attempt died mid-crawl (often exceededMemory),
+  // so it runs under drastically reduced limits instead of the profile that
+  // just failed.
   const limits = isRetry ? RETRY_CRAWL_WINDOW : CRAWL_WINDOW;
   let windowSize = isRetry
     ? limits.initial
@@ -251,6 +296,7 @@ async function runCrawlChunk(
   let nextIndex = 0;
   let attemptedInChunk = 0;
   const inFlight = new Set<Promise<void>>();
+  const inFlightSince = new Map<string, number>();
   const deferred: string[] = [];
   let persistThreshold = FIRST_PERSIST_BATCH_SIZE;
   let batch: CrawledPageResult[] = [];
@@ -339,10 +385,29 @@ async function runCrawlChunk(
       })
       .finally(() => {
         inFlight.delete(promise);
+        inFlightSince.delete(entry.url);
       });
     inFlight.add(promise);
+    inFlightSince.set(entry.url, Date.now());
   };
 
+  // Hosted logs keep only the path: a query string or user info in a link the
+  // audited site controls can carry secrets. Self-hosters read their own logs.
+  const logFullUrls = !(await isHostedServerAuthMode());
+  const stuckTimer = setTimeout(
+    () => {
+      console.warn("site_audit:chunk_stuck", {
+        auditId,
+        chunkNo,
+        queuedPersists,
+        inFlight: [...inFlightSince].map(([url, since]) => ({
+          url: logFullUrls ? url : new URL(url).pathname,
+          seconds: Math.round((Date.now() - since) / 1000),
+        })),
+      });
+    },
+    Math.max(0, deadlineAt - Date.now()) + STUCK_CHUNK_GRACE_MS,
+  );
   while (true) {
     while (
       inFlight.size < windowSize &&
@@ -381,6 +446,7 @@ async function runCrawlChunk(
   }
   flush();
   await persistChain;
+  clearTimeout(stuckTimer);
   await scratchpad.saveCrawlThrottle(throttle.state);
 
   // Preserve URLs without a page result, including slots stopped by a cooldown.
@@ -397,7 +463,7 @@ async function runCrawlChunk(
   // most one sub-batch, not a whole chunk.
   const stats = await scratchpad.getStats();
   const throttleState = throttle.state;
-  return {
+  return logChunkEnd({
     attemptedInChunk,
     attempted: stats.attempted,
     pending: stats.pending,
@@ -419,5 +485,5 @@ async function runCrawlChunk(
         ? throttleState.pausedUntil
         : undefined,
     renderUsage,
-  };
+  });
 }

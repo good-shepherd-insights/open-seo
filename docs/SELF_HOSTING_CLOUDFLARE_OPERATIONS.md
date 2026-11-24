@@ -9,7 +9,9 @@ With password accounts (`AUTH_MODE=password`, the default for new deployments), 
 ### Through Cloudflare Access
 
 With `AUTH_MODE=cloudflare_access`, use the same Cloudflare Access application that protects your OpenSEO Worker.
-Managed OAuth is required for MCP clients and is not enabled by default.
+Managed OAuth is required for MCP clients.
+
+If the deploy created your Access application (you didn't set `TEAM_DOMAIN` and `POLICY_AUD`), each `pnpm deploy:selfhost` turns Managed OAuth on and allows `localhost` and loopback redirect URIs, which CLI and desktop agents (Codex CLI, Claude Code) use. For web connectors, add their HTTPS redirect URIs with step 6 below; later deploys keep them. If you manage the Access application yourself, Managed OAuth is off by default; turn it on:
 
 1. Open Cloudflare Zero Trust.
 2. Go to `Access controls` -> `Applications`.
@@ -61,7 +63,7 @@ Everyone shares the `shared-workspace` organization; the command makes the user 
 
 ## AI visibility tracking
 
-AI Visibility uses your `DATAFORSEO_API_KEY`; tracked questions are sent to DataForSEO and billed directly by the provider. Set `OPENROUTER_API_KEY` for setup research, Prompt Research, and generated prompt suggestions. Deployment configures background collection and a five-minute cron that dispatches due daily, weekly, or monthly checks. The app shows the collection cost before a check or schedule starts. See the [AI Visibility guide](https://openseo.so/docs/ai-visibility).
+AI Visibility uses your `DATAFORSEO_API_KEY` (or `TREG_API_TOKEN`); tracked questions are sent to DataForSEO and billed directly by the provider. Set `OPENROUTER_API_KEY` for setup research, Prompt Research, and generated prompt suggestions. Deployment configures background collection and a five-minute cron that dispatches due daily, weekly, or monthly checks. The app shows the collection cost before a check or schedule starts. See the [AI Visibility guide](https://openseo.so/docs/ai-visibility).
 
 ## Render JavaScript in site audits
 
@@ -71,7 +73,7 @@ Rendering uses [Cloudflare Browser Run](https://developers.cloudflare.com/browse
 
 Some sites block Cloudflare's browser. To render those pages through [Context.dev](https://www.context.dev) instead, create a Context account, set `CONTEXT_API_KEY` in `.env.selfhost`, and redeploy. OpenSEO calls Context only for pages that Browser Run could not render, and for Shopify store pages that Shopify rate limits while project setup or AI Visibility setup reads your site. Each of those pages uses one Context credit on your Context account.
 
-Docker deployments have no browser. On Docker, set `CONTEXT_API_KEY` in `.env.local` to render every page through Context. Until the key is set, the **Render JavaScript** toggle stays disabled with a setup note.
+Docker deployments have no browser. On Docker, set `CONTEXT_API_KEY` in `deploy/standalone/.env` and apply it as described in [Enable features](./SELF_HOSTING_DOCKER.md#enable-features) to render every page through Context. On the [older Docker image](./SELF_HOSTING_DOCKER_LEGACY.md), set it in `.env` and run `docker compose up -d --force-recreate open-seo`. Until the key is set, the **Render JavaScript** toggle stays disabled with a setup note.
 
 ## Telemetry
 

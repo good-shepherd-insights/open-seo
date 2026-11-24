@@ -5,10 +5,13 @@ import {
   helpLinkClassName,
   SecretHelpPage,
 } from "@/client/features/help/SecretHelpPage";
+import { pageHead } from "@/client/lib/pageHead";
 
 const DATAFORSEO_API_ACCESS_URL = "https://app.dataforseo.com/api-access";
+const TREG_URL = "https://treg.to";
 
 export const Route = createFileRoute("/_app/help/dataforseo-api-key")({
+  head: () => pageHead("DataForSEO API key"),
   component: DataforseoApiKeyHelpPage,
 });
 
@@ -64,6 +67,20 @@ function DataforseoApiKeyHelpPage() {
             <CommandBlock command="pnpm everyapp secret set DATAFORSEO_API_KEY" />
           </li>
           <li>Reload {PRODUCT_NAME}: it uses the key on its next request.</li>
+          <li>
+            No DataForSEO account? Create a team at{" "}
+            <a
+              className={helpLinkClassName}
+              href={TREG_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              treg
+            </a>
+            , which sells DataForSEO calls from a prepaid balance, and set its
+            API token instead:
+            <CommandBlock command="pnpm everyapp secret set TREG_API_TOKEN" />
+          </li>
         </>
       }
       dashboardPasteStep="Paste the base64 value from the terminal command above and save."

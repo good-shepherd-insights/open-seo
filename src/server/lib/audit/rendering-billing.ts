@@ -60,6 +60,7 @@ export async function lockRenderingCredits(input: {
 
   const properties = {
     creditFeature: "site_audit",
+    projectId: input.customer.projectId,
     source: "site_audit_rendering",
     auditId: input.auditId,
   };
@@ -128,6 +129,7 @@ export async function settleRenderingLocks(input: {
     remaining -= charge;
     const { landed, error } = await finalizeHold(lock, charge, {
       source: "site_audit_rendering",
+      projectId: input.customer.projectId,
       auditId: input.auditId,
       ...input.usage,
     });

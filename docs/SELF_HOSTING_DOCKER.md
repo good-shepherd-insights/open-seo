@@ -6,7 +6,7 @@ Already running the older single-container image (`ghcr.io/every-app/open-seo`)?
 
 ## Install
 
-You need Docker Engine or Docker Desktop with Compose, at least 4 GiB of memory for Docker, and a [DataForSEO API key](./DATAFORSEO_API_KEY.md). Every command below runs from the repository root:
+You need Docker Engine or Docker Desktop with Compose, at least 4 GiB of memory for Docker, and a [DataForSEO API key](./DATAFORSEO_API_KEY.md) (or a [treg token](./DATAFORSEO_API_KEY.md#no-dataforseo-account-use-treg)). Every command below runs from the repository root:
 
 ```sh
 git clone https://github.com/every-app/open-seo.git
@@ -59,13 +59,17 @@ Set credentials in `deploy/standalone/.env`, then apply them without rebuilding:
 docker compose up -d --force-recreate init web crawl-gateway
 ```
 
-| Variable                                   | Purpose                                                                      |
-| ------------------------------------------ | ---------------------------------------------------------------------------- |
-| `DATAFORSEO_API_KEY`                       | Base64-encoded `login:password`; keyword, backlink, rank and site data       |
-| `OPENROUTER_API_KEY`                       | SAM conversations, website research and summaries                            |
-| `OPENROUTER_MODEL`                         | Optional model override                                                      |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional Search Console and Analytics linking with your own Google OAuth app |
-| `CONTEXT_API_KEY`                          | Optional JavaScript rendering for site audits                                |
+| Variable                                   | Purpose                                                                                                                    |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `DATAFORSEO_API_KEY`                       | Base64-encoded `login:password`; keyword, backlink, rank and site data                                                     |
+| `TREG_API_TOKEN`                           | Optional, instead of `DATAFORSEO_API_KEY`: the same data, bought per call through treg (see the DataForSEO key guide)      |
+| `OPENROUTER_API_KEY`                       | SAM conversations, website research and summaries                                                                          |
+| `OPENROUTER_BASE_URL`                      | Optional base URL of another OpenAI-compatible server (vLLM, LiteLLM, Ollama); set `OPENROUTER_MODEL` to a model it serves |
+| `OPENROUTER_MODEL`                         | Optional model override                                                                                                    |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional Search Console and Analytics linking with your own Google OAuth app                                               |
+| `CONTEXT_API_KEY`                          | Optional JavaScript rendering for site audits                                                                              |
+| `GOOGLE_MAPS_API_KEY`                      | Optional map for Local SEO; see [`GOOGLE_MAPS_SETUP.md`](./GOOGLE_MAPS_SETUP.md)                                           |
+| `CRAWLER_ACCESS_SECRET`                    | Optional, 32+ random characters; encrypts saved Shopify crawler signatures                                                 |
 
 For Google, register your own OAuth application with these redirect URLs under your public address: `/api/gsc/oauth/callback` for Search Console and `/api/ga4/oauth/callback` for Analytics. See [`SELF_HOSTING_GOOGLE_SEARCH_CONSOLE.md`](./SELF_HOSTING_GOOGLE_SEARCH_CONSOLE.md). Signing in with Google is not offered; accounts use email and password.
 
@@ -157,6 +161,8 @@ curl --fail http://localhost:3001/api/health
 ```
 
 `/api/health` succeeds only when sign-in is configured and the database answers. If `init` fails, Nginx does not start; its log says why. `docker compose down -v` deletes the installation's data and secrets.
+
+The runtime needs a kernel with 4 KiB memory pages. A Raspberry Pi 5's default kernel uses 16 KiB pages, and `init` and `runtime` then exit with a message that says so. Add `kernel=kernel8.img` to `/boot/firmware/config.txt` and reboot to use its 4 KiB kernel. Check with `getconf PAGESIZE`, which should print `4096`.
 
 ## How it works
 

@@ -2,6 +2,9 @@ import {
   BASE_PLAN_OFFER,
   type PlanOffer,
 } from "@/client/features/billing/plan-offers";
+import type { CheckoutPlanId } from "@/shared/billing";
+
+type AnnualPlan = { planId: CheckoutPlanId; priceUsd: number };
 
 // The tiers the subscribe page advertises. Maryland Insights offers the Base
 // plan only; upstream's Pro and Agency SKUs carry upstream prices (see
@@ -13,7 +16,7 @@ export const TIERS = {
     offer: BASE_PLAN_OFFER,
     // No approved Maryland Insights annual price; the yearly switch stays
     // hidden until one is set (see REBUILD.md 1.2).
-    annualPriceUsd: null as number | null,
+    annual: null as AnnualPlan | null,
     description: "For your own website.",
     features: [
       "Keyword research, backlinks, rank tracking, and site audits",
@@ -26,7 +29,7 @@ export const TIERS = {
   string,
   {
     offer: PlanOffer;
-    annualPriceUsd: number | null;
+    annual: AnnualPlan | null;
     description: string;
     features: string[];
   }

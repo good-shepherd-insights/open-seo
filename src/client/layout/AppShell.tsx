@@ -1,19 +1,11 @@
 import * as React from "react";
 import { projectsQueryOptions } from "@/client/features/projects/projectQueries";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  LegacyDockerBanner,
-  MissingSeoSetupModal,
-  SeoApiStatusBanners,
-} from "@/client/layout/AppShellParts";
 import { GscReEngagementModal } from "@/client/features/gsc/GscReEngagementModal";
 import { Sidebar } from "@/client/components/Sidebar";
-import { BILLING_ROUTE } from "@/shared/billing";
 import { BrandWordmark } from "@/client/components/BrandIdentity";
-import { getSeoApiKeyStatus } from "@/serverFunctions/config";
 import { getLastProjectId } from "@/client/lib/active-project";
-import { dataforseoHelpLinkOptions } from "@/client/navigation/items";
 import {
   SidebarInset,
   SidebarProvider,
@@ -32,9 +24,6 @@ export function AuthenticatedAppLayout({
   ready: boolean;
   banner?: React.ReactNode;
 }) {
-  const location = useLocation();
-  const [showMissingSeoApiKeyModal, setShowMissingSeoApiKeyModal] =
-    React.useState(false);
   // On non-project pages (e.g. /settings) there's no projectId in the URL, so
   // derive one for the nav/switcher: prefer the last-visited project, else the
   // most recent. The whole app tree is client-only (see root ClientOnly), so we
@@ -64,48 +53,6 @@ export function AuthenticatedAppLayout({
   // (a first visit to a page without a project in the URL).
   const sidebarProjectPending =
     sidebarProjectId === null && projectsQuery.isPending;
-  // The setup guide is where the modal and banners send the user, so it shows
-  // neither: a banner there would link to the page the user is already on.
-  const shouldCheckSeoApiKeyStatus =
-    location.pathname !== BILLING_ROUTE &&
-    location.pathname !== dataforseoHelpLinkOptions.to;
-  const seoApiKeyStatusQuery = useQuery({
-    queryKey: ["seoApiKeyStatus"],
-    queryFn: () => getSeoApiKeyStatus(),
-    enabled: ready && shouldCheckSeoApiKeyStatus,
-  });
-  const isSeoApiKeyConfigured = shouldCheckSeoApiKeyStatus
-    ? (seoApiKeyStatusQuery.data?.configured ?? null)
-    : null;
-  const seoApiKeyStatusError =
-    shouldCheckSeoApiKeyStatus && seoApiKeyStatusQuery.isError;
-
-  React.useEffect(() => {
-    if (!shouldCheckSeoApiKeyStatus) {
-      setShowMissingSeoApiKeyModal(false);
-      return;
-    }
-
-    if (seoApiKeyStatusQuery.isError) {
-      setShowMissingSeoApiKeyModal(false);
-      return;
-    }
-
-    if (!seoApiKeyStatusQuery.isSuccess) return;
-    setShowMissingSeoApiKeyModal(!seoApiKeyStatusQuery.data.configured);
-  }, [
-    location.pathname,
-    seoApiKeyStatusQuery.data,
-    seoApiKeyStatusQuery.isError,
-    seoApiKeyStatusQuery.isSuccess,
-    shouldCheckSeoApiKeyStatus,
-  ]);
-
-  const shouldShowSeoApiWarning =
-    !seoApiKeyStatusError &&
-    isSeoApiKeyConfigured === false &&
-    !showMissingSeoApiKeyModal;
-
   return (
     <SidebarProvider className="h-[100dvh] min-h-0 overflow-hidden">
       <Sidebar
@@ -115,25 +62,14 @@ export function AuthenticatedAppLayout({
       />
       <SidebarInset className="min-h-0 overflow-hidden md:!m-0 md:!mt-2 md:!rounded-none md:!rounded-tl-lg md:border-l md:border-t md:border-sidebar-border md:!shadow-none">
         <MobileTopBar />
-        <SeoApiStatusBanners
-          shouldShowSeoApiWarning={shouldShowSeoApiWarning}
-          seoApiKeyStatusError={seoApiKeyStatusError}
-        />
-        <LegacyDockerBanner />
         {banner}
         <div className="min-h-0 flex-1 overflow-auto">{children}</div>
       </SidebarInset>
 
-      {showMissingSeoApiKeyModal ? (
-        <MissingSeoSetupModal
-          onClose={() => setShowMissingSeoApiKeyModal(false)}
-        />
-      ) : null}
-
       {ready ? (
         <GscReEngagementModal
           projectId={sidebarProjectId}
-          suppressed={showMissingSeoApiKeyModal}
+          suppressed={false}
         />
       ) : null}
     </SidebarProvider>

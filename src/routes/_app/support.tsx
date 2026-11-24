@@ -10,8 +10,10 @@ import {
   CardTitle,
 } from "@/client/components/ui/card";
 import { SUPPORT_EMAIL } from "@/client/lib/support";
+import { pageHead } from "@/client/lib/pageHead";
 
 export const Route = createFileRoute("/_app/support")({
+  head: () => pageHead("Help & Community"),
   component: SupportPage,
 });
 

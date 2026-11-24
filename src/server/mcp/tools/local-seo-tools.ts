@@ -1,6 +1,11 @@
 /* eslint-disable max-lines */
 import { z } from "zod";
 import {
+  DistanceUnit,
+  distanceUnitForMarket,
+  formatDistance,
+} from "@/shared/distance-unit";
+import {
   buildLocalGrid,
   localGridZoom,
   LOCAL_RANK_DEPTH,
@@ -14,9 +19,15 @@ import {
   type BusinessTaskOutcome,
   type LocalSerpTaskOutcome,
 } from "@/server/lib/dataforseo";
+import { DistanceUnitService } from "@/server/auth/distance-unit";
 import { AppError } from "@/server/lib/errors";
 import { jsonRequired } from "@/shared/errors";
-import { buildCacheKey, getCached, setCached } from "@/server/lib/r2-cache";
+import {
+  buildCacheKey,
+  getCached,
+  getCachedStrict,
+  setCached,
+} from "@/server/lib/r2-cache";
 import { buildProjectMeta } from "@/server/mcp/context";
 import { mcpResponse } from "@/server/mcp/formatters";
 import {
@@ -227,7 +238,7 @@ export const getBusinessProfileTool = {
   config: {
     title: "Get business profile",
     description:
-      "Reads one Google Business Profile by name, cid, or placeId: categories, rating and review count, rating breakdown, address, phone, website, claimed status, opening hours, and photo count. Use it to audit your own profile, to compare a named competitor's, or to check whether a business has a Google Business Profile at all — it is the cheapest tool for that question, less than half the credits of search_local_businesses. For identity or existence checks, reuse a business already present in your search results. Fetch the full profile when you need missing details such as opening hours or rating breakdown. Charges credits.",
+      "Get one Google Business Profile by name, cid, or placeId: categories, rating and review count, rating breakdown, address, phone, website, claimed status, opening hours, and photo count. Use it to audit the user's own profile, to compare a named competitor's, or to check whether a business has a Google Business Profile at all: it is the cheapest tool for that, at less than half the credits of search_local_businesses. Skip it when a search result already answers an identity or existence check. Uses credits. To discover businesses you cannot name yet, use search_local_businesses; for reviews and posts, use get_business_reviews and get_business_updates.",
     inputSchema: getBusinessProfileInputSchema,
     outputSchema: z.looseObject({
       profile: looseObjectOutputSchema.nullable(),
@@ -250,7 +261,7 @@ export const getBusinessProfileTool = {
     return mcpResponse({
       text: profile
         ? `Google Business Profile:\n${formatProfileText(profile)}`
-        : "No Google Business Profile matched that identifier. Try a cid or placeId from get_local_serp_results.",
+        : "No Google Business Profile matched that identifier. For a name lookup, call again with `near` set to the storefront's coordinate, or find its cid with search_local_businesses (query = the business name). Both charge credits.",
       meta: buildProjectMeta(context, args.projectId, `/p/${args.projectId}`),
       structuredContent: { profile },
     });
@@ -373,7 +384,7 @@ export const getBusinessReviewsTool = {
   config: {
     title: "Get business reviews",
     description:
-      "Collects Google reviews for a business, with rating, author, text, and the owner's reply. Use it for review-gap analysis against competitors and to spot unanswered reviews. Usually completes within this call; if the queued job is still running you get status 'processing' plus a taskId — call again with that taskId in 30-60 seconds to collect the result at no extra cost. Charges credits.",
+      "Get the Google reviews of a business, each with rating, author, text, and the owner's reply. Use it for review-gap analysis against competitors and to spot unanswered reviews. It usually completes within the call; a 'processing' response returns a taskId to call again with in 30-60 seconds at no extra cost. Uses credits, billed by the number of reviews collected. For the rating and review count alone, use get_business_profile.",
     inputSchema: getBusinessReviewsInputSchema,
     outputSchema: z.looseObject({
       status: z.enum(["completed", "processing"]),
@@ -441,7 +452,9 @@ export const getBusinessReviewsTool = {
     return mcpResponse({
       text:
         reviews.length === 0
-          ? `${header} This profile has no reviews matching the request.`
+          ? outcome.result
+            ? `${header} This profile has no reviews matching the request.`
+            : `${header} Google returned nothing for this business: either it has no reviews or the identifier didn't match a profile. Confirm the business with get_business_profile, or pass its cid.`
           : `${header} Reviews longer than 300 characters and owner replies longer than 200 end in "…" (full text in structuredContent).\n${formatMcpTable(reviews, REVIEW_COLUMNS)}`,
       meta: buildProjectMeta(context, args.projectId, `/p/${args.projectId}`),
       structuredContent: {
@@ -529,7 +542,7 @@ export const getBusinessUpdatesTool = {
   config: {
     title: "Get business updates",
     description:
-      "Collects the posts (updates, offers, events) published on a Google Business Profile. Use it to check posting activity and recency on your profile or a competitor's. Usually completes within this call; a 'processing' response returns a taskId to call back with in 30-60 seconds at no extra cost. Charges credits.",
+      "Get the posts (updates, offers, events) published on a Google Business Profile. Use it to check posting activity and recency on the user's profile or a competitor's. It usually completes within the call; a 'processing' response returns a taskId to call again with in 30-60 seconds at no extra cost. Uses credits.",
     inputSchema: getBusinessUpdatesInputSchema,
     outputSchema: z.looseObject({
       status: z.enum(["completed", "processing"]),
@@ -579,7 +592,9 @@ export const getBusinessUpdatesTool = {
     return mcpResponse({
       text:
         updates.length === 0
-          ? `${header} This profile has published no posts.`
+          ? outcome.result
+            ? `${header} This profile has published no posts.`
+            : `${header} Google returned nothing for this business: either it has no posts or the identifier didn't match a profile. Confirm the business with get_business_profile, or pass its cid.`
           : `${header} Posts longer than 300 characters end in "…" (full text in structuredContent).\n${formatMcpTable(updates, BUSINESS_UPDATE_COLUMNS)}`,
       meta: buildProjectMeta(context, args.projectId, `/p/${args.projectId}`),
       structuredContent: { status: "completed", taskId, updates },
@@ -634,7 +649,7 @@ export const listBusinessCategoriesTool = {
   config: {
     title: "List business categories",
     description:
-      "Lists the Google Business categories DataForSEO recognizes, ranked by how many businesses use them. Use it to find valid category slugs for search_local_businesses (e.g. 'pizza_restaurant'). Uses no credits (the full list is cached for 7 days).",
+      "List Google Business categories, ranked by how many businesses use them. Use it to find valid category slugs, such as 'pizza_restaurant', for search_local_businesses; pass query to match part of a slug. Uses no credits.",
     inputSchema: listBusinessCategoriesInputSchema,
     outputSchema: z.looseObject({
       categories: z.array(
@@ -666,7 +681,11 @@ export const listBusinessCategoriesTool = {
       if (!all) {
         // Free at DataForSEO, so this skips the metered client — see index.ts.
         all = (await fetchBusinessListingsCategories()).data;
-        await setCached(cacheKey, all, BUSINESS_CATEGORIES_TTL_SECONDS);
+        await setCached(cacheKey, all, BUSINESS_CATEGORIES_TTL_SECONDS).catch(
+          (error) => {
+            console.error("local-seo.categories.cache-write failed:", error);
+          },
+        );
       }
 
       const query = args.query?.toLowerCase();
@@ -730,7 +749,7 @@ const getLocalRankGridInputSchema = {
         .max(200)
         .optional()
         .describe(
-          "Match rows whose title contains this text (case-insensitive). Used only when cid/placeId do not match.",
+          "Match rows whose title contains this text (case-insensitive). Used only when neither cid nor placeId is given.",
         ),
     })
     .describe(
@@ -805,7 +824,12 @@ function matchGridItem(
   items: unknown[],
   target: { cid?: string; placeId?: string; name?: string },
 ) {
-  const name = target.name?.toLowerCase();
+  // A name only identifies the business when no id was given: with an id, a
+  // title match can be a different business with a similar name.
+  const name =
+    target.cid == null && target.placeId == null
+      ? target.name?.toLowerCase()
+      : undefined;
   return items.find((item) => {
     if (target.cid != null && readPath(item, "cid") === target.cid) return true;
     if (target.placeId != null && readPath(item, "place_id") === target.placeId)
@@ -882,7 +906,7 @@ const GRID_POINT_COLUMNS: McpTableColumn<GridPointResult>[] = [
 
 function formatMatchedBusiness(business: MatchedBusiness | null): string {
   if (!business) {
-    return "Matched business: none — the target was not found at any point, so no point has a rank.";
+    return "Matched business: none — the target was not found at any point, so no point has a rank. If its name may not match the Maps listing, get its cid from get_local_serp_results at the center, then call get_local_rank_grid again with target.cid and the same other arguments within an hour; that re-reads these searches at no extra charge.";
   }
   return `Matched business: ${formatMcpCell(business.title)} (cid ${formatMcpCell(business.cid)}, place_id ${formatMcpCell(business.placeId)}).`;
 }
@@ -892,10 +916,16 @@ export const getLocalRankGridTool = {
   config: {
     title: "Get local rank grid",
     description:
-      "Runs one Google Maps search per point of a square grid around a coordinate and reports where the target business ranks at each point — plus each point's result count and #1 business — revealing how far its Maps visibility reaches. Cost scales with the grid: gridSize squared SERP calls (3x3 = 9, the sensible default; 5x5 = 25). Charges credits per grid point. The searches run as one queued batch that usually finishes within this call; if some are still running you get status 'processing'. Calling again with the same arguments within an hour collects the same searches at no extra charge, so repeat the call in about a minute to finish a 'processing' grid or to recover a lost response.",
+      "Map how far a business's Google Maps visibility reaches: runs one Maps search per point of a square grid around a coordinate and reports where the target business ranks at each point, plus each point's result count and #1 business. Uses credits per grid point: 3x3 = 9 searches (the sensible default), 5x5 = 25. It usually finishes within the call; if you get status 'processing' or lose the response, repeat the call with the same arguments in about a minute: within an hour it collects the same searches at no extra charge. For one Maps result list from a single point, use get_local_serp_results.",
     inputSchema: getLocalRankGridInputSchema,
     outputSchema: z.looseObject({
       status: z.enum(["completed", "processing"]),
+      distanceUnit: z
+        .enum(DistanceUnit)
+        .optional()
+        .describe(
+          "The unit to write distances in for this user: their Settings choice, else miles for a US project and km otherwise.",
+        ),
       pointsReady: z.number().optional(),
       pointsTotal: z.number().optional(),
       retryAfterSeconds: z.number().optional(),
@@ -975,7 +1005,7 @@ export const getLocalRankGridTool = {
       languageCode,
     });
     const receipt = rankGridReceiptSchema.safeParse(
-      await getCached(receiptKey),
+      await getCachedStrict(receiptKey),
     );
     let taskIds: Array<string | null>;
     if (receipt.success) {
@@ -1088,8 +1118,12 @@ export const getLocalRankGridTool = {
       top10Count: ranks.filter((rank) => rank <= 10).length,
     };
 
+    const distanceUnit = await DistanceUnitService.get({
+      userId: context.auth.userId,
+      fallback: distanceUnitForMarket(context.project.locationCode),
+    });
     const text = [
-      `Local rank grid for "${args.keyword}" (${gridSize}x${gridSize}, ${spacingKm} km spacing, zoom ${zoom}, top ${LOCAL_RANK_DEPTH} checked).`,
+      `Local rank grid for "${args.keyword}" (${gridSize}x${gridSize}, ${formatDistance(spacingKm, distanceUnit)} between points, zoom ${zoom}, top ${LOCAL_RANK_DEPTH} checked). Write distances for this user in ${distanceUnit === DistanceUnit.Mi ? "miles" : "kilometers"} (distanceUnit "${distanceUnit}").`,
       formatMatchedBusiness(matchedBusiness),
       `Rank per point, north at the top ("–" = not among the results returned there, "x" = search failed but may still be charged):`,
       renderGrid(grid, gridSize),
@@ -1105,6 +1139,7 @@ export const getLocalRankGridTool = {
       meta: buildProjectMeta(context, args.projectId, `/p/${args.projectId}`),
       structuredContent: {
         status: "completed",
+        distanceUnit,
         grid,
         summary,
         matchedBusiness,

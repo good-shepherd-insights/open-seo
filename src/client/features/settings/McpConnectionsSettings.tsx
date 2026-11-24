@@ -24,12 +24,13 @@ import {
   revokeMcpConnection,
 } from "@/serverFunctions/mcp-connections";
 
+type McpConnection = Awaited<ReturnType<typeof listMcpConnections>>[number];
+
 export function McpConnectionsSettings() {
   const queryClient = useQueryClient();
-  const [disconnecting, setDisconnecting] = useState<{
-    id: string;
-    clientName: string;
-  } | null>(null);
+  const [disconnecting, setDisconnecting] = useState<McpConnection | null>(
+    null,
+  );
   const { hasMultiple: showOrganization, organizationName } =
     useOrganizations();
 
@@ -39,9 +40,19 @@ export function McpConnectionsSettings() {
   });
 
   const disconnectMutation = useMutation({
-    mutationFn: (grantId: string) => revokeMcpConnection({ data: { grantId } }),
-    onSuccess: () => {
-      captureClientEvent("mcp:connection_revoked");
+    mutationFn: (connection: McpConnection) =>
+      revokeMcpConnection({
+        data:
+          connection.kind === "oauth"
+            ? { kind: "oauth", grantId: connection.id }
+            : {
+                kind: "stripe",
+                organizationId: connection.organizationId,
+                stripeAccountId: connection.stripeAccountId,
+              },
+      }),
+    onSuccess: (_, connection) => {
+      captureClientEvent("mcp:connection_revoked", { kind: connection.kind });
       toast.success("Agent disconnected");
       setDisconnecting(null);
       void queryClient.invalidateQueries({ queryKey: ["mcpConnections"] });
@@ -52,7 +63,8 @@ export function McpConnectionsSettings() {
     <section className="space-y-3">
       <SectionHeader title="Connected agents" />
       <p className="text-sm">
-        AI clients signed in to {PRODUCT_NAME} with OAuth.
+        AI clients signed in to {PRODUCT_NAME} with OAuth or added through
+        Stripe Projects.
       </p>
 
       <QueryState
@@ -97,12 +109,7 @@ export function McpConnectionsSettings() {
                         >
                           <DropdownMenuItem
                             variant="destructive"
-                            onClick={() =>
-                              setDisconnecting({
-                                id: connection.id,
-                                clientName: connection.clientName,
-                              })
-                            }
+                            onClick={() => setDisconnecting(connection)}
                           >
                             <Unplug />
                             Disconnect
@@ -125,9 +132,11 @@ export function McpConnectionsSettings() {
           destructive
           pending={disconnectMutation.isPending}
           onClose={() => setDisconnecting(null)}
-          onConfirm={() => disconnectMutation.mutate(disconnecting.id)}
+          onConfirm={() => disconnectMutation.mutate(disconnecting)}
         >
-          It will have to sign in to {PRODUCT_NAME} again.
+          {disconnecting.kind === "oauth"
+            ? `It will have to sign in to ${PRODUCT_NAME} again.`
+            : "Stripe can't create new keys, and the keys it created stop working. Run stripe projects add openseo/api to connect again."}
         </ConfirmDialog>
       ) : null}
     </section>

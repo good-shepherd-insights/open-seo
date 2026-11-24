@@ -4,12 +4,14 @@
  * Each step is durable - if a step fails, it retries without redoing
  * completed steps.
  */
+import { AuditStatus } from "@/shared/audit-status";
 import {
   WorkflowEntrypoint,
   type WorkflowEvent,
   type WorkflowStep,
 } from "cloudflare:workers";
 import { withPgClient } from "@/db";
+import { yieldingStep } from "@/server/workflows/yieldingStep";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 import { AuditRepository } from "@/server/features/audit/repositories/AuditRepository";
 import {
@@ -58,7 +60,7 @@ export class SiteAuditWorkflow extends WorkflowEntrypoint<Env, AuditParams> {
     // Scope a per-request Postgres client for this workflow invocation (no-op in
     // D1 mode). The socket is reclaimed when the invocation ends, so there is
     // nothing to tear down here.
-    return withPgClient(() => this.runScoped(event, step));
+    return withPgClient(() => this.runScoped(event, yieldingStep(step)));
   }
 
   private async runScoped(
@@ -136,7 +138,7 @@ export class SiteAuditWorkflow extends WorkflowEntrypoint<Env, AuditParams> {
         );
         // A completed audit (e.g. cleanup failed after finalize) stays
         // completed, so it gets no failure telemetry either.
-        if (runningAudit?.status !== "running") return;
+        if (runningAudit?.status !== AuditStatus.Running) return;
         await AuditRepository.failAudit(auditId, event.instanceId, {
           ...errorInfo,
           failedPhase: runningAudit?.currentPhase ?? null,
@@ -166,7 +168,7 @@ export class SiteAuditWorkflow extends WorkflowEntrypoint<Env, AuditParams> {
           organizationId: billingCustomer.organizationId,
           properties: {
             project_id: projectId,
-            status: "failed",
+            status: AuditStatus.Failed,
             error_code: errorInfo.errorCode,
             failed_phase: runningAudit?.currentPhase,
             pages_crawled: runningAudit?.pagesCrawled,

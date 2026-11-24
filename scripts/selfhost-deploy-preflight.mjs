@@ -35,7 +35,7 @@ if (!existsSync(envFile)) {
     "",
     `  ${cmd("cp deploy/.env.selfhost.example .env.selfhost")}`,
     "",
-    `then set ${em("DATAFORSEO_API_KEY")}.`,
+    `then set ${em("DATAFORSEO_API_KEY")} (or ${em("TREG_API_TOKEN")}).`,
   );
 }
 const env = {};
@@ -43,9 +43,9 @@ for (const line of readFileSync(envFile, "utf8").split("\n")) {
   const match = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/.exec(line);
   if (match) env[match[1]] = match[2].replace(/^(["'])(.*)\1$/, "$2");
 }
-if (!env.DATAFORSEO_API_KEY) {
+if (!env.DATAFORSEO_API_KEY?.trim() && !env.TREG_API_TOKEN?.trim()) {
   fail(
-    `${em("DATAFORSEO_API_KEY")} is not set in ${envFile} — see docs/DATAFORSEO_API_KEY.md for how to get one.`,
+    `Neither ${em("DATAFORSEO_API_KEY")} nor ${em("TREG_API_TOKEN")} is set in ${envFile} — see docs/DATAFORSEO_API_KEY.md for how to get one.`,
   );
 }
 // Mirrors the stack's default (deploy/alchemy/alchemy.run.ts): an unset
@@ -84,7 +84,7 @@ if (!process.env.CLOUDFLARE_API_TOKEN) {
   }
   if (!cloudflare) {
     fail(
-      `No Cloudflare login found (alchemy profile "${profileName}") — run ${cmd("pnpm alchemy login")} first`,
+      `No Cloudflare login found (alchemy profile "${profileName}") — run ${cmd("pnpm alchemy login deploy/alchemy/alchemy.run.ts")} first`,
       managedAccess
         ? `(answer yes to "Customize OAuth scopes?" and enable ${em("access:write")}).`
         : "(the default scopes are enough).",
@@ -100,7 +100,7 @@ if (!process.env.CLOUDFLARE_API_TOKEN) {
       `Your Cloudflare login is missing the ${em("access:write")} scope, which the deploy needs`,
       "to provision the Cloudflare Access login gate. Log in again with the scope enabled:",
       "",
-      `  ${cmd("pnpm alchemy login --configure")}`,
+      `  ${cmd("pnpm alchemy login deploy/alchemy/alchemy.run.ts --configure")}`,
       "",
       `When asked "Customize OAuth scopes?", answer yes, then select ${em("access:write")}`,
       "(space to toggle, enter to confirm — keep the preselected defaults).",

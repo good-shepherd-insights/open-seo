@@ -2,7 +2,6 @@ import {
   AUTUMN_AGENCY_PLAN_ID,
   AUTUMN_PAID_PLAN_ID,
   AUTUMN_PRO_PLAN_ID,
-  AUTUMN_YC_PLAN_ID,
   type CheckoutPlanId,
 } from "@/shared/billing";
 
@@ -23,16 +22,6 @@ export const BASE_PLAN_OFFER: PlanOffer = {
   monthlyCreditsUsd: 200,
 };
 
-export const YC_PLAN_OFFER: PlanOffer = {
-  planId: AUTUMN_YC_PLAN_ID,
-  name: "YC Plan",
-  priceUsd: 50,
-  monthlyCreditsUsd: 50,
-};
-
-// Defined so plan attribution and reporting can resolve any Autumn plan id.
-// What the subscribe page actually ADVERTISES is TIERS in subscribe-tiers.ts,
-// which Maryland Insights restricts to Base (see REBUILD.md 1.1).
 export const PRO_PLAN_OFFER: PlanOffer = {
   planId: AUTUMN_PRO_PLAN_ID,
   name: "Pro Plan",
@@ -43,16 +32,9 @@ export const PRO_PLAN_OFFER: PlanOffer = {
 export const AGENCY_PLAN_OFFER: PlanOffer = {
   planId: AUTUMN_AGENCY_PLAN_ID,
   name: "Agency Plan",
-  priceUsd: 200,
-  monthlyCreditsUsd: 240,
+  priceUsd: 100,
+  monthlyCreditsUsd: 120,
 };
-
-/** Every tier plan, for id -> offer lookups. Not the advertised set. */
-export const TIER_PLAN_OFFERS = [
-  BASE_PLAN_OFFER,
-  PRO_PLAN_OFFER,
-  AGENCY_PLAN_OFFER,
-] as const;
 
 export function monthlyCreditsFeature(offer: PlanOffer) {
   return `Includes $${offer.monthlyCreditsUsd.toFixed(2)} of Usage Credits each month`;

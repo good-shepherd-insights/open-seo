@@ -1,9 +1,62 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6cca16e1-92c7-4b3a-adab-ab6e7fa48d21",
+  "id": "f1b39d04-0124-442f-afd9-49710ac7afb7",
   "prevId": "633a88f7-a404-403e-9507-e5c69314be6c",
   "tables": {
+    "account_deletion_requests": {
+      "name": "account_deletion_requests",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requested_at": {
+          "name": "requested_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "delete_after": {
+          "name": "delete_after",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "account_deletion_requests_delete_after_idx": {
+          "name": "account_deletion_requests_delete_after_idx",
+          "columns": [
+            "delete_after"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "account_deletion_requests_user_id_user_id_fk": {
+          "name": "account_deletion_requests_user_id_user_id_fk",
+          "tableFrom": "account_deletion_requests",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "backlink_snapshots": {
       "name": "backlink_snapshots",
       "columns": {
@@ -216,88 +269,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "dashboard_card_positions": {
-      "name": "dashboard_card_positions",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "card_id": {
-          "name": "card_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "position": {
-          "name": "position",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "dashboard_card_positions_project_idx": {
-          "name": "dashboard_card_positions_project_idx",
-          "columns": [
-            "project_id"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "dashboard_card_positions_user_id_user_id_fk": {
-          "name": "dashboard_card_positions_user_id_user_id_fk",
-          "tableFrom": "dashboard_card_positions",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "dashboard_card_positions_project_id_projects_id_fk": {
-          "name": "dashboard_card_positions_project_id_projects_id_fk",
-          "tableFrom": "dashboard_card_positions",
-          "tableTo": "projects",
-          "columnsFrom": [
-            "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "dashboard_card_positions_user_id_project_id_card_id_pk": {
-          "columns": [
-            "user_id",
-            "project_id",
-            "card_id"
-          ],
-          "name": "dashboard_card_positions_user_id_project_id_card_id_pk"
-        }
-      },
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -3863,13 +3834,6 @@
         "analytics_opted_out": {
           "name": "analytics_opted_out",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "agent_id": {
-          "name": "agent_id",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

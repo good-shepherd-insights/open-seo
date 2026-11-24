@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CampaignRouteImport } from './routes/_campaign'
 import { Route as MarketingRouteImport } from './routes/_marketing'
 import { Route as AgentSetupDottxtRouteImport } from './routes/agent-setup[.]txt'
+import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as CampaignAgenciesRouteImport } from './routes/_campaign/agencies'
 import { Route as CampaignAgentsRouteImport } from './routes/_campaign/agents'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
@@ -32,6 +33,7 @@ import { Route as MarketingPrivacyRouteImport } from './routes/_marketing/privac
 import { Route as MarketingRoadmapRouteImport } from './routes/_marketing/roadmap'
 import { Route as MarketingSemrushAlternativeRouteImport } from './routes/_marketing/semrush-alternative'
 import { Route as MarketingSemrushPricingRouteImport } from './routes/_marketing/semrush-pricing'
+import { Route as MarketingSeoReportRouteImport } from './routes/_marketing/seo-report'
 import { Route as MarketingSerpSimulatorRouteImport } from './routes/_marketing/serp-simulator'
 import { Route as MarketingSpamScoreCheckerRouteImport } from './routes/_marketing/spam-score-checker'
 import { Route as MarketingSupportRouteImport } from './routes/_marketing/support'
@@ -46,6 +48,7 @@ import { Route as ApiDomainAgeCheckerRouteImport } from './routes/api/domain-age
 import { Route as ApiEventRouteImport } from './routes/api/event'
 import { Route as ApiKeywordGeneratorRouteImport } from './routes/api/keyword-generator'
 import { Route as ApiPrivacyRegionRouteImport } from './routes/api/privacy-region'
+import { Route as ApiSeoReportRouteImport } from './routes/api/seo-report'
 import { Route as ApiSpamScoreCheckerRouteImport } from './routes/api/spam-score-checker'
 import { Route as ApiSubscribeRouteImport } from './routes/api/subscribe'
 import { Route as ApiWebsiteTrafficCheckerRouteImport } from './routes/api/website-traffic-checker'
@@ -53,11 +56,14 @@ import { Route as BlogsIndexRouteImport } from './routes/blogs/index'
 import { Route as BlogsSplatRouteImport } from './routes/blogs/$'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
 import { Route as DocsSplatRouteImport } from './routes/docs/$'
+import { Route as DocsClaudeRouteImport } from './routes/docs/claude'
+import { Route as DocsCodexRouteImport } from './routes/docs/codex'
 import { Route as DocsLlmsDottxtRouteImport } from './routes/docs/llms[.]txt'
 import { Route as GuidesIndexRouteImport } from './routes/guides/index'
 import { Route as GuidesSplatRouteImport } from './routes/guides/$'
 import { Route as JsMetaDotjsRouteImport } from './routes/js/meta[.]js'
 import { Route as JsScriptDotjsRouteImport } from './routes/js/script[.]js'
+import { Route as CampaignStartAngleRouteImport } from './routes/_campaign/start.$angle'
 import { Route as MarketingFeaturesIndexRouteImport } from './routes/_marketing/features/index'
 import { Route as MarketingFeaturesAiBrandVisibilityRouteImport } from './routes/_marketing/features/ai-brand-visibility'
 import { Route as MarketingFeaturesAiSearchPromptsRouteImport } from './routes/_marketing/features/ai-search-prompts'
@@ -102,6 +108,7 @@ import { Route as MarketingLibrarySiteAuditIndexRouteImport } from './routes/_ma
 import { Route as MarketingLibrarySiteAuditIndexBloatRouteImport } from './routes/_marketing/library/site-audit/index-bloat'
 import { Route as MarketingLibrarySiteAuditSeoAuditReportTemplateRouteImport } from './routes/_marketing/library/site-audit/seo-audit-report-template'
 import { Route as MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRouteImport } from './routes/_marketing/library/site-audit/technical-seo-audit-checklist'
+import { Route as MarketingSeoReportRTokenRouteImport } from './routes/_marketing/seo-report_.r.$token'
 
 const CampaignRoute = CampaignRouteImport.update({
   id: '/_campaign',
@@ -114,6 +121,11 @@ const MarketingRoute = MarketingRouteImport.update({
 const AgentSetupDottxtRoute = AgentSetupDottxtRouteImport.update({
   id: '/agent-setup.txt',
   path: '/agent-setup.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogsRoute = BlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampaignAgenciesRoute = CampaignAgenciesRouteImport.update({
@@ -225,6 +237,11 @@ const MarketingSemrushPricingRoute = MarketingSemrushPricingRouteImport.update({
   path: '/semrush-pricing',
   getParentRoute: () => MarketingRoute,
 } as any)
+const MarketingSeoReportRoute = MarketingSeoReportRouteImport.update({
+  id: '/seo-report',
+  path: '/seo-report',
+  getParentRoute: () => MarketingRoute,
+} as any)
 const MarketingSerpSimulatorRoute = MarketingSerpSimulatorRouteImport.update({
   id: '/serp-simulator',
   path: '/serp-simulator',
@@ -299,6 +316,11 @@ const ApiPrivacyRegionRoute = ApiPrivacyRegionRouteImport.update({
   path: '/api/privacy-region',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSeoReportRoute = ApiSeoReportRouteImport.update({
+  id: '/api/seo-report',
+  path: '/api/seo-report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSpamScoreCheckerRoute = ApiSpamScoreCheckerRouteImport.update({
   id: '/api/spam-score-checker',
   path: '/api/spam-score-checker',
@@ -316,14 +338,14 @@ const ApiWebsiteTrafficCheckerRoute =
     getParentRoute: () => rootRouteImport,
   } as any)
 const BlogsIndexRoute = BlogsIndexRouteImport.update({
-  id: '/blogs/',
-  path: '/blogs/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogsRoute,
 } as any)
 const BlogsSplatRoute = BlogsSplatRouteImport.update({
-  id: '/blogs/$',
-  path: '/blogs/$',
-  getParentRoute: () => rootRouteImport,
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => BlogsRoute,
 } as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/docs/',
@@ -333,6 +355,16 @@ const DocsIndexRoute = DocsIndexRouteImport.update({
 const DocsSplatRoute = DocsSplatRouteImport.update({
   id: '/docs/$',
   path: '/docs/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsClaudeRoute = DocsClaudeRouteImport.update({
+  id: '/docs/claude',
+  path: '/docs/claude',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsCodexRoute = DocsCodexRouteImport.update({
+  id: '/docs/codex',
+  path: '/docs/codex',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsLlmsDottxtRoute = DocsLlmsDottxtRouteImport.update({
@@ -359,6 +391,11 @@ const JsScriptDotjsRoute = JsScriptDotjsRouteImport.update({
   id: '/js/script.js',
   path: '/js/script.js',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CampaignStartAngleRoute = CampaignStartAngleRouteImport.update({
+  id: '/start/$angle',
+  path: '/start/$angle',
+  getParentRoute: () => CampaignRoute,
 } as any)
 const MarketingFeaturesIndexRoute = MarketingFeaturesIndexRouteImport.update({
   id: '/features/',
@@ -625,10 +662,17 @@ const MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute =
     path: '/library/site-audit/technical-seo-audit-checklist',
     getParentRoute: () => MarketingRoute,
   } as any)
+const MarketingSeoReportRTokenRoute =
+  MarketingSeoReportRTokenRouteImport.update({
+    id: '/seo-report_/r/$token',
+    path: '/seo-report/r/$token',
+    getParentRoute: () => MarketingRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MarketingIndexRoute
   '/agent-setup.txt': typeof AgentSetupDottxtRoute
+  '/blogs': typeof BlogsRouteWithChildren
   '/agencies': typeof CampaignAgenciesRoute
   '/agents': typeof CampaignAgentsRoute
   '/about': typeof MarketingAboutRoute
@@ -648,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/roadmap': typeof MarketingRoadmapRoute
   '/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/semrush-pricing': typeof MarketingSemrushPricingRoute
+  '/seo-report': typeof MarketingSeoReportRoute
   '/serp-simulator': typeof MarketingSerpSimulatorRoute
   '/spam-score-checker': typeof MarketingSpamScoreCheckerRoute
   '/support': typeof MarketingSupportRoute
@@ -662,11 +707,14 @@ export interface FileRoutesByFullPath {
   '/api/event': typeof ApiEventRoute
   '/api/keyword-generator': typeof ApiKeywordGeneratorRoute
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
+  '/api/seo-report': typeof ApiSeoReportRoute
   '/api/spam-score-checker': typeof ApiSpamScoreCheckerRoute
   '/api/subscribe': typeof ApiSubscribeRoute
   '/api/website-traffic-checker': typeof ApiWebsiteTrafficCheckerRoute
   '/blogs/$': typeof BlogsSplatRoute
   '/docs/$': typeof DocsSplatRoute
+  '/docs/claude': typeof DocsClaudeRoute
+  '/docs/codex': typeof DocsCodexRoute
   '/docs/llms.txt': typeof DocsLlmsDottxtRoute
   '/guides/$': typeof GuidesSplatRoute
   '/js/meta.js': typeof JsMetaDotjsRoute
@@ -674,6 +722,7 @@ export interface FileRoutesByFullPath {
   '/blogs/': typeof BlogsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/guides/': typeof GuidesIndexRoute
+  '/start/$angle': typeof CampaignStartAngleRoute
   '/features/ai-brand-visibility': typeof MarketingFeaturesAiBrandVisibilityRoute
   '/features/ai-search-prompts': typeof MarketingFeaturesAiSearchPromptsRoute
   '/features/backlink-checker': typeof MarketingFeaturesBacklinkCheckerRoute
@@ -712,6 +761,7 @@ export interface FileRoutesByFullPath {
   '/library/site-audit/index-bloat': typeof MarketingLibrarySiteAuditIndexBloatRoute
   '/library/site-audit/seo-audit-report-template': typeof MarketingLibrarySiteAuditSeoAuditReportTemplateRoute
   '/library/site-audit/technical-seo-audit-checklist': typeof MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute
+  '/seo-report/r/$token': typeof MarketingSeoReportRTokenRoute
   '/library/ai-agent-seo/': typeof MarketingLibraryAiAgentSeoIndexRoute
   '/library/competitive-analysis/': typeof MarketingLibraryCompetitiveAnalysisIndexRoute
   '/library/keyword-research/': typeof MarketingLibraryKeywordResearchIndexRoute
@@ -741,6 +791,7 @@ export interface FileRoutesByTo {
   '/roadmap': typeof MarketingRoadmapRoute
   '/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/semrush-pricing': typeof MarketingSemrushPricingRoute
+  '/seo-report': typeof MarketingSeoReportRoute
   '/serp-simulator': typeof MarketingSerpSimulatorRoute
   '/spam-score-checker': typeof MarketingSpamScoreCheckerRoute
   '/support': typeof MarketingSupportRoute
@@ -755,11 +806,14 @@ export interface FileRoutesByTo {
   '/api/event': typeof ApiEventRoute
   '/api/keyword-generator': typeof ApiKeywordGeneratorRoute
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
+  '/api/seo-report': typeof ApiSeoReportRoute
   '/api/spam-score-checker': typeof ApiSpamScoreCheckerRoute
   '/api/subscribe': typeof ApiSubscribeRoute
   '/api/website-traffic-checker': typeof ApiWebsiteTrafficCheckerRoute
   '/blogs/$': typeof BlogsSplatRoute
   '/docs/$': typeof DocsSplatRoute
+  '/docs/claude': typeof DocsClaudeRoute
+  '/docs/codex': typeof DocsCodexRoute
   '/docs/llms.txt': typeof DocsLlmsDottxtRoute
   '/guides/$': typeof GuidesSplatRoute
   '/js/meta.js': typeof JsMetaDotjsRoute
@@ -767,6 +821,7 @@ export interface FileRoutesByTo {
   '/blogs': typeof BlogsIndexRoute
   '/docs': typeof DocsIndexRoute
   '/guides': typeof GuidesIndexRoute
+  '/start/$angle': typeof CampaignStartAngleRoute
   '/features/ai-brand-visibility': typeof MarketingFeaturesAiBrandVisibilityRoute
   '/features/ai-search-prompts': typeof MarketingFeaturesAiSearchPromptsRoute
   '/features/backlink-checker': typeof MarketingFeaturesBacklinkCheckerRoute
@@ -805,6 +860,7 @@ export interface FileRoutesByTo {
   '/library/site-audit/index-bloat': typeof MarketingLibrarySiteAuditIndexBloatRoute
   '/library/site-audit/seo-audit-report-template': typeof MarketingLibrarySiteAuditSeoAuditReportTemplateRoute
   '/library/site-audit/technical-seo-audit-checklist': typeof MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute
+  '/seo-report/r/$token': typeof MarketingSeoReportRTokenRoute
   '/library/ai-agent-seo': typeof MarketingLibraryAiAgentSeoIndexRoute
   '/library/competitive-analysis': typeof MarketingLibraryCompetitiveAnalysisIndexRoute
   '/library/keyword-research': typeof MarketingLibraryKeywordResearchIndexRoute
@@ -817,6 +873,7 @@ export interface FileRoutesById {
   '/_campaign': typeof CampaignRouteWithChildren
   '/_marketing': typeof MarketingRouteWithChildren
   '/agent-setup.txt': typeof AgentSetupDottxtRoute
+  '/blogs': typeof BlogsRouteWithChildren
   '/_campaign/agencies': typeof CampaignAgenciesRoute
   '/_campaign/agents': typeof CampaignAgentsRoute
   '/_marketing/about': typeof MarketingAboutRoute
@@ -836,6 +893,7 @@ export interface FileRoutesById {
   '/_marketing/roadmap': typeof MarketingRoadmapRoute
   '/_marketing/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/_marketing/semrush-pricing': typeof MarketingSemrushPricingRoute
+  '/_marketing/seo-report': typeof MarketingSeoReportRoute
   '/_marketing/serp-simulator': typeof MarketingSerpSimulatorRoute
   '/_marketing/spam-score-checker': typeof MarketingSpamScoreCheckerRoute
   '/_marketing/support': typeof MarketingSupportRoute
@@ -850,11 +908,14 @@ export interface FileRoutesById {
   '/api/event': typeof ApiEventRoute
   '/api/keyword-generator': typeof ApiKeywordGeneratorRoute
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
+  '/api/seo-report': typeof ApiSeoReportRoute
   '/api/spam-score-checker': typeof ApiSpamScoreCheckerRoute
   '/api/subscribe': typeof ApiSubscribeRoute
   '/api/website-traffic-checker': typeof ApiWebsiteTrafficCheckerRoute
   '/blogs/$': typeof BlogsSplatRoute
   '/docs/$': typeof DocsSplatRoute
+  '/docs/claude': typeof DocsClaudeRoute
+  '/docs/codex': typeof DocsCodexRoute
   '/docs/llms.txt': typeof DocsLlmsDottxtRoute
   '/guides/$': typeof GuidesSplatRoute
   '/js/meta.js': typeof JsMetaDotjsRoute
@@ -863,6 +924,7 @@ export interface FileRoutesById {
   '/blogs/': typeof BlogsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/guides/': typeof GuidesIndexRoute
+  '/_campaign/start/$angle': typeof CampaignStartAngleRoute
   '/_marketing/features/ai-brand-visibility': typeof MarketingFeaturesAiBrandVisibilityRoute
   '/_marketing/features/ai-search-prompts': typeof MarketingFeaturesAiSearchPromptsRoute
   '/_marketing/features/backlink-checker': typeof MarketingFeaturesBacklinkCheckerRoute
@@ -901,6 +963,7 @@ export interface FileRoutesById {
   '/_marketing/library/site-audit/index-bloat': typeof MarketingLibrarySiteAuditIndexBloatRoute
   '/_marketing/library/site-audit/seo-audit-report-template': typeof MarketingLibrarySiteAuditSeoAuditReportTemplateRoute
   '/_marketing/library/site-audit/technical-seo-audit-checklist': typeof MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute
+  '/_marketing/seo-report_/r/$token': typeof MarketingSeoReportRTokenRoute
   '/_marketing/library/ai-agent-seo/': typeof MarketingLibraryAiAgentSeoIndexRoute
   '/_marketing/library/competitive-analysis/': typeof MarketingLibraryCompetitiveAnalysisIndexRoute
   '/_marketing/library/keyword-research/': typeof MarketingLibraryKeywordResearchIndexRoute
@@ -913,6 +976,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agent-setup.txt'
+    | '/blogs'
     | '/agencies'
     | '/agents'
     | '/about'
@@ -932,6 +996,7 @@ export interface FileRouteTypes {
     | '/roadmap'
     | '/semrush-alternative'
     | '/semrush-pricing'
+    | '/seo-report'
     | '/serp-simulator'
     | '/spam-score-checker'
     | '/support'
@@ -946,11 +1011,14 @@ export interface FileRouteTypes {
     | '/api/event'
     | '/api/keyword-generator'
     | '/api/privacy-region'
+    | '/api/seo-report'
     | '/api/spam-score-checker'
     | '/api/subscribe'
     | '/api/website-traffic-checker'
     | '/blogs/$'
     | '/docs/$'
+    | '/docs/claude'
+    | '/docs/codex'
     | '/docs/llms.txt'
     | '/guides/$'
     | '/js/meta.js'
@@ -958,6 +1026,7 @@ export interface FileRouteTypes {
     | '/blogs/'
     | '/docs/'
     | '/guides/'
+    | '/start/$angle'
     | '/features/ai-brand-visibility'
     | '/features/ai-search-prompts'
     | '/features/backlink-checker'
@@ -996,6 +1065,7 @@ export interface FileRouteTypes {
     | '/library/site-audit/index-bloat'
     | '/library/site-audit/seo-audit-report-template'
     | '/library/site-audit/technical-seo-audit-checklist'
+    | '/seo-report/r/$token'
     | '/library/ai-agent-seo/'
     | '/library/competitive-analysis/'
     | '/library/keyword-research/'
@@ -1025,6 +1095,7 @@ export interface FileRouteTypes {
     | '/roadmap'
     | '/semrush-alternative'
     | '/semrush-pricing'
+    | '/seo-report'
     | '/serp-simulator'
     | '/spam-score-checker'
     | '/support'
@@ -1039,11 +1110,14 @@ export interface FileRouteTypes {
     | '/api/event'
     | '/api/keyword-generator'
     | '/api/privacy-region'
+    | '/api/seo-report'
     | '/api/spam-score-checker'
     | '/api/subscribe'
     | '/api/website-traffic-checker'
     | '/blogs/$'
     | '/docs/$'
+    | '/docs/claude'
+    | '/docs/codex'
     | '/docs/llms.txt'
     | '/guides/$'
     | '/js/meta.js'
@@ -1051,6 +1125,7 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/docs'
     | '/guides'
+    | '/start/$angle'
     | '/features/ai-brand-visibility'
     | '/features/ai-search-prompts'
     | '/features/backlink-checker'
@@ -1089,6 +1164,7 @@ export interface FileRouteTypes {
     | '/library/site-audit/index-bloat'
     | '/library/site-audit/seo-audit-report-template'
     | '/library/site-audit/technical-seo-audit-checklist'
+    | '/seo-report/r/$token'
     | '/library/ai-agent-seo'
     | '/library/competitive-analysis'
     | '/library/keyword-research'
@@ -1100,6 +1176,7 @@ export interface FileRouteTypes {
     | '/_campaign'
     | '/_marketing'
     | '/agent-setup.txt'
+    | '/blogs'
     | '/_campaign/agencies'
     | '/_campaign/agents'
     | '/_marketing/about'
@@ -1119,6 +1196,7 @@ export interface FileRouteTypes {
     | '/_marketing/roadmap'
     | '/_marketing/semrush-alternative'
     | '/_marketing/semrush-pricing'
+    | '/_marketing/seo-report'
     | '/_marketing/serp-simulator'
     | '/_marketing/spam-score-checker'
     | '/_marketing/support'
@@ -1133,11 +1211,14 @@ export interface FileRouteTypes {
     | '/api/event'
     | '/api/keyword-generator'
     | '/api/privacy-region'
+    | '/api/seo-report'
     | '/api/spam-score-checker'
     | '/api/subscribe'
     | '/api/website-traffic-checker'
     | '/blogs/$'
     | '/docs/$'
+    | '/docs/claude'
+    | '/docs/codex'
     | '/docs/llms.txt'
     | '/guides/$'
     | '/js/meta.js'
@@ -1146,6 +1227,7 @@ export interface FileRouteTypes {
     | '/blogs/'
     | '/docs/'
     | '/guides/'
+    | '/_campaign/start/$angle'
     | '/_marketing/features/ai-brand-visibility'
     | '/_marketing/features/ai-search-prompts'
     | '/_marketing/features/backlink-checker'
@@ -1184,6 +1266,7 @@ export interface FileRouteTypes {
     | '/_marketing/library/site-audit/index-bloat'
     | '/_marketing/library/site-audit/seo-audit-report-template'
     | '/_marketing/library/site-audit/technical-seo-audit-checklist'
+    | '/_marketing/seo-report_/r/$token'
     | '/_marketing/library/ai-agent-seo/'
     | '/_marketing/library/competitive-analysis/'
     | '/_marketing/library/keyword-research/'
@@ -1196,6 +1279,7 @@ export interface RootRouteChildren {
   CampaignRoute: typeof CampaignRouteWithChildren
   MarketingRoute: typeof MarketingRouteWithChildren
   AgentSetupDottxtRoute: typeof AgentSetupDottxtRoute
+  BlogsRoute: typeof BlogsRouteWithChildren
   ApiBacklinkCheckRoute: typeof ApiBacklinkCheckRoute
   ApiCompetitorAnalysisRoute: typeof ApiCompetitorAnalysisRoute
   ApiCompetitorKeywordFinderRoute: typeof ApiCompetitorKeywordFinderRoute
@@ -1203,16 +1287,17 @@ export interface RootRouteChildren {
   ApiEventRoute: typeof ApiEventRoute
   ApiKeywordGeneratorRoute: typeof ApiKeywordGeneratorRoute
   ApiPrivacyRegionRoute: typeof ApiPrivacyRegionRoute
+  ApiSeoReportRoute: typeof ApiSeoReportRoute
   ApiSpamScoreCheckerRoute: typeof ApiSpamScoreCheckerRoute
   ApiSubscribeRoute: typeof ApiSubscribeRoute
   ApiWebsiteTrafficCheckerRoute: typeof ApiWebsiteTrafficCheckerRoute
-  BlogsSplatRoute: typeof BlogsSplatRoute
   DocsSplatRoute: typeof DocsSplatRoute
+  DocsClaudeRoute: typeof DocsClaudeRoute
+  DocsCodexRoute: typeof DocsCodexRoute
   DocsLlmsDottxtRoute: typeof DocsLlmsDottxtRoute
   GuidesSplatRoute: typeof GuidesSplatRoute
   JsMetaDotjsRoute: typeof JsMetaDotjsRoute
   JsScriptDotjsRoute: typeof JsScriptDotjsRoute
-  BlogsIndexRoute: typeof BlogsIndexRoute
   DocsIndexRoute: typeof DocsIndexRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
 }
@@ -1238,6 +1323,13 @@ declare module '@tanstack/react-router' {
       path: '/agent-setup.txt'
       fullPath: '/agent-setup.txt'
       preLoaderRoute: typeof AgentSetupDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogs': {
+      id: '/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_campaign/agencies': {
@@ -1380,6 +1472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingSemrushPricingRouteImport
       parentRoute: typeof MarketingRoute
     }
+    '/_marketing/seo-report': {
+      id: '/_marketing/seo-report'
+      path: '/seo-report'
+      fullPath: '/seo-report'
+      preLoaderRoute: typeof MarketingSeoReportRouteImport
+      parentRoute: typeof MarketingRoute
+    }
     '/_marketing/serp-simulator': {
       id: '/_marketing/serp-simulator'
       path: '/serp-simulator'
@@ -1478,6 +1577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPrivacyRegionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/seo-report': {
+      id: '/api/seo-report'
+      path: '/api/seo-report'
+      fullPath: '/api/seo-report'
+      preLoaderRoute: typeof ApiSeoReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/spam-score-checker': {
       id: '/api/spam-score-checker'
       path: '/api/spam-score-checker'
@@ -1501,17 +1607,17 @@ declare module '@tanstack/react-router' {
     }
     '/blogs/': {
       id: '/blogs/'
-      path: '/blogs'
+      path: '/'
       fullPath: '/blogs/'
       preLoaderRoute: typeof BlogsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogsRoute
     }
     '/blogs/$': {
       id: '/blogs/$'
-      path: '/blogs/$'
+      path: '/$'
       fullPath: '/blogs/$'
       preLoaderRoute: typeof BlogsSplatRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogsRoute
     }
     '/docs/': {
       id: '/docs/'
@@ -1525,6 +1631,20 @@ declare module '@tanstack/react-router' {
       path: '/docs/$'
       fullPath: '/docs/$'
       preLoaderRoute: typeof DocsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/claude': {
+      id: '/docs/claude'
+      path: '/docs/claude'
+      fullPath: '/docs/claude'
+      preLoaderRoute: typeof DocsClaudeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/codex': {
+      id: '/docs/codex'
+      path: '/docs/codex'
+      fullPath: '/docs/codex'
+      preLoaderRoute: typeof DocsCodexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/llms.txt': {
@@ -1561,6 +1681,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/js/script.js'
       preLoaderRoute: typeof JsScriptDotjsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_campaign/start/$angle': {
+      id: '/_campaign/start/$angle'
+      path: '/start/$angle'
+      fullPath: '/start/$angle'
+      preLoaderRoute: typeof CampaignStartAngleRouteImport
+      parentRoute: typeof CampaignRoute
     }
     '/_marketing/features/': {
       id: '/_marketing/features/'
@@ -1870,17 +1997,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRouteImport
       parentRoute: typeof MarketingRoute
     }
+    '/_marketing/seo-report_/r/$token': {
+      id: '/_marketing/seo-report_/r/$token'
+      path: '/seo-report/r/$token'
+      fullPath: '/seo-report/r/$token'
+      preLoaderRoute: typeof MarketingSeoReportRTokenRouteImport
+      parentRoute: typeof MarketingRoute
+    }
   }
 }
 
 interface CampaignRouteChildren {
   CampaignAgenciesRoute: typeof CampaignAgenciesRoute
   CampaignAgentsRoute: typeof CampaignAgentsRoute
+  CampaignStartAngleRoute: typeof CampaignStartAngleRoute
 }
 
 const CampaignRouteChildren: CampaignRouteChildren = {
   CampaignAgenciesRoute: CampaignAgenciesRoute,
   CampaignAgentsRoute: CampaignAgentsRoute,
+  CampaignStartAngleRoute: CampaignStartAngleRoute,
 }
 
 const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
@@ -1905,6 +2041,7 @@ interface MarketingRouteChildren {
   MarketingRoadmapRoute: typeof MarketingRoadmapRoute
   MarketingSemrushAlternativeRoute: typeof MarketingSemrushAlternativeRoute
   MarketingSemrushPricingRoute: typeof MarketingSemrushPricingRoute
+  MarketingSeoReportRoute: typeof MarketingSeoReportRoute
   MarketingSerpSimulatorRoute: typeof MarketingSerpSimulatorRoute
   MarketingSpamScoreCheckerRoute: typeof MarketingSpamScoreCheckerRoute
   MarketingSupportRoute: typeof MarketingSupportRoute
@@ -1951,6 +2088,7 @@ interface MarketingRouteChildren {
   MarketingLibrarySiteAuditIndexBloatRoute: typeof MarketingLibrarySiteAuditIndexBloatRoute
   MarketingLibrarySiteAuditSeoAuditReportTemplateRoute: typeof MarketingLibrarySiteAuditSeoAuditReportTemplateRoute
   MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute: typeof MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute
+  MarketingSeoReportRTokenRoute: typeof MarketingSeoReportRTokenRoute
   MarketingLibraryAiAgentSeoIndexRoute: typeof MarketingLibraryAiAgentSeoIndexRoute
   MarketingLibraryCompetitiveAnalysisIndexRoute: typeof MarketingLibraryCompetitiveAnalysisIndexRoute
   MarketingLibraryKeywordResearchIndexRoute: typeof MarketingLibraryKeywordResearchIndexRoute
@@ -1977,6 +2115,7 @@ const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingRoadmapRoute: MarketingRoadmapRoute,
   MarketingSemrushAlternativeRoute: MarketingSemrushAlternativeRoute,
   MarketingSemrushPricingRoute: MarketingSemrushPricingRoute,
+  MarketingSeoReportRoute: MarketingSeoReportRoute,
   MarketingSerpSimulatorRoute: MarketingSerpSimulatorRoute,
   MarketingSpamScoreCheckerRoute: MarketingSpamScoreCheckerRoute,
   MarketingSupportRoute: MarketingSupportRoute,
@@ -2050,6 +2189,7 @@ const MarketingRouteChildren: MarketingRouteChildren = {
     MarketingLibrarySiteAuditSeoAuditReportTemplateRoute,
   MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute:
     MarketingLibrarySiteAuditTechnicalSeoAuditChecklistRoute,
+  MarketingSeoReportRTokenRoute: MarketingSeoReportRTokenRoute,
   MarketingLibraryAiAgentSeoIndexRoute: MarketingLibraryAiAgentSeoIndexRoute,
   MarketingLibraryCompetitiveAnalysisIndexRoute:
     MarketingLibraryCompetitiveAnalysisIndexRoute,
@@ -2066,10 +2206,23 @@ const MarketingRouteWithChildren = MarketingRoute._addFileChildren(
   MarketingRouteChildren,
 )
 
+interface BlogsRouteChildren {
+  BlogsSplatRoute: typeof BlogsSplatRoute
+  BlogsIndexRoute: typeof BlogsIndexRoute
+}
+
+const BlogsRouteChildren: BlogsRouteChildren = {
+  BlogsSplatRoute: BlogsSplatRoute,
+  BlogsIndexRoute: BlogsIndexRoute,
+}
+
+const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   CampaignRoute: CampaignRouteWithChildren,
   MarketingRoute: MarketingRouteWithChildren,
   AgentSetupDottxtRoute: AgentSetupDottxtRoute,
+  BlogsRoute: BlogsRouteWithChildren,
   ApiBacklinkCheckRoute: ApiBacklinkCheckRoute,
   ApiCompetitorAnalysisRoute: ApiCompetitorAnalysisRoute,
   ApiCompetitorKeywordFinderRoute: ApiCompetitorKeywordFinderRoute,
@@ -2077,16 +2230,17 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEventRoute: ApiEventRoute,
   ApiKeywordGeneratorRoute: ApiKeywordGeneratorRoute,
   ApiPrivacyRegionRoute: ApiPrivacyRegionRoute,
+  ApiSeoReportRoute: ApiSeoReportRoute,
   ApiSpamScoreCheckerRoute: ApiSpamScoreCheckerRoute,
   ApiSubscribeRoute: ApiSubscribeRoute,
   ApiWebsiteTrafficCheckerRoute: ApiWebsiteTrafficCheckerRoute,
-  BlogsSplatRoute: BlogsSplatRoute,
   DocsSplatRoute: DocsSplatRoute,
+  DocsClaudeRoute: DocsClaudeRoute,
+  DocsCodexRoute: DocsCodexRoute,
   DocsLlmsDottxtRoute: DocsLlmsDottxtRoute,
   GuidesSplatRoute: GuidesSplatRoute,
   JsMetaDotjsRoute: JsMetaDotjsRoute,
   JsScriptDotjsRoute: JsScriptDotjsRoute,
-  BlogsIndexRoute: BlogsIndexRoute,
   DocsIndexRoute: DocsIndexRoute,
   GuidesIndexRoute: GuidesIndexRoute,
 }

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { PRODUCT_NAME } from "@/shared/branding";
-import { FileText, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { ReportIllustration } from "@/client/components/EmptyIllustrations";
 import { EmptyState } from "@/client/components/EmptyState";
+import { Button } from "@/client/components/ui/button";
 import { RowActionsMenu } from "@/client/components/RowActionsMenu";
 import { DropdownMenuItem } from "@/client/components/ui/dropdown-menu";
 import {
@@ -30,9 +31,18 @@ export function ReportsList({
   if (reports.length === 0) {
     return (
       <EmptyState
-        icon={FileText}
+        illustration={<ReportIllustration />}
         title="No reports yet"
-        description={`Run a ${PRODUCT_NAME} skill such as seo-audit from Claude Code or Codex and the report will appear here.`}
+        description="Ask your AI agent for an SEO audit or a competitor analysis and its report is saved here."
+        action={
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link to="/ai" />}
+          >
+            Set up your agent
+          </Button>
+        }
       />
     );
   }
