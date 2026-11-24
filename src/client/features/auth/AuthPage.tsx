@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "cn";
 import { z } from "zod";
-import { BrandWordmark } from "@/client/components/BrandIdentity";
+import { BrandIcon } from "@/client/components/BrandIdentity";
 import { Button } from "@/client/components/ui/button";
 import {
   getCurrentAuthRedirect,
@@ -226,7 +226,9 @@ export function AuthPageCard({
   return (
     <div className={cn("w-full max-w-xs space-y-6", className)}>
       <div className="space-y-3 text-center">
-        <BrandWordmark className="justify-center text-base" />
+        <span className="mx-auto flex size-9 items-center justify-center rounded-[9px] bg-white">
+          <BrandIcon className="size-7 object-contain" />
+        </span>
         <div>
           <h1 className="text-xl font-semibold text-balance">{title}</h1>
           {helperText ? (
