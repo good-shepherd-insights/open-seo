@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { hasOrgPermission } from "@/lib/org-permissions";
 import { EmbedRepository } from "@/server/features/embeds/EmbedRepository";
 import {
@@ -14,7 +15,7 @@ async function requireEmbedsEnabled() {
   if (!(await sharesEnabled())) {
     throw new AppError(
       "VALIDATION_ERROR",
-      "Embed links are only available on hosted OpenSEO.",
+      `Embed links are only available on hosted ${PRODUCT_NAME}.`,
     );
   }
 }

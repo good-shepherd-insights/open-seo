@@ -92,14 +92,14 @@ function McpWidget() {
   return (
     <main className="space-y-4 p-4">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-        <span className="font-medium">OpenSEO</span>
+        <span className="font-medium">{PRODUCT_NAME}</span>
         {appUrl && (
           <Button
             variant="ghost"
             disabled={!host.isConnected || host.busy}
             onClick={() => host.open(appUrl)}
           >
-            Open in OpenSEO
+            Open in {PRODUCT_NAME}
             <ExternalLink />
           </Button>
         )}
@@ -129,7 +129,7 @@ function EmbedWidgets({ page }: { page: EmbedPage }) {
   return (
     <main className="space-y-8 p-4">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-        <span className="font-medium">OpenSEO</span>
+        <span className="font-medium">{PRODUCT_NAME}</span>
         <Button variant="ghost" onClick={() => window.location.reload()}>
           <RefreshCw />
           Refresh

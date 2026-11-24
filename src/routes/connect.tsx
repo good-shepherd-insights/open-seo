@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { z } from "zod";
@@ -68,11 +69,11 @@ function ConnectPage() {
   return (
     <AuthPageShell>
       <AuthPageCard
-        title="Connecting OpenSEO"
+        title={`Connecting ${PRODUCT_NAME}`}
         helperText="This takes a few seconds. You'll go back to your AI app when it's done."
         footer={
           <p className="text-center text-sm text-muted-foreground">
-            Already have an OpenSEO account?{" "}
+            Already have a {PRODUCT_NAME} account?{" "}
             <a href={signInHref} className="underline">
               Sign in
             </a>

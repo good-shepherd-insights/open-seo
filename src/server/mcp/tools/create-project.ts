@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { requireOrgPermission } from "@/server/auth/org-gate";
 import { completeOnboardingFromAgent } from "@/server/features/activation/mcpActivation";
 import { ProjectService } from "@/server/features/projects/services/ProjectService";
@@ -45,8 +46,7 @@ export const createProjectTool = {
   name: "create_project",
   config: {
     title: "Create project",
-    description:
-      "Create a project in the user's organization. Provide a name, and optionally a domain and a default market (locationCode and languageCode; a languageCode requires a locationCode). Pass the returned id as projectId to other OpenSEO tools. Uses no credits. Call list_projects first to avoid creating a duplicate.",
+    description: `Create a project in the user's organization. Provide a name, and optionally a domain and a default market (locationCode and languageCode; a languageCode requires a locationCode). Pass the returned id as projectId to other ${PRODUCT_NAME} tools. Uses no credits. Call list_projects first to avoid creating a duplicate.`,
     inputSchema,
     outputSchema: z.looseObject({
       project: z

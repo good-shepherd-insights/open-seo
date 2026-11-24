@@ -1,4 +1,4 @@
-import { PRODUCT_NAME } from "@/shared/branding";
+import { PRODUCT_NAME, SUPPORT_EMAIL } from "@/shared/branding";
 import { ACCOUNT_DELETION_SCHEDULED_ERROR } from "@/shared/account-deletion";
 import { CHATGPT_EMAIL_NOT_VERIFIED_CODE } from "@/shared/chatgpt-sign-in";
 import { SIGN_UP_EMAIL_REFUSED_CODE } from "@/shared/sign-up-email";
@@ -25,8 +25,7 @@ export function googleAuthErrorCopy(
     case ACCOUNT_DELETION_SCHEDULED_ERROR:
       return {
         title: "This account is being deleted",
-        description:
-          "You asked us to delete this account, so it can't be signed in to. To keep it, email support@openseo.so before the deletion date.",
+        description: `You asked us to delete this account, so it can't be signed in to. To keep it, email ${SUPPORT_EMAIL} before the deletion date.`,
       };
     // Sign-in with Google or ChatGPT reached an existing account it may not
     // be attached to: the provider hasn't verified the email, or the account
@@ -40,8 +39,7 @@ export function googleAuthErrorCopy(
     case CHATGPT_EMAIL_NOT_VERIFIED_CODE:
       return {
         title: "Verify your email with ChatGPT first",
-        description:
-          "OpenAI hasn't verified the email on your ChatGPT account, so we can't create an OpenSEO account from it. Verify it in ChatGPT, or sign up with Google or email.",
+        description: `OpenAI hasn't verified the email on your ChatGPT account, so we can't create a ${PRODUCT_NAME} account from it. Verify it in ChatGPT, or sign up with Google or email.`,
       };
     case SIGN_UP_EMAIL_REFUSED_CODE:
       return {

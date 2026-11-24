@@ -59,6 +59,8 @@
     "drizzle/remote-d1.config.ts",
     // Hidden from users; kept so upstream merges stay clean
     "src/client/features/settings/ApiKeySettings.tsx",
+    "src/client/features/every-app/MoveToEveryAppSettings.tsx",
+    "src/client/features/every-app/runEveryAppMove.ts",
   ],
   // GitHub CLI, used by deploy:prod; installed system-wide, not via npm
   "ignoreBinaries": ["gh"],

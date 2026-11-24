@@ -18,7 +18,7 @@ export const MCP_WIDGET_TOOLS = [
 
 export type McpWidgetTool = (typeof MCP_WIDGET_TOOLS)[number];
 
-export const MCP_WIDGET_URI = "ui://openseo/research-v1.html";
+export const MCP_WIDGET_URI = "ui://marylandinsights/research-v1.html";
 
 export const mcpMetaOutputSchema = z.looseObject({
   url: z.string().optional(),

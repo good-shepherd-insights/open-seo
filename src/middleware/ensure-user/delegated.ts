@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import {
@@ -16,7 +17,7 @@ const LOCAL_ADMIN_EMAIL = "admin@localhost";
 // single user table means the OAuth `account` grant and every app table that
 // references `user.id` resolve the same way in all auth modes.
 function deriveUserName(email: string) {
-  return email.split("@")[0] || "OpenSEO";
+  return email.split("@")[0] || PRODUCT_NAME;
 }
 
 export async function ensureUserRecord(userId: string, userEmail: string) {

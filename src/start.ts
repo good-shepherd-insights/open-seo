@@ -15,7 +15,7 @@ const csrfMiddleware = createCsrfMiddleware({
 // that into a 500 the tab can never recover from. Answer with this header
 // instead so the client reloads onto the new build. This has to run as request
 // middleware: by the time startHandler returns, the error is already a 500.
-const STALE_CLIENT_HEADER = "x-openseo-stale-client";
+const STALE_CLIENT_HEADER = "x-stale-client";
 
 const staleClientMiddleware = createMiddleware().server(async ({ next }) => {
   try {

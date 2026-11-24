@@ -1,3 +1,4 @@
+import { DASHBOARD_URL, PRODUCT_NAME } from "@/shared/branding";
 import {
   getAiVisibilityTrackerTool,
   generateAiVisibilityPromptsTool,
@@ -352,15 +353,15 @@ export function createOpenSeoMcpServer(
 ) {
   const server = new McpServer(
     {
-      name: "OpenSEO MCP",
-      title: "OpenSEO",
+      name: `${PRODUCT_NAME} MCP`,
+      title: PRODUCT_NAME,
       version: "0.0.12",
       description:
         "SEO research tools for AI agents: keyword research and metrics, SERP and local SERP results, domain and backlink analysis, rank tracking, and Google Search Console performance.",
-      websiteUrl: "https://openseo.so",
+      websiteUrl: DASHBOARD_URL,
       icons: [
         {
-          src: "https://openseo.so/android-chrome-512x512.png",
+          src: `${DASHBOARD_URL}/android-chrome-512x512.png`,
           mimeType: "image/png",
           sizes: ["512x512"],
         },
@@ -379,9 +380,9 @@ export function createOpenSeoMcpServer(
       // instructions until a change passes, and this is the approved text.
       // Edit it only alongside a planned review.
       instructions:
-        "OpenSEO research tools use credits. Proceed with normal focused research, but ask the user for confirmation before planned batches over 2,000 credits. OpenSEO cannot purchase credits or charge cards. Explain unsupported purchase requests without promoting subscriptions, upgrades or credit purchases, or directing users to checkout." +
+        `${PRODUCT_NAME} research tools use credits. Proceed with normal focused research, but ask the user for confirmation before planned batches over 2,000 credits. ${PRODUCT_NAME} cannot purchase credits or charge cards. Explain unsupported purchase requests without promoting subscriptions, upgrades or credit purchases, or directing users to checkout.` +
         (authProps[MCP_AUTH_CONTEXT_PROP].guestClaimToken
-          ? " This connection uses a guest OpenSEO account: the user connected without signing up. It has the same free credits as a new account. Adding credits, connecting Google Search Console or Google Analytics, and using the OpenSEO web app need a full account; whoami gives the link that creates one; signing up in the browser that connected OpenSEO keeps the user's projects and this connection."
+          ? ` This connection uses a guest ${PRODUCT_NAME} account: the user connected without signing up. It has the same free credits as a new account. Adding credits, connecting Google Search Console or Google Analytics, and using the ${PRODUCT_NAME} web app need a full account; whoami gives the link that creates one; signing up in the browser that connected ${PRODUCT_NAME} keeps the user's projects and this connection.`
           : ""),
     },
   );

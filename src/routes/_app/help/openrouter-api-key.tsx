@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { PRODUCT_NAME } from "@/shared/branding";
 import {
   CommandBlock,
@@ -10,6 +10,10 @@ import { pageHead } from "@/client/lib/pageHead";
 const OPENROUTER_KEYS_URL = "https://openrouter.ai/settings/keys";
 
 export const Route = createFileRoute("/_app/help/openrouter-api-key")({
+  // Server setup steps, so users never reach it.
+  beforeLoad: () => {
+    throw notFound();
+  },
   head: () => pageHead("OpenRouter API key"),
   component: OpenrouterApiKeyHelpPage,
 });

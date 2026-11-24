@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@/shared/branding";
 import { env } from "cloudflare:workers";
 import { APIError } from "better-auth/api";
 import { isHostedAuthMode } from "@/lib/auth-mode";
@@ -18,6 +19,6 @@ export async function assertNotScheduledForDeletion(userId: string) {
   if (!request) return;
   throw new APIError("BAD_REQUEST", {
     code: ACCOUNT_DELETION_SCHEDULED_ERROR,
-    message: `This account is scheduled for deletion on ${formatDeletionDate(request.deleteAfter)}. To keep it, email support@openseo.so before then.`,
+    message: `This account is scheduled for deletion on ${formatDeletionDate(request.deleteAfter)}. To keep it, email ${SUPPORT_EMAIL} before then.`,
   });
 }

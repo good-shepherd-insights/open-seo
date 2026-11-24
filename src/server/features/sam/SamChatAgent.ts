@@ -1,4 +1,5 @@
 /* eslint-disable max-lines -- the SAM Durable Object: per-turn gates, credit hold and metering, telemetry, and recovery hooks */
+import { DASHBOARD_URL, PRODUCT_NAME } from "@/shared/branding";
 import { Think } from "@cloudflare/think";
 import type {
   ChatErrorContext,
@@ -282,7 +283,7 @@ export class SamChatAgent extends Think {
     return withPgClient(async () => {
       const ctx = await this.loadSamContext();
       if (!ctx) {
-        return "You are SAM, the SEO agent inside OpenSEO. This chat session no longer exists; tell the user to start a new chat.";
+        return `You are SAM, the SEO agent inside ${PRODUCT_NAME}. This chat session no longer exists; tell the user to start a new chat.`;
       }
       const context = await ProjectContextService.getProjectContext(
         ctx.project.id,
@@ -377,7 +378,7 @@ export class SamChatAgent extends Think {
 
       const baseUrl =
         (await this.ctx.storage.get<string>(PUBLIC_ORIGIN_KEY)) ??
-        "https://app.openseo.so";
+        DASHBOARD_URL;
       // Delegated/self-host orgs have no member rows — implicit owner. With
       // real accounts (hosted and password modes) a missing member row means the
       // user was removed from the workspace; fail closed instead of letting

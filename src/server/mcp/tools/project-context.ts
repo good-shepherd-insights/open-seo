@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { ProjectContextService } from "@/server/features/project-context/services/ProjectContextService";
 import { buildProjectMeta } from "@/server/mcp/context";
@@ -39,8 +40,7 @@ export const getProjectContextTool = {
   name: "get_project_context",
   config: {
     title: "Get project context",
-    description:
-      "Read a project's shared memory: business overview, current goal, positioning, writing preferences, custom sections, competitors, key pages, and the recent research log. Call it before SEO work to ground the work in what the user already told OpenSEO, and check the research log before buying the same research again. Uses no credits. To fill sections listed as missing, use update_project_context.",
+    description: `Read a project's shared memory: business overview, current goal, positioning, writing preferences, custom sections, competitors, key pages, and the recent research log. Call it before SEO work to ground the work in what the user already told ${PRODUCT_NAME}, and check the research log before buying the same research again. Uses no credits. To fill sections listed as missing, use update_project_context.`,
     inputSchema: getInputSchema,
     outputSchema: contextOutputSchema,
     annotations: {

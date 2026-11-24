@@ -1,4 +1,4 @@
-import { CRAWLER_DOCS_URL, CRAWLER_USER_AGENT_TOKEN } from "@/shared/branding";
+import { CRAWLER_USER_AGENT_TOKEN } from "@/shared/branding";
 import { MetricsTable } from "@/client/components/MetricsTable";
 import { Fragment, useMemo, type ReactNode } from "react";
 import { ShieldAlert } from "lucide-react";
@@ -152,16 +152,7 @@ export function ResultsView({
               ? "The site kept refusing pages, so some URLs were left unvisited. This report is incomplete. "
               : "Pages that returned 429 Too Many Requests could not be audited. "}
             Re-run the audit after the rate limit resets, or ask the site owner
-            to allow the{" "}
-            <a
-              className="underline underline-offset-4"
-              href={CRAWLER_DOCS_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {CRAWLER_USER_AGENT_TOKEN} crawler
-            </a>
-            .
+            to allow the {CRAWLER_USER_AGENT_TOKEN} crawler .
           </AlertDescription>
         </Alert>
       )}

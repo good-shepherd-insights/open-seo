@@ -11,6 +11,7 @@ import {
   MapPin,
   MessageSquare,
   Search,
+  Sparkles,
   TrendingUp,
 } from "lucide-react";
 import { linkOptions } from "@tanstack/react-router";
@@ -80,6 +81,11 @@ const projectNavItems = [
     to: "/p/$projectId/prompt-explorer" as const,
     label: "Prompt Explorer",
     icon: MessageSquare,
+  },
+  {
+    to: "/p/$projectId/sam" as const,
+    label: "SAM",
+    icon: Sparkles,
   },
   {
     to: "/p/$projectId/reports" as const,
@@ -159,6 +165,7 @@ export function getProjectNavGroups(projectId: string) {
     {
       label: "AI Tools",
       items: [
+        byPath("/p/$projectId/sam"),
         byPath("/p/$projectId/reports"),
         byPath("/p/$projectId/context"),
         aiNavItem,

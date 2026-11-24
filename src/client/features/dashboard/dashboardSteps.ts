@@ -48,7 +48,7 @@ export const setupSteps: {
   },
   {
     id: "skills",
-    label: "Try OpenSEO skills",
+    label: `Try ${PRODUCT_NAME} skills`,
     detail: "Give your agent repeatable SEO workflows.",
     icon: Sparkles,
     skipLabel: "Dismiss",

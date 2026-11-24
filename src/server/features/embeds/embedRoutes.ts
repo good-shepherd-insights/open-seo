@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { env } from "cloudflare:workers";
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
@@ -25,7 +26,7 @@ import {
 // the data endpoint the page calls, which runs the same MCP tools as the
 // link's creator, for the link's project only.
 
-const DEAD_LINK_BODY = "This OpenSEO embed link isn't active.";
+const DEAD_LINK_BODY = `This ${PRODUCT_NAME} embed link isn't active.`;
 
 /**
  * Framable by any site: the page and its data are read-only, so there is no

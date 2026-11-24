@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AiVisibilityRepository as repo } from "../repositories/AiVisibilityRepository";
 import { AiVisibilityError } from "./aiVisibilityErrors";
 import { aiScope } from "./aiVisibilityConfiguration";
@@ -89,8 +90,8 @@ export async function estimateCost(
     currency: "USD",
     warnings: [
       hosted
-        ? "Customer cost uses OpenSEO data credits, including the service markup."
-        : "Self-hosted: cost estimates your own DataForSEO account charges. OpenSEO credits are not used.",
+        ? `Customer cost uses ${PRODUCT_NAME} data credits, including the service markup.`
+        : `Self-hosted: cost estimates your own DataForSEO account charges. ${PRODUCT_NAME} credits are not used.`,
       `One fresh answer per prompt and engine. The ${scheduleInterval} estimate assumes ${checksPerMonth} ${checksPerMonth === 1 ? "check" : "checks"} per month.`,
       ...(liveEngines.length
         ? [

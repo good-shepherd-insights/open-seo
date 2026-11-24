@@ -4,7 +4,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { AgentList } from "./AgentList";
 import { ONE_CLICK_INSTALLS } from "./agentInstalls";
 import { AgentSetupPanel, AGENT_SETUP_DESCRIPTION } from "./AgentSetupPanel";
-import { getAgentSetupPrompt } from "./agentSetupPrompt";
+import { getAgentConnectPrompt, getAgentSetupPrompt } from "./agentSetupPrompt";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { WizardFooter } from "@/client/features/onboarding/WizardFooter";
 import { Button } from "@/client/components/ui/button";
@@ -62,14 +62,20 @@ export function AgentSetup({
           setStartedSetup(true);
           captureClientEvent("onboarding:setup_prompt_copy");
         }}
-        actions={ONE_CLICK_INSTALLS.map(({ agent, name, href, Icon }) => (
+        actions={ONE_CLICK_INSTALLS.map(({ agent, name, newChatUrl, Icon }) => (
           <Button
             key={agent}
             variant="outline"
             size="lg"
             className="w-full"
             nativeButton={false}
-            render={<a href={href} target="_blank" rel="noreferrer" />}
+            render={
+              <a
+                href={newChatUrl(getAgentConnectPrompt(window.location.origin))}
+                target="_blank"
+                rel="noreferrer"
+              />
+            }
             onClick={() => {
               setStartedSetup(true);
               captureClientEvent("onboarding:add_to_agent_click", { agent });

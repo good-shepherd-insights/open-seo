@@ -32,7 +32,7 @@ export const embedPageSchema = z.object({
 export type EmbedPage = z.infer<typeof embedPageSchema>;
 
 /** The element id the page's JSON travels in. */
-export const EMBED_PAGE_ELEMENT_ID = "openseo-embed";
+export const EMBED_PAGE_ELEMENT_ID = "mi-embed";
 
 /** A page's link: one widget, or without one the overview of them all. */
 export const embedPath = (token: string, widget?: EmbedWidget) =>

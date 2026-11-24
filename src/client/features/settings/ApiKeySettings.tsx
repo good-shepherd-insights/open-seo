@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DASHBOARD_MCP_URL, UPSTREAM_DOCS_URL } from "@/shared/branding";
+import { DASHBOARD_MCP_URL } from "@/shared/branding";
 import { QueryState } from "@/client/components/QueryState";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -142,16 +142,6 @@ export function ApiKeySettings() {
           <p className="mt-1 text-sm text-muted-foreground">
             Use this for remote agents like Hermes where the normal login flow
             doesn't work.
-          </p>
-          <p className="mt-1 text-sm">
-            <a
-              className="text-primary underline-offset-4 hover:underline"
-              href={`${UPSTREAM_DOCS_URL}/mcp`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Setup guide
-            </a>
           </p>
         </div>
         <Button size="sm" onClick={() => setIsCreateOpen(true)}>

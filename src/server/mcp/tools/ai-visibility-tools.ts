@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 import type { AiVisibilityService } from "@/server/features/ai-visibility/services/AiVisibilityService";
@@ -168,8 +169,7 @@ export const completeAiResearchSetupTool = defineAiTool({
   readOnly: false,
   openWorld: true,
   path: "research",
-  description:
-    "Set up Prompt Research keywords for a project that has a saved website. Returns keywords, status, and review. Research uses OpenSEO credits: it sends project context to an external model and reads websites or searches for competitors when needed. An existing tracker, a running setup, or a setup awaiting review is returned without restarting research, and saved context and keywords are reused. When no tracker exists, saving the setup also creates three topics with five prompts each and turns on weekly paid AI checks, first due about a week later; no answer check starts immediately. For status=running, call again after about 20 seconds. For status=review, review the proposed setup with the user, then save it through save_project_website_setup, preserving saved competitors when review.preserveCompetitors=true. To change keywords that are already saved, use update_ai_research_keywords.",
+  description: `Set up Prompt Research keywords for a project that has a saved website. Returns keywords, status, and review. Research uses ${PRODUCT_NAME} credits: it sends project context to an external model and reads websites or searches for competitors when needed. An existing tracker, a running setup, or a setup awaiting review is returned without restarting research, and saved context and keywords are reused. When no tracker exists, saving the setup also creates three topics with five prompts each and turns on weekly paid AI checks, first due about a week later; no answer check starts immediately. For status=running, call again after about 20 seconds. For status=review, review the proposed setup with the user, then save it through save_project_website_setup, preserving saved competitors when review.preserveCompetitors=true. To change keywords that are already saved, use update_ai_research_keywords.`,
   execute: (s, a, b) => s.startResearchSetup(a, b),
   summarize: (d) =>
     d.status === "ready"
@@ -191,8 +191,7 @@ export const researchAiVisibilityPromptsTool = defineAiTool({
   readOnly: true,
   openWorld: true,
   path: "research",
-  description:
-    "Find questions people ask about a keyword, with ChatGPT's answer to each, the sources it cited, and whether the project's domain is cited or its brand mentioned. US English data only. The questions come from a database built mostly from Google \"People also ask\" questions; they are not logged ChatGPT prompts, and nobody can see real ChatGPT prompt volume. A model keeps only the questions that use the keyword in the business's sense, so niche keywords may return few prompts. The most common questions come first. Costs credits for one prompt search and one relevance check per keyword, cached for 24 hours. Requires a paid plan on hosted OpenSEO. Nothing is saved or collected: save picked prompts with source prompt_research through save_ai_visibility_tracker. For new prompt ideas written from project context, use generate_ai_visibility_prompts.",
+  description: `Find questions people ask about a keyword, with ChatGPT's answer to each, the sources it cited, and whether the project's domain is cited or its brand mentioned. US English data only. The questions come from a database built mostly from Google "People also ask" questions; they are not logged ChatGPT prompts, and nobody can see real ChatGPT prompt volume. A model keeps only the questions that use the keyword in the business's sense, so niche keywords may return few prompts. The most common questions come first. Costs credits for one prompt search and one relevance check per keyword, cached for 24 hours. Requires a paid plan on hosted ${PRODUCT_NAME}. Nothing is saved or collected: save picked prompts with source prompt_research through save_ai_visibility_tracker. For new prompt ideas written from project context, use generate_ai_visibility_prompts.`,
   execute: (s, a, b) => s.researchPrompts(a, b),
   summarize: (d) =>
     `Found ${d.prompts.length} relevant prompts for "${d.keyword}".`,

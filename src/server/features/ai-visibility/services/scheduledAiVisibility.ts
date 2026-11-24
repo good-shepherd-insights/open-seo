@@ -1,3 +1,4 @@
+import { PRIMARY_DOMAIN } from "@/shared/branding";
 import { AppError, describeError } from "@/server/lib/errors";
 import { pruneAiVisibility } from "./aiVisibilityRetention";
 import { AiVisibilityRepository as repo } from "../repositories/AiVisibilityRepository";
@@ -56,7 +57,7 @@ export async function runScheduledAiVisibility() {
       await startRun(config, "scheduled", {
         organizationId,
         userId: "system",
-        userEmail: "system@openseo.so",
+        userEmail: `system@${PRIMARY_DOMAIN}`,
         projectId: tracker.projectId,
       });
       started++;

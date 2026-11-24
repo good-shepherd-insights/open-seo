@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@/shared/branding";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
@@ -37,7 +38,7 @@ function blockerText(blocker: Status["blockers"][number]) {
     blocker.otherMemberCount === 1
       ? "1 other member"
       : `${blocker.otherMemberCount} other members`;
-  return `You own “${blocker.organizationName}”, which has ${others}. Deleting your account would leave them without an owner. Remove them in Organization settings, or email support@openseo.so to hand the workspace to one of them.`;
+  return `You own “${blocker.organizationName}”, which has ${others}. Deleting your account would leave them without an owner. Remove them in Organization settings, or email ${SUPPORT_EMAIL} to hand the workspace to one of them.`;
 }
 
 function billingText(charge: Status["billingToStop"][number]) {

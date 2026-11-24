@@ -17,9 +17,6 @@ import {
 import { getClientAuthMode, usesBetterAuthClient } from "@/lib/auth-mode";
 import { getSignInHref, getSignInHrefForLocation } from "@/lib/auth-redirect";
 
-const CLOUDFLARE_SETUP_GUIDE_URL =
-  "https://github.com/every-app/open-seo/blob/main/docs/SELF_HOSTING_CLOUDFLARE.md#2-configure-authentication-and-secrets";
-
 type CardProps = {
   message: string;
   onRetry: () => void;
@@ -77,14 +74,6 @@ function AuthConfigErrorCard({ message, onRetry }: CardProps) {
           <AlertDescription>{message}</AlertDescription>
         </Alert>
 
-        {clientAuthMode === "hosted" ? (
-          <p className="text-muted-foreground">
-            Hosted mode requires{" "}
-            <code className="mx-1">BETTER_AUTH_SECRET</code>
-            (32+ characters), <code className="mx-1">BETTER_AUTH_URL</code>, and
-            Google OAuth credentials on the deployment.
-          </p>
-        ) : null}
         {clientAuthMode === "everyapp" ? (
           <p className="text-muted-foreground">
             {PRODUCT_NAME} runs behind an Every App gateway, which signs people
@@ -105,18 +94,6 @@ function AuthConfigErrorCard({ message, onRetry }: CardProps) {
       <CardFooter className="justify-end gap-2">
         <Button variant="ghost" onClick={onRetry}>
           Try Again
-        </Button>
-        <Button
-          nativeButton={false}
-          render={
-            <a
-              href={CLOUDFLARE_SETUP_GUIDE_URL}
-              target="_blank"
-              rel="noreferrer"
-            />
-          }
-        >
-          Open Setup Guide
         </Button>
       </CardFooter>
     </Card>

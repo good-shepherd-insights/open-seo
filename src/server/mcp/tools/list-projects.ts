@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { ProjectService } from "@/server/features/projects/services/ProjectService";
 import { mcpResponse } from "@/server/mcp/formatters";
 import { type ToolContext } from "@/server/mcp/context";
@@ -9,8 +10,7 @@ export const listProjectsTool = {
   name: "list_projects",
   config: {
     title: "List projects",
-    description:
-      "List the user's projects with their id, name, domain, and default market. Use it whenever another OpenSEO tool needs a projectId: pass the project's id. Tools fall back to the project's default market when a call omits location or language. Uses no credits. When there is no project yet, use create_project.",
+    description: `List the user's projects with their id, name, domain, and default market. Use it whenever another ${PRODUCT_NAME} tool needs a projectId: pass the project's id. Tools fall back to the project's default market when a call omits location or language. Uses no credits. When there is no project yet, use create_project.`,
     inputSchema: {} as Record<string, never>,
     outputSchema: z.looseObject({
       projects: z.array(

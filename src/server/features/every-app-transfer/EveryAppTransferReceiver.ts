@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { env } from "cloudflare:workers";
 import { listMembers } from "@every-app/sdk/server";
 import { getAgentByName } from "agents";
@@ -162,7 +163,7 @@ async function begin(
         .values({
           id: member.id,
           email: member.email,
-          name: member.name || member.email.split("@")[0] || "OpenSEO",
+          name: member.name || member.email.split("@")[0] || PRODUCT_NAME,
           emailVerified: true,
         })
         .onConflictDoNothing(),

@@ -182,8 +182,7 @@ export function TrackerEditor({
         {!adding && !review && schedule}
         {!state.providerConfigured && (
           <p className="rounded-lg bg-muted px-4 py-3 text-sm">
-            An administrator needs to configure the DataForSEO API key before we
-            can collect data.
+            Tracking data isn't available right now. Please try again later.
           </p>
         )}
         {review ? (

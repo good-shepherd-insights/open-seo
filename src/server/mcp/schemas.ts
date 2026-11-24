@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import {
   isSupportedLanguageCode,
@@ -10,7 +11,7 @@ export const projectIdSchema = z
   .string()
   .min(1)
   .describe(
-    "Required. The OpenSEO project ID to scope this call to. Get one from list_projects.",
+    `Required. The ${PRODUCT_NAME} project ID to scope this call to. Get one from list_projects.`,
   );
 
 // Country codes only. DataForSEO rejects an unknown location_code with a 40501

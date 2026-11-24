@@ -5,6 +5,7 @@
 // gracefully (less text); a Browser Rendering upgrade can slot in behind this
 // same interface later.
 
+import { DASHBOARD_URL } from "@/shared/branding";
 import { publicFetch } from "@/server/lib/public-fetch";
 import { normalizeAndValidateStartUrl } from "@/server/lib/audit/url-policy";
 import { RenderedPageService } from "@/server/lib/audit/rendered-page";
@@ -17,7 +18,7 @@ const FETCH_TIMEOUT_MS = 10_000;
 // Covers chains like https://apex -> http://www -> https://www.
 const MAX_REDIRECTS = 3;
 const MAX_RESPONSE_BYTES = 2_000_000;
-const USER_AGENT = "OpenSEO-Onboarding/1.0 (+https://openseo.so)";
+const USER_AGENT = `MarylandInsights-Onboarding/1.0 (+${DASHBOARD_URL})`;
 
 type ScrapedPage = {
   url: string;

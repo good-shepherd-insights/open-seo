@@ -215,7 +215,7 @@ export function DashboardSetupAction({
 
 export function getSkillsSetupPrompt(domain: string | null) {
   const site = domain ? ` for ${domain}` : "";
-  return `Check whether I have the OpenSEO skills set up in this agent. If not, walk me through installing them using https://openseo.so/docs/skills/setup. Then recommend the single most useful OpenSEO skill to try first${site} and show me how to run it.`;
+  return `Check whether I have the ${PRODUCT_NAME} skills set up in this agent. If not, walk me through installing them from ${window.location.origin}/skills/index.md. Then recommend the single most useful ${PRODUCT_NAME} skill to try first${site} and show me how to run it.`;
 }
 
 function DashboardSkillsAction({ domain }: { domain: string | null }) {

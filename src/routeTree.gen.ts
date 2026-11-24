@@ -15,7 +15,9 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthErrorRouteImport } from './routes/auth-error'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRouteImport } from './routes/[.well-known]/http-message-signatures-directory'
 import { Route as Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport } from './routes/[.well-known]/openai-apps-challenge'
@@ -35,6 +37,7 @@ import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiPrivacyRegionRouteImport } from './routes/api/privacy-region'
 import { Route as ApiSignUpStatusRouteImport } from './routes/api/sign-up-status'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
+import { Route as SkillsNameRouteImport } from './routes/skills/$name'
 import { Route as StripeProjectsLoginRouteImport } from './routes/stripe-projects.login'
 import { Route as AppBillingFixPaymentRouteImport } from './routes/_app/billing_.fix-payment'
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
@@ -113,9 +116,19 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
@@ -214,6 +227,11 @@ const ApiSignUpStatusRoute = ApiSignUpStatusRouteImport.update({
 const RReportIdRoute = RReportIdRouteImport.update({
   id: '/r/$reportId',
   path: '/r/$reportId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkillsNameRoute = SkillsNameRouteImport.update({
+  id: '/skills/$name',
+  path: '/skills/$name',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StripeProjectsLoginRoute = StripeProjectsLoginRouteImport.update({
@@ -493,7 +511,9 @@ export interface FileRoutesByFullPath {
   '/auth-error': typeof AuthErrorRoute
   '/connect': typeof ConnectRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
@@ -512,6 +532,7 @@ export interface FileRoutesByFullPath {
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
   '/api/sign-up-status': typeof ApiSignUpStatusRoute
   '/r/$reportId': typeof RReportIdRoute
+  '/skills/$name': typeof SkillsNameRoute
   '/stripe-projects/login': typeof StripeProjectsLoginRoute
   '/p/$projectId': typeof AppPProjectIdRouteRouteWithChildren
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
@@ -568,7 +589,9 @@ export interface FileRoutesByTo {
   '/auth-error': typeof AuthErrorRoute
   '/connect': typeof ConnectRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
@@ -586,6 +609,7 @@ export interface FileRoutesByTo {
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
   '/api/sign-up-status': typeof ApiSignUpStatusRoute
   '/r/$reportId': typeof RReportIdRoute
+  '/skills/$name': typeof SkillsNameRoute
   '/stripe-projects/login': typeof StripeProjectsLoginRoute
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
@@ -640,7 +664,9 @@ export interface FileRoutesById {
   '/auth-error': typeof AuthErrorRoute
   '/connect': typeof ConnectRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terms': typeof TermsRoute
   '/verify-email': typeof VerifyEmailRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
@@ -659,6 +685,7 @@ export interface FileRoutesById {
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
   '/api/sign-up-status': typeof ApiSignUpStatusRoute
   '/r/$reportId': typeof RReportIdRoute
+  '/skills/$name': typeof SkillsNameRoute
   '/stripe-projects/login': typeof StripeProjectsLoginRoute
   '/_app/': typeof AppIndexRoute
   '/_app/p/$projectId': typeof AppPProjectIdRouteRouteWithChildren
@@ -718,7 +745,9 @@ export interface FileRouteTypes {
     | '/auth-error'
     | '/connect'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/verify-email'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/openai-apps-challenge'
@@ -737,6 +766,7 @@ export interface FileRouteTypes {
     | '/api/privacy-region'
     | '/api/sign-up-status'
     | '/r/$reportId'
+    | '/skills/$name'
     | '/stripe-projects/login'
     | '/p/$projectId'
     | '/billing/fix-payment'
@@ -793,7 +823,9 @@ export interface FileRouteTypes {
     | '/auth-error'
     | '/connect'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/verify-email'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/openai-apps-challenge'
@@ -811,6 +843,7 @@ export interface FileRouteTypes {
     | '/api/privacy-region'
     | '/api/sign-up-status'
     | '/r/$reportId'
+    | '/skills/$name'
     | '/stripe-projects/login'
     | '/billing/fix-payment'
     | '/help/dataforseo-api-key'
@@ -864,7 +897,9 @@ export interface FileRouteTypes {
     | '/auth-error'
     | '/connect'
     | '/forgot-password'
+    | '/privacy'
     | '/reset-password'
+    | '/terms'
     | '/verify-email'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/openai-apps-challenge'
@@ -883,6 +918,7 @@ export interface FileRouteTypes {
     | '/api/privacy-region'
     | '/api/sign-up-status'
     | '/r/$reportId'
+    | '/skills/$name'
     | '/stripe-projects/login'
     | '/_app/'
     | '/_app/p/$projectId'
@@ -943,7 +979,9 @@ export interface RootRouteChildren {
   AuthErrorRoute: typeof AuthErrorRoute
   ConnectRoute: typeof ConnectRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TermsRoute: typeof TermsRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute: typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
@@ -953,6 +991,7 @@ export interface RootRouteChildren {
   ApiPrivacyRegionRoute: typeof ApiPrivacyRegionRoute
   ApiSignUpStatusRoute: typeof ApiSignUpStatusRoute
   RReportIdRoute: typeof RReportIdRoute
+  SkillsNameRoute: typeof SkillsNameRoute
   StripeProjectsLoginRoute: typeof StripeProjectsLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
@@ -1013,11 +1052,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verify-email': {
@@ -1151,6 +1204,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$reportId'
       fullPath: '/r/$reportId'
       preLoaderRoute: typeof RReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/skills/$name': {
+      id: '/skills/$name'
+      path: '/skills/$name'
+      fullPath: '/skills/$name'
+      preLoaderRoute: typeof SkillsNameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stripe-projects/login': {
@@ -1702,7 +1762,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthErrorRoute: AuthErrorRoute,
   ConnectRoute: ConnectRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TermsRoute: TermsRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute:
     Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute,
@@ -1714,6 +1776,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPrivacyRegionRoute: ApiPrivacyRegionRoute,
   ApiSignUpStatusRoute: ApiSignUpStatusRoute,
   RReportIdRoute: RReportIdRoute,
+  SkillsNameRoute: SkillsNameRoute,
   StripeProjectsLoginRoute: StripeProjectsLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,

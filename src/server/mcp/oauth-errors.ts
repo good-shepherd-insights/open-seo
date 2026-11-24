@@ -1,3 +1,4 @@
+import { DASHBOARD_URL, PRODUCT_NAME } from "@/shared/branding";
 // The provider's refresh-token failures that only a new sign-in can fix: the
 // grant sat idle past its 30-day window or was revoked. The bare provider text
 // ("Grant not found") doesn't tell the agent or the user what to do next.
@@ -5,8 +6,7 @@ const DEAD_GRANT_REASONS = new Set([
   "grant_not_found",
   "refresh_token_mismatch",
 ]);
-const REAUTHORIZE_DESCRIPTION =
-  "Your OpenSEO sign-in has expired or was revoked. Reconnect OpenSEO in your agent and approve the sign-in again: https://openseo.so/docs/agent-setup";
+const REAUTHORIZE_DESCRIPTION = `Your ${PRODUCT_NAME} sign-in has expired or was revoked. Reconnect ${PRODUCT_NAME} in your agent and approve the sign-in again: ${DASHBOARD_URL}/ai`;
 
 export function handleOAuthError(error: {
   code: string;

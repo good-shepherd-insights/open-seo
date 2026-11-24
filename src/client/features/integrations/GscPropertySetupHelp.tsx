@@ -1,4 +1,3 @@
-import { GSC_SETUP_GUIDE_URL } from "@/shared/branding";
 import { Button } from "@/client/components/ui/button";
 import type { GooglePickerAccount } from "./GooglePropertyPicker";
 
@@ -47,14 +46,6 @@ export function GscPropertySetupHelp({
             className="underline underline-offset-4"
           >
             Open Search Console ↗
-          </a>
-          <a
-            href={GSC_SETUP_GUIDE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4"
-          >
-            Setup guide
           </a>
         </div>
       </div>

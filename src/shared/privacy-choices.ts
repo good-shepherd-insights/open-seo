@@ -1,3 +1,4 @@
+import { PRIMARY_DOMAIN } from "@/shared/branding";
 // Optional tracking choices shared by the marketing site (openseo.so) and the
 // app (app.openseo.so). Both read one first-party cookie on `.openseo.so`, so a
 // choice made on either side applies to both. Necessary cookies (sign-in,
@@ -126,8 +127,8 @@ export function hasGlobalPrivacyControl(): boolean {
 
 function cookieDomainAttribute(): string {
   const host = location.hostname;
-  return host === "openseo.so" || host.endsWith(".openseo.so")
-    ? "; Domain=openseo.so"
+  return host === PRIMARY_DOMAIN || host.endsWith(`.${PRIMARY_DOMAIN}`)
+    ? `; Domain=${PRIMARY_DOMAIN}`
     : "";
 }
 

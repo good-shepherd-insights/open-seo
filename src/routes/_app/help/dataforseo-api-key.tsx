@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { PRODUCT_NAME } from "@/shared/branding";
 import {
   CommandBlock,
@@ -11,6 +11,10 @@ const DATAFORSEO_API_ACCESS_URL = "https://app.dataforseo.com/api-access";
 const TREG_URL = "https://treg.to";
 
 export const Route = createFileRoute("/_app/help/dataforseo-api-key")({
+  // Server setup steps, so users never reach it.
+  beforeLoad: () => {
+    throw notFound();
+  },
   head: () => pageHead("DataForSEO API key"),
   component: DataforseoApiKeyHelpPage,
 });

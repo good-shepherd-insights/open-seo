@@ -1,5 +1,4 @@
 import { AlertTriangle, Info } from "lucide-react";
-import { PRODUCT_NAME } from "@/shared/branding";
 import { SafeExternalLink } from "@/client/components/SafeExternalLink";
 import {
   Alert,
@@ -13,10 +12,8 @@ const EVERY_APP_GOOGLE_SETUP_URL =
 
 export function GoogleOAuthSetupWarning({
   integrationName,
-  docsUrl,
 }: {
   integrationName: string;
-  docsUrl: string;
 }) {
   if (isEveryAppClientAuthMode()) {
     // Google connects through the gateway, which holds the Google client;
@@ -52,17 +49,9 @@ export function GoogleOAuthSetupWarning({
   return (
     <Alert variant="warning">
       <AlertTriangle className="size-4" />
-      <AlertTitle>Google OAuth client not configured</AlertTitle>
+      <AlertTitle>{integrationName} isn't available right now</AlertTitle>
       <AlertDescription>
-        <p>
-          Add your Google client ID and secret to this {PRODUCT_NAME} deployment
-          before connecting {integrationName}.
-        </p>
-        <SafeExternalLink
-          url={docsUrl}
-          label="Open setup guide"
-          className="inline-flex items-center gap-1 font-medium underline underline-offset-2"
-        />
+        Please try again later, and contact support if it keeps happening.
       </AlertDescription>
     </Alert>
   );

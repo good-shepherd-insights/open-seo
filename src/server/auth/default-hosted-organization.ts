@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { AppError } from "@/server/lib/errors";
 import {
@@ -36,7 +37,7 @@ type HostedOrganizationCreator = (
 ) => Promise<{ id: string }>;
 
 function getDefaultHostedOrganizationName(user: HostedUser) {
-  const name = user.name?.trim() || user.email.split("@")[0] || "OpenSEO";
+  const name = user.name?.trim() || user.email.split("@")[0] || PRODUCT_NAME;
   return `${name}'s organization`;
 }
 

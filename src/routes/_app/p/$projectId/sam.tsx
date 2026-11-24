@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { pageHead } from "@/client/lib/pageHead";
 import { SamChat } from "@/client/features/sam/SamChat";
 
 const samSearchSchema = z.object({
@@ -8,6 +9,7 @@ const samSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_app/p/$projectId/sam")({
+  head: () => pageHead("SAM"),
   validateSearch: samSearchSchema,
   component: SamRoute,
 });

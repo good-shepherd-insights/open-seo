@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { env } from "cloudflare:workers";
 import {
   ConfigurationError,
@@ -35,7 +36,7 @@ export async function resolveEveryAppContext(
     if (error instanceof ConfigurationError) {
       throw new AppError(
         "AUTH_CONFIG_MISSING",
-        `${error.message} Deploy OpenSEO to the gateway with \`everyapp deploy\`, or run it locally with \`pnpm dev:everyapp\`.`,
+        `${error.message} Deploy ${PRODUCT_NAME} to the gateway with \`everyapp deploy\`, or run it locally with \`pnpm dev:everyapp\`.`,
       );
     }
     console.error("Every App identity verification failed:", error);

@@ -7,9 +7,6 @@ import {
 } from "@/server/lib/runtime-env";
 import { requireProjectContext } from "@/serverFunctions/middleware";
 
-const OPENROUTER_KEY_MISSING_MESSAGE =
-  "OPENROUTER_API_KEY is not set for this deployment yet. Add it to your environment, restart Maryland Insights SEO, then confirm here.";
-
 const projectScopedSchema = z.object({ projectId: z.string().min(1) });
 
 type SamAccessStatus = {
@@ -33,6 +30,6 @@ export const getSamAccessSetupStatus = createServerFn({ method: "GET" })
     const enabled = Boolean(getOpenRouterAccess((await getWorkersEnv()) ?? {}));
     return {
       enabled,
-      errorMessage: enabled ? null : OPENROUTER_KEY_MISSING_MESSAGE,
+      errorMessage: null,
     };
   });

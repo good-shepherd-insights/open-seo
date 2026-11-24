@@ -1,3 +1,4 @@
+import { DASHBOARD_URL } from "@/shared/branding";
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
 import { normalizeAndValidateStartUrl } from "@/server/lib/audit/url-policy";
 import { publicFetch } from "@/server/lib/public-fetch";
@@ -83,7 +84,9 @@ async function checkKeyFile(host: string, key: string): Promise<KeyFileStatus> {
     // publicFetch, not fetch: the standalone edition's gateway pins the
     // address it checked, so a domain can't rebind to an internal host.
     response = await publicFetch(await normalizeAndValidateStartUrl(url), {
-      headers: { "user-agent": "OpenSEO-IndexNow/1.0 (+https://openseo.so)" },
+      headers: {
+        "user-agent": `MarylandInsights-IndexNow/1.0 (+${DASHBOARD_URL})`,
+      },
       redirect: "manual",
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });

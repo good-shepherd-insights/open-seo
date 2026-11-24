@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { DashboardCacheService } from "@/server/features/dashboard/services/DashboardCacheService";
@@ -96,7 +97,7 @@ export async function displayWidgetResult(
     );
   }
   const result = mcpResponse({
-    text: "Showing the saved OpenSEO results.",
+    text: `Showing the saved ${PRODUCT_NAME} results.`,
     meta: { projectId: args.projectId },
     structuredContent: { displayed: true, resultId: args.resultId },
   });

@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { env } from "cloudflare:workers";
 import {
   getContactNameParts,
@@ -110,7 +111,7 @@ export async function upsertHostedSignupContact({
     payload: {
       email,
       userId,
-      source: "openseo-signup",
+      source: "marylandinsights-signup",
       userGroup: "app-user",
       ...getContactNameParts(name),
       // Only ever adds: someone who joined the list through the website's
@@ -169,7 +170,7 @@ export async function sendHostedVerificationEmail({
     email,
     transactionalId: config.verificationTemplateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: PRODUCT_NAME,
       confirmationUrl,
     },
   });
@@ -197,7 +198,7 @@ export async function sendHostedInvitationEmail({
     email,
     transactionalId: templateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: PRODUCT_NAME,
       inviteUrl,
       organizationName,
       inviterName,
@@ -219,7 +220,7 @@ export async function sendHostedPasswordResetEmail({
     email,
     transactionalId: config.passwordResetTemplateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: PRODUCT_NAME,
       resetUrl,
     },
   });

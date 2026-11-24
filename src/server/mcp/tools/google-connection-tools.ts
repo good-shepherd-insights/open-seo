@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { waitUntil } from "cloudflare:workers";
 import { z } from "zod";
 import { requireOrgPermission } from "@/server/auth/org-gate";
@@ -79,8 +80,7 @@ export const listSearchConsoleSitesTool = {
   name: "list_search_console_sites",
   config: {
     title: "List Search Console sites",
-    description:
-      "List the Search Console properties visible to each Google account the user has connected in the OpenSEO dashboard, and flag the one bound to the project. Use it to find the siteUrl (such as sc-domain:example.com) and accountId to pass to set_search_console_site. It cannot connect a new Google account: connectUrl is the page where the user does that. Uses no credits.",
+    description: `List the Search Console properties visible to each Google account the user has connected in the ${PRODUCT_NAME} dashboard, and flag the one bound to the project. Use it to find the siteUrl (such as sc-domain:example.com) and accountId to pass to set_search_console_site. It cannot connect a new Google account: connectUrl is the page where the user does that. Uses no credits.`,
     inputSchema: { projectId: projectIdSchema } as const,
     outputSchema: z.looseObject({
       ok: z.boolean(),
@@ -126,7 +126,7 @@ export const listSearchConsoleSitesTool = {
     }));
     const text =
       accounts.length === 0
-        ? `No Google account with Search Console access is connected to this OpenSEO user. Connect one here: ${connectUrl}`
+        ? `No Google account with Search Console access is connected to this ${PRODUCT_NAME} user. Connect one here: ${connectUrl}`
         : accounts
             .map((grant) =>
               [
@@ -171,8 +171,7 @@ export const setSearchConsoleSiteTool = {
   name: "set_search_console_site",
   config: {
     title: "Set project Search Console site",
-    description:
-      "Set which verified Search Console property a project reads, through a Google account the user already connected in the OpenSEO dashboard. Pass the siteUrl and gscAccountId from list_search_console_sites. Replaces the project's previous binding. Requires permission to manage integrations. Uses no credits.",
+    description: `Set which verified Search Console property a project reads, through a Google account the user already connected in the ${PRODUCT_NAME} dashboard. Pass the siteUrl and gscAccountId from list_search_console_sites. Replaces the project's previous binding. Requires permission to manage integrations. Uses no credits.`,
     inputSchema: setSiteInputSchema,
     outputSchema: z.looseObject({
       ok: z.boolean(),
@@ -225,8 +224,7 @@ export const listGoogleAnalyticsPropertiesTool = {
   name: "list_google_analytics_properties",
   config: {
     title: "List Google Analytics properties",
-    description:
-      "List the GA4 properties visible to each Google account the user has connected in the OpenSEO dashboard, and flag the one bound to the project. Use it to find the propertyId and accountId to pass to set_google_analytics_property. It cannot connect a new Google account: the user does that on the project's Integrations page. Uses no credits.",
+    description: `List the GA4 properties visible to each Google account the user has connected in the ${PRODUCT_NAME} dashboard, and flag the one bound to the project. Use it to find the propertyId and accountId to pass to set_google_analytics_property. It cannot connect a new Google account: the user does that on the project's Integrations page. Uses no credits.`,
     inputSchema: { projectId: projectIdSchema } as const,
     outputSchema: z.looseObject({
       ok: z.boolean(),
@@ -265,8 +263,8 @@ export const listGoogleAnalyticsPropertiesTool = {
     const text =
       accounts.length === 0
         ? context.auth.guestClaimToken
-          ? `No Google account with Google Analytics access is connected to this OpenSEO user. Connecting one needs a full OpenSEO account, which the user can create (or sign in to) here: ${buildGuestSignUpUrl(context.baseUrl, integrationsPath)}. ${GUEST_SIGN_UP_NOTE}`
-          : `No Google account with Google Analytics access is connected to this OpenSEO user. Connect one here: ${buildDashboardUrl(context.baseUrl, integrationsPath)}`
+          ? `No Google account with Google Analytics access is connected to this ${PRODUCT_NAME} user. Connecting one needs a full ${PRODUCT_NAME} account, which the user can create (or sign in to) here: ${buildGuestSignUpUrl(context.baseUrl, integrationsPath)}. ${GUEST_SIGN_UP_NOTE}`
+          : `No Google account with Google Analytics access is connected to this ${PRODUCT_NAME} user. Connect one here: ${buildDashboardUrl(context.baseUrl, integrationsPath)}`
         : accounts
             .map((grant) =>
               [
@@ -308,8 +306,7 @@ export const setGoogleAnalyticsPropertyTool = {
   name: "set_google_analytics_property",
   config: {
     title: "Set project Google Analytics property",
-    description:
-      "Set which GA4 property a project reads, through a Google account the user already connected in the OpenSEO dashboard. Pass the propertyId and ga4AccountId from list_google_analytics_properties. Replaces the project's previous binding. Requires permission to manage integrations. Uses no credits.",
+    description: `Set which GA4 property a project reads, through a Google account the user already connected in the ${PRODUCT_NAME} dashboard. Pass the propertyId and ga4AccountId from list_google_analytics_properties. Replaces the project's previous binding. Requires permission to manage integrations. Uses no credits.`,
     inputSchema: setPropertyInputSchema,
     outputSchema: z.looseObject({
       ok: z.boolean(),

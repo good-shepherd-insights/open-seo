@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { waitUntil } from "cloudflare:workers";
 import { RankTrackingService } from "@/server/features/rank-tracking/services/RankTrackingService";
@@ -58,7 +59,7 @@ export const runRankTrackerTool = {
       if (error instanceof AppError && error.code === "PAYMENT_REQUIRED")
         throw new AppError(
           "PAYMENT_REQUIRED",
-          "Rank checks need a paid OpenSEO plan, and this account doesn't have one. If Search Console is connected, get_search_console_performance shows the site's average positions for free; get_serp_results checks one keyword's live results for credits.",
+          `Rank checks need a paid ${PRODUCT_NAME} plan, and this account doesn't have one. If Search Console is connected, get_search_console_performance shows the site's average positions for free; get_serp_results checks one keyword's live results for credits.`,
         );
       throw error;
     });

@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { APIError, getOAuthState } from "better-auth/api";
 import { validateAuthorizationCode } from "better-auth/oauth2";
 import { genericOAuth } from "better-auth/plugins";
@@ -144,7 +145,7 @@ export function chatGptSignInPlugins(env: ChatGptEnv) {
               // the same email only when this is true.
               emailVerified: email_verified === true,
               // The same fallback the email sign-up form uses.
-              name: name || email?.split("@")[0] || "OpenSEO User",
+              name: name || email?.split("@")[0] || `${PRODUCT_NAME} User`,
               image: picture,
             };
           },

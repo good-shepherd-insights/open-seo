@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AuditStatus } from "@/shared/audit-status";
 import {
   getAiVisibilityTrackerTool,
@@ -84,7 +85,7 @@ import { whoamiTool } from "@/server/mcp/tools/whoami";
 import { explorePromptTool } from "@/server/mcp/tools/explore-prompt";
 import { scrapeTools } from "@/server/features/sam/samScrapeTools";
 import { capToolOutput } from "@/server/features/sam/samToolOutput";
-import openSeoFactSheet from "@/server/features/sam/openseo-fact-sheet.md?raw";
+import productFactSheet from "@/server/features/sam/product-fact-sheet.md?raw";
 
 // Shape of the MCP tool objects exported from src/server/mcp/tools/*. SAM reuses
 // the exact same definitions the MCP server registers, so the in-app agent and
@@ -306,10 +307,9 @@ export function buildSamMcpTools(
     // On-demand product reference (kept out of the system prompt: inlining it
     // made the agent narrate hosted/self-hosted framing at signed-in users).
     get_product_info: tool({
-      description:
-        "The OpenSEO fact sheet: what the product does, plans/pricing, credit costs, integrations, MCP setup. Call before answering questions about OpenSEO itself. Uses no credits.",
+      description: `The ${PRODUCT_NAME} fact sheet: what the product does, plans/pricing, credit costs, integrations, MCP setup. Call before answering questions about ${PRODUCT_NAME} itself. Uses no credits.`,
       inputSchema: z.object({}),
-      execute: () => Promise.resolve({ factSheet: openSeoFactSheet }),
+      execute: () => Promise.resolve({ factSheet: productFactSheet }),
     }),
     ...scrapeTools(project.domain),
     whoami: adaptTool(whoamiTool),

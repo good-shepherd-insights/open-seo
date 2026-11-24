@@ -1,4 +1,4 @@
-import { PRODUCT_NAME } from "@/shared/branding";
+import { LOGO_PATH, PRODUCT_NAME } from "@/shared/branding";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -315,7 +315,7 @@ function SubscribePage() {
       <div className="space-y-6">
         <div className="mx-auto max-w-md space-y-2 text-center">
           <img
-            src="/transparent-logo.png"
+            src={LOGO_PATH}
             alt={PRODUCT_NAME}
             className="mx-auto mb-4 size-10 rounded-lg"
           />
@@ -419,18 +419,6 @@ function SubscribePage() {
       <div className="space-y-2">
         <PlanGuarantee />
         <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          <a
-            className={PLAN_FOOTER_LINK_CLASS}
-            href="https://openseo.so/pricing"
-            target="_blank"
-            rel="noreferrer"
-            onClick={() =>
-              captureClientEvent("billing:pricing_estimator_click")
-            }
-          >
-            How far do usage credits go? <span aria-hidden="true">&#8599;</span>
-          </a>
-          <span aria-hidden="true">&middot;</span>
           <span>
             Questions? Email{" "}
             <a

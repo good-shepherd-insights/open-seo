@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { ReportService } from "@/server/features/reports/services/ReportService";
 import { sharesEnabled } from "@/server/features/reports/shareAccess";
@@ -35,8 +36,7 @@ export const setReportSharingTool = {
   name: "set_report_sharing",
   config: {
     title: "Set report sharing",
-    description:
-      "Turn public sharing on or off for one saved report. Anyone with shareUrl can read the latest saved version without an account, so enable sharing only when the user explicitly asks for it, in their prompt or in instructions for the skill. Repeating true preserves the existing link; false revokes it, and enabling again creates a new link. Public sharing is available only on hosted OpenSEO. Uses no credits. To retrieve an existing link without changing access, use get_report.",
+    description: `Turn public sharing on or off for one saved report. Anyone with shareUrl can read the latest saved version without an account, so enable sharing only when the user explicitly asks for it, in their prompt or in instructions for the skill. Repeating true preserves the existing link; false revokes it, and enabling again creates a new link. Public sharing is available only on hosted ${PRODUCT_NAME}. Uses no credits. To retrieve an existing link without changing access, use get_report.`,
     inputSchema: sharingInputSchema,
     outputSchema: z.looseObject({
       reportId: z.string(),

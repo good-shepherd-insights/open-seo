@@ -33,7 +33,7 @@ function readSnapshot(
 
 function theme(value: string | undefined) {
   document.documentElement.dataset.theme =
-    value === "dark" ? "openseo-dark" : "openseo";
+    value === "dark" ? "mi-dark" : "mi-light";
 }
 
 export function useMcpHost(): WidgetHost {

@@ -87,8 +87,8 @@ export async function inviteToReviewIfDue(organizationId: string) {
           createTrustpilotInvitation(config, accessToken, {
             email: owner.email,
             name: owner.name.trim() || owner.email.split("@")[0],
-            referenceNumber: `openseo-${organizationId}`,
-            tags: ["openseo-subscriber"],
+            referenceNumber: `seo-${organizationId}`,
+            tags: ["seo-subscriber"],
             preferredSendTime: new Date(),
           }),
         )

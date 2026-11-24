@@ -179,10 +179,7 @@ export function GoogleConnectionCard({
         />
       ) : needsGoogleOAuthSetup ? (
         <div className="flex flex-1 flex-col items-start justify-between gap-3">
-          <GoogleOAuthSetupWarning
-            integrationName={config.name}
-            docsUrl={config.docsUrl}
-          />
+          <GoogleOAuthSetupWarning integrationName={config.name} />
           {dismissButton}
         </div>
       ) : connected && !picking ? (

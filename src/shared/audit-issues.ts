@@ -7,6 +7,7 @@
  */
 
 // Relative: tests/badseo type-checks this file without the @ alias.
+import { CRAWLER_USER_AGENT_TOKEN, PRODUCT_NAME } from "@/shared/branding";
 import { RENDERED_CRAWL_TIME_LIMIT_HOURS } from "./audit-limits";
 
 export type IssueSeverity = "critical" | "warning" | "info";
@@ -24,8 +25,7 @@ export const AUDIT_ISSUE_TYPES = {
     title: "Crawler was blocked",
     explanation:
       "The site returned a bot challenge or access denial (e.g. a Cloudflare challenge or a 403) instead of the page. We report this honestly rather than pretending the page is broken — but it means this page could not be audited, and other crawlers like search engines may face similar friction.",
-    howToFix:
-      'If you own this site, allowlist the "OpenSEO-Audit" user agent in your WAF/bot-protection settings (on Cloudflare: a WAF custom rule that skips bot protection when the user agent contains "OpenSEO-Audit"; on some free tiers you may need to relax bot protection). Then re-run the audit. On Shopify, use Crawler access instead (Online Store → Preferences → Crawler access) and paste the signature into OpenSEO under Settings → Crawler access. How to allow and verify the crawler: https://openseo.so/docs/crawler',
+    howToFix: `If you own this site, allowlist the "${CRAWLER_USER_AGENT_TOKEN}" user agent in your WAF/bot-protection settings (on Cloudflare: a WAF custom rule that skips bot protection when the user agent contains "${CRAWLER_USER_AGENT_TOKEN}"; on some free tiers you may need to relax bot protection). Then re-run the audit. On Shopify, use Crawler access instead (Online Store → Preferences → Crawler access) and paste the signature into ${PRODUCT_NAME} under Settings → Crawler access.`,
   },
   "javascript-rendering-suspected": {
     severity: "warning",
@@ -40,16 +40,14 @@ export const AUDIT_ISSUE_TYPES = {
     title: "Rate limited (429)",
     explanation:
       "The server answered 429 Too Many Requests, so this page could not be audited. The crawler paused for the server's Retry-After and tried the page once more before moving on.",
-    howToFix:
-      'Raise the rate limit for crawlers, or allowlist the "OpenSEO-Audit" user agent in your rate-limiting rules (on Cloudflare: a rate-limiting rule exception matching that user agent). Then re-run the audit. Re-running with fewer pages also helps if the limit is strict. On Shopify, if this audit did not render JavaScript, re-run it with Render JavaScript on. How to allow and verify the crawler: https://openseo.so/docs/crawler',
+    howToFix: `Raise the rate limit for crawlers, or allowlist the "${CRAWLER_USER_AGENT_TOKEN}" user agent in your rate-limiting rules (on Cloudflare: a rate-limiting rule exception matching that user agent). Then re-run the audit. Re-running with fewer pages also helps if the limit is strict. On Shopify, if this audit did not render JavaScript, re-run it with Render JavaScript on.`,
   },
   "crawl-rate-limited": {
     severity: "warning",
     title: "Crawl stopped early: rate limit",
     explanation:
       "The site refused several pages in a row with 429 Too Many Requests, or kept the crawler waiting for too long, so we stopped requesting pages. This report is incomplete; URLs we did not fetch are not recorded as broken or rate limited.",
-    howToFix:
-      "Re-run the audit after the site's rate limit resets, or ask the site owner to allow the OpenSEO-Audit crawler (https://openseo.so/docs/crawler). On Shopify, if this audit did not render JavaScript, re-run it with Render JavaScript on.",
+    howToFix: `Re-run the audit after the site's rate limit resets, or ask the site owner to allow the ${CRAWLER_USER_AGENT_TOKEN} crawler. On Shopify, if this audit did not render JavaScript, re-run it with Render JavaScript on.`,
   },
   "crawl-time-limit": {
     severity: "warning",
@@ -71,8 +69,7 @@ export const AUDIT_ISSUE_TYPES = {
     title: "Crawl stopped early: page limit",
     explanation:
       "The audit reached its page limit before visiting every URL it found, so this report covers part of the site. Orphan pages are not checked on a partial crawl.",
-    howToFix:
-      'Re-run the audit with a higher page limit. If it is already at the maximum, add a robots.txt group for the "OpenSEO-Audit" user agent that disallows sections you don\'t need audited, such as tag archives or filtered listings, so the limit goes to the pages that matter: https://openseo.so/docs/crawler',
+    howToFix: `Re-run the audit with a higher page limit. If it is already at the maximum, add a robots.txt group for the "${CRAWLER_USER_AGENT_TOKEN}" user agent that disallows sections you don't need audited, such as tag archives or filtered listings, so the limit goes to the pages that matter.`,
   },
   "server-error": {
     severity: "critical",

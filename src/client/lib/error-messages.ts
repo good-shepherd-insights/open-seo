@@ -15,11 +15,15 @@ export const UNEXPECTED_ERROR_MESSAGE = isHostedClientAuthMode()
   ? "Something went wrong on our end. Please try again, and contact support if it keeps happening."
   : "Something went wrong. Please try again, or check the server logs for details.";
 
+// The cause is ours to fix, so users never see the setup details behind it.
+const UNAVAILABLE =
+  "This data isn't available right now. Please try again later, and contact support if it keeps happening.";
+
 const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   UNAUTHENTICATED: "Please sign in and try again.",
   AUTH_CONFIG_MISSING: isEveryAppClientAuthMode()
     ? `${PRODUCT_NAME} can't reach your Every App gateway for this right now. An owner or admin can check its setup with pnpm everyapp status.`
-    : `${PRODUCT_NAME} auth is not configured. Follow the README setup steps for Cloudflare Access.`,
+    : "Sign-in isn't available right now. Please try again later.",
   PAYMENT_REQUIRED: `An active hosted subscription is required before you can use ${PRODUCT_NAME}.`,
   INSUFFICIENT_CREDITS:
     "You don't have enough credits for this. Upgrade your plan or buy more credits to keep going.",
@@ -29,7 +33,7 @@ const STANDARD_MESSAGES: Record<ErrorCode, string> = {
     "Your bank needs more time or a confirmation for this charge. Check your balance in a minute; if nothing arrived, buy your first top-up with the Buy credits button, then turn on auto-reload.",
   AUDIT_RENDERING_UNAVAILABLE: isEveryAppClientAuthMode()
     ? GATEWAY_RENDERING_NOT_SET_UP_MESSAGE
-    : "JavaScript rendering is not configured on this deployment. Ask your administrator to enable a renderer.",
+    : "JavaScript rendering isn't available right now. Run the audit without it.",
   FORBIDDEN: "You do not have access to this resource.",
   NOT_FOUND: "The requested resource was not found.",
   AUDIT_CAPACITY_REACHED:
@@ -41,20 +45,17 @@ const STANDARD_MESSAGES: Record<ErrorCode, string> = {
   UNKNOWN_LOCATION:
     "We couldn't find that city, county, or region. Pick a location from the list, or clear the field to search the whole country.",
   CRAWL_TARGET_BLOCKED: "This crawl target is blocked by security policy.",
-  BACKLINKS_BILLING_ISSUE:
-    "The connected DataForSEO account has a billing or balance issue.",
-  AI_SEARCH_BILLING_ISSUE:
-    "The connected DataForSEO account has a billing or balance issue.",
+  BACKLINKS_BILLING_ISSUE: UNAVAILABLE,
+  AI_SEARCH_BILLING_ISSUE: UNAVAILABLE,
   AI_VISIBILITY_ERROR:
     "The AI visibility request could not be completed. Review the tracking settings and try again.",
   DATAFORSEO_AUTH_FAILED: isEveryAppClientAuthMode()
     ? "DataForSEO isn't set up on your Every App gateway yet, or rejected the key it holds. An owner or admin sets it with pnpm everyapp secret set DATAFORSEO_API_KEY, or TREG_API_TOKEN to use treg instead."
-    : "DataForSEO rejected the credentials. Check that DATAFORSEO_API_KEY is the base64 of your DataForSEO login:password, and that the DataForSEO account is verified and has API access. If you use TREG_API_TOKEN instead, check the token and its balance at treg.to.",
+    : UNAVAILABLE,
   RATE_LIMITED: "Too many requests. Please wait and try again.",
   UPSTREAM_UNAVAILABLE:
     "The data provider is temporarily unavailable. Please retry in a moment.",
-  SUBREQUEST_LIMIT:
-    "Cloudflare stopped this at its limit on requests per run. On Workers Paid, redeploy OpenSEO to raise it.",
+  SUBREQUEST_LIMIT: UNAVAILABLE,
   CONFLICT: "This request conflicts with existing data.",
   INTERNAL_ERROR: UNEXPECTED_ERROR_MESSAGE,
 };

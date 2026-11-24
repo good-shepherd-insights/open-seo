@@ -6,7 +6,6 @@ import { ThemePreferenceRadio } from "@/client/components/ThemePreferenceMenuIte
 import { DistanceUnitSetting } from "@/client/features/settings/DistanceUnitSetting";
 import { everyAppAccountQueryOptions } from "@/client/features/every-app/everyAppAccountQueries";
 import { ImportFromSelfHosted } from "@/client/features/every-app/ImportFromSelfHosted";
-import { MoveToEveryAppSettings } from "@/client/features/every-app/MoveToEveryAppSettings";
 import { DeleteAccountSettings } from "@/client/features/settings/DeleteAccountSettings";
 import { McpConnectionsSettings } from "@/client/features/settings/McpConnectionsSettings";
 import { PrivacySettings } from "@/client/features/settings/PrivacySettings";
@@ -36,10 +35,6 @@ function PersonalSettings() {
       {isEveryAppClientAuthMode() ? <EveryAppSettings /> : null}
 
       {isHosted ? <McpConnectionsSettings /> : null}
-
-      {isHosted || isEveryAppClientAuthMode() ? null : (
-        <MoveToEveryAppSettings />
-      )}
 
       {isHosted ? (
         <PrivacySettings />

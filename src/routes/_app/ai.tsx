@@ -1,4 +1,4 @@
-import { PRODUCT_NAME, UPSTREAM_DOCS_URL } from "@/shared/branding";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { everyAppAccountQueryOptions } from "@/client/features/every-app/everyAppAccountQueries";
@@ -18,23 +18,19 @@ import {
   CardTitle,
 } from "@/client/components/ui/card";
 import { PageHeader } from "@/client/components/PageHeader";
-import { ArrowUpRight, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { getClientAuthMode } from "@/lib/auth-mode";
 import { captureClientEvent } from "@/client/lib/posthog";
 import {
-  agentUpdatePrompt,
+  getAgentUpdatePrompt,
   getAgentSetupPrompt,
 } from "@/client/features/ai-mcp/agentSetupPrompt";
 import { CopyButton } from "@/client/components/CopyButton";
 import { AgentList } from "@/client/features/ai-mcp/AgentList";
 import { pageHead } from "@/client/lib/pageHead";
 
-const DOCS_URL = `${UPSTREAM_DOCS_URL}/agent-setup`;
-
 const LINK_CLASS =
   "text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-foreground";
-const MUTED_LINK_CLASS =
-  "inline-flex items-center gap-1 text-sm text-muted-foreground underline decoration-foreground/25 underline-offset-4 hover:text-foreground";
 const SKILLS = [
   ["seo-coach", "Explains where you stand and picks your next step."],
   [
@@ -137,15 +133,6 @@ function AiPage() {
                             captureClientEvent("mcp:setup_prompt_copy")
                           }
                         />
-                        <a
-                          href={`${DOCS_URL}#set-up-your-agent`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={MUTED_LINK_CLASS}
-                        >
-                          Setup instructions
-                          <ArrowUpRight className="size-3.5" />
-                        </a>
                       </div>
                     </CardContent>
                   </Card>
@@ -165,22 +152,13 @@ function AiPage() {
                       <CopyButton
                         variant="default"
                         size="lg"
-                        value={agentUpdatePrompt}
+                        value={getAgentUpdatePrompt(origin)}
                         label="Copy update prompt"
                         successMessage="Update prompt copied"
                         onCopy={() =>
                           captureClientEvent("mcp:update_prompt_copy")
                         }
                       />
-                      <a
-                        href={`${DOCS_URL}#update-your-skills`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={MUTED_LINK_CLASS}
-                      >
-                        Update instructions
-                        <ArrowUpRight className="size-3.5" />
-                      </a>
                     </CardContent>
                   </Card>
                 </div>
@@ -237,7 +215,7 @@ function AiPage() {
                     className="flex flex-col gap-0.5 sm:flex-row sm:gap-3"
                   >
                     <a
-                      href={`${UPSTREAM_DOCS_URL}/skills/${name}`}
+                      href={`/skills/${name}.md`}
                       target="_blank"
                       rel="noreferrer"
                       className={`shrink-0 font-mono text-[13px] sm:w-48 ${LINK_CLASS}`}

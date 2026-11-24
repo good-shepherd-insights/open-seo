@@ -1,3 +1,4 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import {
   AuthorizationError,
   OAuthError,
@@ -342,7 +343,7 @@ function createProvider(appFetch: AppFetch, resource: string) {
     resourceMetadata: {
       resource,
       scopes_supported: [MCP_SCOPE],
-      resource_name: "OpenSEO MCP",
+      resource_name: `${PRODUCT_NAME} MCP`,
     },
     tokenExchangeCallback: ({ props, requestedScope }) => {
       if (!requestedScope.includes(MCP_SCOPE)) {

@@ -7,19 +7,6 @@ import {
 } from "@/shared/rank-tracking";
 import type { useRankRunPolling } from "./useRankRunPolling";
 
-function ReadWhatChangedLink() {
-  return (
-    <a
-      href="https://openseo.so/blogs/state-of-rank-tracking-november-2026"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="font-medium underline underline-offset-4"
-    >
-      Read what changed
-    </a>
-  );
-}
-
 /** The latest rank check's state: running, delayed, stale, failed, or incomplete. */
 export function RankRunAlerts({
   run,
@@ -62,7 +49,7 @@ export function RankRunAlerts({
           <p>
             <span className="font-medium">This check takes about an hour</span>{" "}
             because Google's results have been unreliable lately. You can leave
-            this page while it's running. <ReadWhatChangedLink />
+            this page while it's running.
           </p>
         </AlertDescription>
       </Alert>
@@ -103,7 +90,7 @@ export function RankRunAlerts({
               We couldn't finish your last check.
             </span>{" "}
             Google's results have been unreliable for all rank trackers lately.
-            Please try again later. <ReadWhatChangedLink />
+            Please try again later.
           </p>
         </AlertDescription>
       </Alert>
@@ -121,7 +108,7 @@ export function RankRunAlerts({
               Some keywords couldn't be checked.
             </span>{" "}
             Google's results have been unreliable for all rank trackers lately,
-            so these show their last known position. <ReadWhatChangedLink />
+            so these show their last known position.
           </p>
         </AlertDescription>
       </Alert>

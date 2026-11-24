@@ -31,12 +31,7 @@ export function CrawlerAccessSetupHint() {
       </>
     );
   }
-  return (
-    <>
-      An admin sets <code>CRAWLER_ACCESS_SECRET</code> to at least 32 random
-      characters in the deployment's environment, then redeploys.
-    </>
-  );
+  return <>Crawler access isn't available right now. Please contact support.</>;
 }
 
 /** Whether to show the setup hint, once the server has said. */

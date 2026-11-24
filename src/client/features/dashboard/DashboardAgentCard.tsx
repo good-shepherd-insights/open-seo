@@ -7,6 +7,7 @@ import { CopyButton } from "@/client/components/CopyButton";
 import { Button } from "@/client/components/ui/button";
 import { Card } from "@/client/components/ui/card";
 import { ONE_CLICK_INSTALLS } from "@/client/features/ai-mcp/agentInstalls";
+import { getAgentConnectPrompt } from "@/client/features/ai-mcp/agentSetupPrompt";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { dismissDashboardAgentCard } from "@/serverFunctions/dashboard";
 import { listMcpConnections } from "@/serverFunctions/mcp-connections";
@@ -22,13 +23,19 @@ export function DashboardAgentCard({ projectId }: { projectId: string }) {
       title={`Use ${PRODUCT_NAME} in ChatGPT or Claude`}
       description="Research keywords and audit your site from the chatbot you already use."
     >
-      {ONE_CLICK_INSTALLS.map(({ agent, name, href, Icon }) => (
+      {ONE_CLICK_INSTALLS.map(({ agent, name, newChatUrl, Icon }) => (
         <Button
           key={agent}
           variant="outline"
           className={actionClassName}
           nativeButton={false}
-          render={<a href={href} target="_blank" rel="noreferrer" />}
+          render={
+            <a
+              href={newChatUrl(getAgentConnectPrompt(window.location.origin))}
+              target="_blank"
+              rel="noreferrer"
+            />
+          }
           onClick={() =>
             captureClientEvent("onboarding:add_to_agent_click", {
               agent,
@@ -66,7 +73,7 @@ export function DashboardAgentPromptCard({
     ({ agent }) =>
       grants.length === 0 || grants.some((grant) => grant.webChat === agent),
   );
-  const prompt = `Use OpenSEO to audit ${domain ?? "my website"} and tell me the 3 most important next steps.`;
+  const prompt = `Use ${PRODUCT_NAME} to audit ${domain ?? "my website"} and tell me the 3 most important next steps.`;
 
   return (
     <AgentCard

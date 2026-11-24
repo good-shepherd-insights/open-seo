@@ -1,6 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
 import { Package } from "lucide-react";
-import { UPSTREAM_DOCS_URL } from "@/shared/branding";
 import { PRODUCT_NAME } from "@/shared/branding";
 import { CopyButton } from "@/client/components/CopyButton";
 
@@ -50,16 +49,6 @@ export function AgentSetupPanel({
           ) : null}
         </div>
         {children}
-      </div>
-      <div className="mt-4 text-center">
-        <a
-          href={`${UPSTREAM_DOCS_URL}/agent-setup`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-xs text-muted-foreground underline decoration-muted-foreground/25 underline-offset-4 hover:text-foreground"
-        >
-          Manual setup
-        </a>
       </div>
     </>
   );

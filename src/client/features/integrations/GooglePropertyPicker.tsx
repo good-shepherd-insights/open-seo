@@ -1,6 +1,5 @@
-import { GSC_SETUP_GUIDE_URL } from "@/shared/branding";
 import { GscPropertySetupHelp, hasNoGscWebsites } from "./GscPropertySetupHelp";
-import { GoogleAccounts, accountLabel, accountStatus } from "./GoogleAccounts";
+import { GoogleAccounts, accountLabel } from "./GoogleAccounts";
 import { GoogleAccountRemovalDialog } from "@/client/features/integrations/GoogleAccountRemovalDialog";
 import { QueryError } from "@/client/components/QueryState";
 import { Spinner } from "@/client/components/Spinner";
@@ -237,24 +236,6 @@ export function GooglePropertyPicker({
             onRetry={onRetry}
             onRemove={setRemoving}
           />
-          {provider === "gsc" &&
-          !loading &&
-          !emptyGsc &&
-          accounts.some(
-            (account) => accountStatus(account, provider) !== null,
-          ) ? (
-            <p className="text-xs text-muted-foreground">
-              Having trouble?{" "}
-              <a
-                href={GSC_SETUP_GUIDE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-4"
-              >
-                Setup guide ↗
-              </a>
-            </p>
-          ) : null}
         </div>
       ) : null}
       {renderActions ? (

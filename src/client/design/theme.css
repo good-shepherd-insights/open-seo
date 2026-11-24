@@ -25,7 +25,7 @@
 }
 
 :root,
-html[data-theme="openseo"] {
+html[data-theme="mi-light"] {
   --radius: 0.625rem;
   --background: #f4f5f7;
   --foreground: #1b1e24;
@@ -57,7 +57,7 @@ html[data-theme="openseo"] {
   --trend-bar: #8a93a3;
 }
 
-html[data-theme="openseo-dark"] {
+html[data-theme="mi-dark"] {
   --background: #17191d;
   --foreground: #f2f3f5;
   --card: #202329;
@@ -104,7 +104,7 @@ body {
   border-color: transparent;
   box-shadow: none;
 }
-html[data-theme="openseo"] [data-slot="card"] {
+html[data-theme="mi-light"] [data-slot="card"] {
   border-color: var(--border);
 }
 
