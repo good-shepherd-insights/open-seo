@@ -44,7 +44,7 @@ Customers choose a plan when they subscribe. The organization owner can move up 
 
 Maryland Insights SEO uses usage credits for features that query paid SEO data providers, especially DataForSEO. Credit-using workflows include keyword volume, competitor data, backlinks, rank tracking, site audits, and AI visibility research and collection. Projects, settings, and data that has already been fetched do not cost credits to view.
 
-Anyone, on any plan including Starter, can buy top-up credits: any whole-dollar amount from $5 to $5,000. Bulk discounts: 5% off from $100, 10% from $500, 15% from $1,000, 20% from $2,500, 25% at $5,000. Top-up credits are used after plan credits and do not expire. Monthly included credits reset each billing cycle.
+Anyone, on any plan including Starter, can buy top-up credits: any whole-dollar amount from $5 to $5,000. Bulk discounts: 2% off from $100, 4% from $500, 6% from $1,000, 8% from $2,500, 10% at $5,000. Top-up credits are used after plan credits and do not expire. Monthly included credits reset each billing cycle.
 
 New paid operations require credits. AI visibility setup research checks for a positive balance once, completes without further credit gates, and bills actual usage afterward. Prompt Research, Prompt Explorer and prompt tracking work on every plan and use credits.
 

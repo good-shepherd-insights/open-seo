@@ -79,11 +79,11 @@ export const TOP_UP_MAX_USD = 5000;
 // What a bulk top-up saves. Autumn charges the price: these mirror the volume
 // tiers on its credit-top-up plan, so change both together.
 export const TOP_UP_DISCOUNTS = [
-  { minUsd: 5000, percent: 25 },
-  { minUsd: 2500, percent: 20 },
-  { minUsd: 1000, percent: 15 },
-  { minUsd: 500, percent: 10 },
-  { minUsd: 100, percent: 5 },
+  { minUsd: 5000, percent: 10 },
+  { minUsd: 2500, percent: 8 },
+  { minUsd: 1000, percent: 6 },
+  { minUsd: 500, percent: 4 },
+  { minUsd: 100, percent: 2 },
 ] as const;
 
 export function topUpPrice(creditsUsd: number) {
