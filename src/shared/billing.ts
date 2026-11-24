@@ -15,9 +15,9 @@ export type BillingTab = (typeof BILLING_TABS)[number]["value"];
 export type PlanStatus = "free" | "paid";
 
 export const AUTUMN_PAID_PLAN_ID = "base-plan";
-// Base Plan entitlements with 20% more monthly credits than the price.
-export const AUTUMN_PRO_PLAN_ID = "pro-plan";
-export const AUTUMN_AGENCY_PLAN_ID = "agency-plan";
+// Sold as Growth and Ultimate. The constants keep upstream's names so merges stay clean.
+export const AUTUMN_PRO_PLAN_ID = "growth-plan";
+export const AUTUMN_AGENCY_PLAN_ID = "ultimate-plan";
 // The tiers billed yearly, at ten months' price. Credits still refill monthly.
 export const AUTUMN_PAID_ANNUAL_PLAN_ID = "base-plan-annual";
 export const AUTUMN_PRO_ANNUAL_PLAN_ID = "pro-plan-annual";

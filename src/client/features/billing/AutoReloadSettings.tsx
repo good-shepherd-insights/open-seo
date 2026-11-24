@@ -2,17 +2,24 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/client/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/client/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/client/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/client/components/ui/input-group";
+import { Progress } from "@/client/components/ui/progress";
 import {
   AutoReloadNotice,
   UpdateCardButton,
 } from "@/client/features/billing/AutoReloadNotice";
-import { BillingRow } from "@/client/features/billing/BillingRow";
 import { billingAccountQueryOptions } from "@/client/features/billing/billingAccountQuery";
 import { parseUsdAmount } from "@/client/features/billing/HostedBillingContentUtils";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
@@ -36,8 +43,22 @@ type AutoReload = NonNullable<
   ReturnType<typeof useCreditBalance>["autoReload"]
 >;
 
+const STATE_LABELS: Record<
+  ReturnType<typeof useCreditBalance>["autoReloadState"],
+  { label: string; className: string }
+> = {
+  off: { label: "Off", className: "text-muted-foreground" },
+  on: { label: "On", className: "" },
+  card_failed: { label: "Not working", className: "text-destructive" },
+  failed: { label: "Not working", className: "text-destructive" },
+  budget_spent: {
+    label: "Paused",
+    className: "text-amber-700 dark:text-amber-500",
+  },
+};
+
 /**
- * The auto-reload row of the billing summary. Collapsed, it says what is set
+ * The auto-reload card on the billing page. Collapsed, it says what is set
  * and offers Turn on or Edit; the amounts open only when asked for. Turning
  * on can charge the first reload right away (the server buys it before
  * enabling); the button says so. A failed reload or a spent budget shows a
@@ -151,120 +172,131 @@ export function AutoReloadSettings() {
   ) : null;
 
   return (
-    <BillingRow
-      label="Auto-reload"
-      summary={
-        on ? (
-          <>
-            <span className="font-medium text-foreground">On</span> &middot;
-            Adds ${on.amountUsd} when top-ups drop to $
-            {AUTO_RELOAD_THRESHOLD_USD} &middot; ${on.spentUsd.toFixed(2)} of $
-            {on.monthlyLimitUsd} monthly budget used
-            {refillDate ? `, resets ${refillDate}` : ""}
-          </>
-        ) : (
-          <>
-            Off &middot; Buy more automatically when top-ups drop to $
-            {AUTO_RELOAD_THRESHOLD_USD}
-          </>
-        )
-      }
-      action={
-        editing ? null : (
-          <Button variant="outline" size="sm" onClick={openForm}>
-            {!on ? "Turn on" : chargesNow ? "Retry" : "Edit"}
-          </Button>
-        )
-      }
-    >
-      {notice}
-      {editing ? (
-        <div className="max-w-xl space-y-3">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <AmountField
-              id="auto-reload-amount"
-              label="Add each time"
-              value={fields.amountUsd}
-              error={
-                amount.isValid
-                  ? undefined
-                  : `Enter between $${TOP_UP_MIN_USD}–$${TOP_UP_MAX_USD}.`
-              }
-              onChange={(value) =>
-                setFields((prev) => ({ ...prev, amountUsd: value }))
-              }
+    <Card size="lg">
+      <CardHeader>
+        <CardTitle>
+          <h2>Auto-reload</h2>
+        </CardTitle>
+        <CardAction className={STATE_LABELS[autoReloadState].className}>
+          {STATE_LABELS[autoReloadState].label}
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <p>
+          {on
+            ? `Adds $${on.amountUsd} when top-ups drop to $${AUTO_RELOAD_THRESHOLD_USD}.`
+            : `Buy more automatically when top-ups drop to $${AUTO_RELOAD_THRESHOLD_USD}.`}
+        </p>
+        {on ? (
+          <div className="space-y-1.5">
+            <p className="flex justify-between gap-3">
+              <span>Monthly budget</span>
+              <span className="tabular-nums">
+                ${on.spentUsd.toFixed(2)} of ${on.monthlyLimitUsd}
+              </span>
+            </p>
+            <Progress
+              aria-label="Monthly budget used"
+              value={Math.min(on.spentUsd / on.monthlyLimitUsd, 1) * 100}
             />
-            <AmountField
-              id="auto-reload-budget"
-              label="Monthly budget"
-              value={fields.monthlyLimitUsd}
-              error={
-                budget.isValid
-                  ? undefined
-                  : `Enter between $${amount.parsed}–$${AUTO_RELOAD_MAX_MONTHLY_USD}.`
-              }
-              onChange={(value) =>
-                setFields((prev) => ({ ...prev, monthlyLimitUsd: value }))
-              }
-            />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            The budget caps what you spend on top-up credits each month,
-            including ones you buy yourself.
-          </p>
-
-          {hint ? <p className="text-xs text-amber-600">{hint}</p> : null}
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              size="sm"
-              pending={saving}
-              disabled={mutation.isPending || !canSubmit}
-              onClick={() =>
-                // Nothing to change and nothing to retry: just close.
-                isDirty || chargesNow ? save(values) : setEditing(false)
-              }
-            >
-              {saveLabel}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={mutation.isPending}
-              onClick={() => setEditing(false)}
-            >
-              Cancel
-            </Button>
-            {on ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-auto text-muted-foreground"
-                pending={turningOff}
-                disabled={mutation.isPending}
-                onClick={() => mutation.mutate({ enabled: false })}
-              >
-                Turn off auto-reload
-              </Button>
+            {refillDate ? (
+              <p className="text-muted-foreground">Resets {refillDate}</p>
             ) : null}
           </div>
+        ) : null}
+        {notice}
+        {editing ? (
+          <div className="space-y-3">
+            <div className="grid gap-3">
+              <AmountField
+                id="auto-reload-amount"
+                label="Add each time"
+                value={fields.amountUsd}
+                error={
+                  amount.isValid
+                    ? undefined
+                    : `Enter between $${TOP_UP_MIN_USD}–$${TOP_UP_MAX_USD}.`
+                }
+                onChange={(value) =>
+                  setFields((prev) => ({ ...prev, amountUsd: value }))
+                }
+              />
+              <AmountField
+                id="auto-reload-budget"
+                label="Monthly budget"
+                value={fields.monthlyLimitUsd}
+                error={
+                  budget.isValid
+                    ? undefined
+                    : `Enter between $${amount.parsed}–$${AUTO_RELOAD_MAX_MONTHLY_USD}.`
+                }
+                onChange={(value) =>
+                  setFields((prev) => ({ ...prev, monthlyLimitUsd: value }))
+                }
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              The budget caps what you spend on top-up credits each month,
+              including ones you buy yourself.
+            </p>
 
-          {mutation.isError ? (
-            <div className="space-y-2">
-              <p role="alert" className="text-sm text-destructive">
-                {getStandardErrorMessage(
-                  mutation.error,
-                  "We couldn't save auto-reload. Please try again.",
-                )}
-              </p>
-              {getErrorCode(mutation.error) === "PAYMENT_METHOD_REQUIRED" ? (
-                <UpdateCardButton />
+            {hint ? <p className="text-xs text-amber-600">{hint}</p> : null}
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                pending={saving}
+                disabled={mutation.isPending || !canSubmit}
+                onClick={() =>
+                  // Nothing to change and nothing to retry: just close.
+                  isDirty || chargesNow ? save(values) : setEditing(false)
+                }
+              >
+                {saveLabel}
+              </Button>
+              <Button
+                variant="ghost"
+                disabled={mutation.isPending}
+                onClick={() => setEditing(false)}
+              >
+                Cancel
+              </Button>
+              {on ? (
+                <Button
+                  variant="ghost"
+                  className="text-destructive"
+                  pending={turningOff}
+                  disabled={mutation.isPending}
+                  onClick={() => mutation.mutate({ enabled: false })}
+                >
+                  Turn off auto-reload
+                </Button>
               ) : null}
             </div>
-          ) : null}
-        </div>
-      ) : null}
-    </BillingRow>
+
+            {mutation.isError ? (
+              <div className="space-y-2">
+                <p role="alert" className="text-sm text-destructive">
+                  {getStandardErrorMessage(
+                    mutation.error,
+                    "We couldn't save auto-reload. Please try again.",
+                  )}
+                </p>
+                {getErrorCode(mutation.error) === "PAYMENT_METHOD_REQUIRED" ? (
+                  <UpdateCardButton />
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+        {editing ? null : (
+          <div>
+            <Button variant="outline" onClick={openForm}>
+              {!on ? "Turn on" : chargesNow ? "Retry" : "Edit"}
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 

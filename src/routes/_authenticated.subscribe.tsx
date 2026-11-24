@@ -19,8 +19,7 @@ import { PlanChangeAction } from "@/client/features/billing/PlanChange";
 import { UpgradePlanDialog } from "@/client/features/billing/UpgradePlanDialog";
 import { PlanPageAccountMenu } from "@/client/features/billing/PlanPageAccountMenu";
 import {
-  PLAN_FOOTER_LINK_CLASS,
-  PlanGuarantee,
+  PlanDetails,
   PlanOfferCard,
 } from "@/client/features/billing/PlanOfferCard";
 import {
@@ -168,7 +167,7 @@ function SubscribePage() {
     finalizingTimedOut,
   });
   const isChangingPlan = subscribeRouteState === "changePlan";
-  const highlightedPlan = requestedPlan ?? (isChangingPlan ? null : "base");
+  const highlightedPlan = requestedPlan ?? null;
 
   // Armed once on landing with checkout=success (not on the finalizing state,
   // which a refetch with no cached data can leave for "loading" and re-enter)
@@ -297,7 +296,7 @@ function SubscribePage() {
 
   return (
     // The top padding clears the pinned Back to app and account buttons.
-    <div className="w-full max-w-5xl space-y-8 pt-12 pb-4">
+    <div className="w-full max-w-[70rem] space-y-9 pt-12 pb-4">
       {/* Pinned like the account menu across from it, at the same height. */}
       {isUpgradeFlow ? (
         <div className="fixed top-4 left-4 z-20">
@@ -313,13 +312,13 @@ function SubscribePage() {
       <PlanPageAccountMenu email={session?.user?.email} />
 
       <div className="space-y-6">
-        <div className="mx-auto max-w-md space-y-2 text-center">
+        <div className="mx-auto max-w-xl space-y-3 text-center">
           <img
             src={LOGO_PATH}
             alt={PRODUCT_NAME}
-            className="mx-auto mb-4 size-10 rounded-lg"
+            className="mx-auto mb-4 size-14 rounded-xl bg-white p-1.5"
           />
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-medium tracking-tight text-balance">
             {isChangingPlan
               ? "Change your plan"
               : isUpgradeFlow
@@ -355,11 +354,11 @@ function SubscribePage() {
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-5 lg:grid-cols-3">
         {Object.keys(TIERS)
           .filter(isTier)
           .map((tier) => {
-            const { offer, annual, description, features } = TIERS[tier];
+            const { offer, annual, description } = TIERS[tier];
             return (
               <PlanOfferCard
                 key={tier}
@@ -367,14 +366,17 @@ function SubscribePage() {
                 description={description}
                 priceUsd={yearly && annual ? annual.priceUsd : offer.priceUsd}
                 period={yearly && annual ? "year" : "month"}
-                features={features}
-                highlighted={tier === highlightedPlan}
+                highlighted={
+                  isChangingPlan
+                    ? offer.planId === paidPlanId
+                    : tier === highlightedPlan
+                }
               >
                 {!canManageBilling ? null : isChangingPlan ? (
                   <PlanChangeAction
                     offer={offer}
                     currentPlanId={paidPlanId}
-                    highlighted={tier === highlightedPlan}
+                    highlighted
                     yearly={yearly}
                     onUpgrade={() => {
                       setUpgradeTier(tier);
@@ -385,7 +387,6 @@ function SubscribePage() {
                 ) : (
                   <Button
                     className="w-full"
-                    variant={tier === highlightedPlan ? "default" : "outline"}
                     pending={attachingPlan === tier}
                     // One checkout at a time: a second one would replace the first.
                     disabled={attachingPlan !== null}
@@ -416,21 +417,7 @@ function SubscribePage() {
         </div>
       ) : null}
 
-      <div className="space-y-2">
-        <PlanGuarantee />
-        <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          <span>
-            Questions? Email{" "}
-            <a
-              className={PLAN_FOOTER_LINK_CLASS}
-              href={`mailto:${SUPPORT_EMAIL}`}
-            >
-              {SUPPORT_EMAIL}
-            </a>
-            .
-          </span>
-        </p>
-      </div>
+      <PlanDetails />
 
       {annualPriceUsd !== undefined ? (
         <AnnualPlanDialog

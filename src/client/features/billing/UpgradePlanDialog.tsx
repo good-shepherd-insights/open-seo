@@ -77,6 +77,7 @@ export function UpgradePlanDialog({
   // Stays pending through the redirect after a success.
   const upgrading = mutation.isPending || mutation.isSuccess;
   const preview = previewQuery.data;
+  const creditsUsd = offer.monthlyCreditsUsd;
   const error = mutation.error ?? previewQuery.error;
 
   function handleOpenChange(next: boolean) {
@@ -111,20 +112,21 @@ export function UpgradePlanDialog({
               <dt className="text-muted-foreground">Then</dt>
               <dd className="tabular-nums">{usd(preview.renewalUsd)}/month</dd>
             </div>
-            <div className="flex justify-between gap-4 border-t border-border pt-3">
-              <dt className="text-muted-foreground">
-                Usage credits until {renewalDate(preview.renewsAt)}
-                {preview.carriedUsd > 0 ? (
-                  <span className="block text-xs tabular-nums">
-                    {usd(offer.monthlyCreditsUsd)} plan +{" "}
-                    {usd(preview.carriedUsd)} unused
-                  </span>
-                ) : null}
-              </dt>
-              <dd className="font-medium tabular-nums">
-                {usd(offer.monthlyCreditsUsd + preview.carriedUsd)}
-              </dd>
-            </div>
+            {creditsUsd === null ? null : (
+              <div className="flex justify-between gap-4 border-t border-border pt-3">
+                <dt className="text-muted-foreground">
+                  Usage credits until {renewalDate(preview.renewsAt)}
+                  {preview.carriedUsd > 0 ? (
+                    <span className="block text-xs tabular-nums">
+                      {usd(creditsUsd)} plan + {usd(preview.carriedUsd)} unused
+                    </span>
+                  ) : null}
+                </dt>
+                <dd className="font-medium tabular-nums">
+                  {usd(creditsUsd + preview.carriedUsd)}
+                </dd>
+              </div>
+            )}
           </dl>
         ) : previewQuery.isPending ? (
           <div aria-busy className="space-y-3">

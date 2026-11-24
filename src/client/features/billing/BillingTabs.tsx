@@ -38,7 +38,7 @@ export function BillingTabs({
           ))}
         </DataTableTabs>
       ) : null}
-      <div className="p-4">
+      <div className="p-4 md:p-6">
         {showInvoices ? (
           <BillingInvoices invoiceEmailsEnabled={invoiceEmailsEnabled} />
         ) : (

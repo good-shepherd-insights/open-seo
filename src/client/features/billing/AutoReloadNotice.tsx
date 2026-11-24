@@ -103,7 +103,7 @@ export function AutoReloadNotice({
           {onRaise && canRaise ? (
             <Button
               variant="outline"
-              size="sm"
+              className="text-foreground"
               pending={pending}
               disabled={pending}
               onClick={() => onRaise(raised)}
@@ -142,7 +142,7 @@ export function UpdateCardButton() {
   return (
     <Button
       variant="outline"
-      size="sm"
+      className="text-foreground"
       pending={isOpening}
       onClick={() => void openPortal()}
     >

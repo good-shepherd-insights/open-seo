@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ErrorState } from "@/client/components/ErrorState";
 import { PageHeader } from "@/client/components/PageHeader";
 import { QueryError } from "@/client/components/QueryState";
+import { Alert, AlertDescription } from "@/client/components/ui/alert";
 import { Button } from "@/client/components/ui/button";
 import {
   Card,
@@ -29,7 +30,6 @@ import { useCanManageBilling } from "@/client/features/team/organizationQueries"
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { prefetchBillingAccount } from "@/client/features/billing/billingAccountQuery";
 import { AutoReloadSettings } from "@/client/features/billing/AutoReloadSettings";
-import { BillingRow } from "@/client/features/billing/BillingRow";
 import { ChangePlanButton } from "@/client/features/billing/PlanChange";
 import { BillingTabs } from "@/client/features/billing/BillingTabs";
 import { CreditsCard } from "@/client/features/billing/CreditsCard";
@@ -74,13 +74,14 @@ export const Route = createFileRoute("/_app/billing")({
   component: BillingPage,
 });
 
+const TOP_UP_PRESETS = ["20", "50", "99"];
+
 type BillingAction = "plan" | "topUp";
 
 function BillingPage() {
   const { tab } = Route.useSearch();
   const navigate = useNavigate();
-  const [topUpAmount, setTopUpAmount] = useState("20");
-  const [buyingCredits, setBuyingCredits] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(TOP_UP_PRESETS[0]);
   const [pendingAction, setPendingAction] = useState<BillingAction | null>(
     null,
   );
@@ -165,185 +166,187 @@ function BillingPage() {
             />
           ) : null}
 
-          {/* One column read top to bottom: the plan, then the credits with
-              the ways to get more, then the usage tabs. */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <h2>Plan</h2>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-1">
-                  <p className="text-xl font-semibold tracking-tight">
-                    {account.paidPlanId ? account.paidPlanName : "Free Plan"}
+          {account.isPastDue && canManageBilling ? (
+            <Alert variant="destructive">
+              <AlertDescription className="flex flex-wrap items-center justify-between gap-x-5 gap-y-3 p-2 [&_p]:mb-0!">
+                <div>
+                  <p className="font-medium text-foreground">
+                    Your last payment didn&rsquo;t go through
                   </p>
-                  {account.paidPlanId ? (
-                    <p className="text-sm text-muted-foreground">
-                      ${account.monthlyCreditsUsd.toFixed(2)} of credits each
-                      month
-                    </p>
-                  ) : canManageBilling ? (
-                    <p className="text-sm text-muted-foreground">
-                      Upgrade to access every feature and more credits each
-                      month
-                    </p>
-                  ) : null}
+                  <p>
+                    Nothing has been turned off yet. Update your card to keep
+                    your plan.
+                  </p>
                 </div>
+                <Button
+                  nativeButton={false}
+                  className="no-underline!"
+                  render={<Link to="/billing/fix-payment" />}
+                >
+                  Fix payment
+                </Button>
+              </AlertDescription>
+            </Alert>
+          ) : null}
 
-                {!canManageBilling ? null : isFreePlan ? (
-                  <Button
-                    size="sm"
-                    nativeButton={false}
-                    render={
-                      <Link to={SUBSCRIBE_ROUTE} search={{ upgrade: true }} />
-                    }
-                  >
-                    Upgrade Plan
-                  </Button>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    <ChangePlanButton planId={account.paidPlanId} />
+          <div className="grid gap-6 has-[#auto-reload-amount]:items-start has-data-[slot=alert]:items-start lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
+            {/* Buying is owner-only and needs a paid plan; free plans see what
+                one adds, so the base plan's credits aren't read as a cap. */}
+            <CreditsCard>
+              {!canManageBilling ? null : isFreePlan ? (
+                <>
+                  <h3 className="font-medium">Need more?</h3>
+                  <p className="text-muted-foreground">
+                    A paid plan lets you buy credits whenever you need them, or
+                    have them added automatically when you run low. They never
+                    expire.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="font-medium">Buy credits</h3>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <div
+                      role="group"
+                      aria-label="Amount"
+                      className="flex gap-2"
+                    >
+                      {TOP_UP_PRESETS.map((preset) => (
+                        <Button
+                          key={preset}
+                          variant="outline"
+                          aria-pressed={topUpAmount === preset}
+                          className="min-w-14 aria-pressed:border-primary aria-pressed:bg-muted"
+                          onClick={() => setTopUpAmount(preset)}
+                        >
+                          ${preset}
+                        </Button>
+                      ))}
+                    </div>
+                    <span className="text-muted-foreground">or</span>
+                    <Field data-invalid={showTopUpError} className="w-24">
+                      <InputGroup>
+                        <InputGroupAddon>$</InputGroupAddon>
+                        <InputGroupInput
+                          type="number"
+                          min={TOP_UP_MIN_USD}
+                          max={TOP_UP_MAX_USD}
+                          step={1}
+                          inputMode="numeric"
+                          aria-label="Top-up amount in USD"
+                          aria-invalid={showTopUpError}
+                          value={topUpAmount}
+                          onChange={(e) => setTopUpAmount(e.target.value)}
+                        />
+                      </InputGroup>
+                    </Field>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      pending={pendingAction === "plan"}
-                      disabled={pendingAction !== null}
+                      className="ml-auto"
+                      pending={pendingAction === "topUp"}
+                      disabled={
+                        !isValidTopUp || pendingAction !== null || budgetSpent
+                      }
                       onClick={() =>
                         void runAction(
-                          "plan",
-                          openPortal,
-                          "We couldn't open the billing portal. Please try again.",
+                          "topUp",
+                          startTopUpCheckout,
+                          "We couldn't start the checkout. Please try again.",
                         )
                       }
                     >
-                      {pendingAction === "plan"
+                      {pendingAction === "topUp"
                         ? "Redirecting to Stripe..."
-                        : "Manage subscription"}
+                        : `Buy $${parsedTopUpAmount} of credits`}
                     </Button>
                   </div>
-                )}
-              </div>
-
-              {!canManageBilling ? (
-                <p className="text-sm text-muted-foreground">
-                  Only the organization owner can change the plan or buy
-                  credits. Ask them if you need more.
-                </p>
-              ) : (
-                actionError("plan")
+                  {showTopUpError ? (
+                    <p className="text-sm text-destructive">
+                      Enter between ${TOP_UP_MIN_USD}–${TOP_UP_MAX_USD}.
+                    </p>
+                  ) : null}
+                  {budgetSpent ? (
+                    <p className="text-sm text-muted-foreground">
+                      You&rsquo;ve hit your monthly auto-reload budget. Raise it
+                      under Auto-reload to buy more.
+                    </p>
+                  ) : null}
+                  {actionError("topUp")}
+                </>
               )}
-            </CardContent>
-          </Card>
+            </CreditsCard>
 
-          {/* Buying is owner-only and needs a paid plan; free plans see what
-              one adds, so the base plan's credits aren't read as a cap. */}
-          <CreditsCard>
-            {canManageBilling ? (
-              <>
-                <BillingRow
-                  label="Top-up credits"
-                  summary={
-                    isFreePlan
-                      ? "Need more than your monthly credits? On a paid plan, buy as many as you need. They never expire."
-                      : "Never expire and are used after your monthly credits."
-                  }
-                  action={
-                    isFreePlan || buyingCredits ? null : (
+            <div className="flex min-w-0 flex-col gap-6">
+              <Card size="lg">
+                <CardHeader>
+                  <CardTitle>
+                    <h2>Plan</h2>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-xl font-medium tracking-tight">
+                      {account.paidPlanId ? account.paidPlanName : "Free Plan"}
+                    </p>
+                    {account.paidPlanId ? (
+                      <p className="text-muted-foreground">
+                        ${account.monthlyCreditsUsd.toFixed(2)} of credits each
+                        month
+                      </p>
+                    ) : canManageBilling ? (
+                      <p className="text-muted-foreground">
+                        Upgrade to access every feature and more credits each
+                        month
+                      </p>
+                    ) : null}
+                  </div>
+                  {!canManageBilling ? (
+                    <p className="text-muted-foreground">
+                      Only the organization owner can change the plan or buy
+                      credits. Ask them if you need more.
+                    </p>
+                  ) : isFreePlan ? (
+                    <Button
+                      nativeButton={false}
+                      render={
+                        <Link to={SUBSCRIBE_ROUTE} search={{ upgrade: true }} />
+                      }
+                    >
+                      Upgrade Plan
+                    </Button>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         variant="outline"
-                        size="sm"
-                        onClick={() => setBuyingCredits(true)}
+                        pending={pendingAction === "plan"}
+                        disabled={pendingAction !== null}
+                        onClick={() =>
+                          void runAction(
+                            "plan",
+                            openPortal,
+                            "We couldn't open the billing portal. Please try again.",
+                          )
+                        }
                       >
-                        Buy credits
+                        {pendingAction === "plan"
+                          ? "Redirecting to Stripe..."
+                          : "Manage subscription"}
                       </Button>
-                    )
-                  }
-                >
-                  {!isFreePlan && buyingCredits ? (
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap items-start gap-2">
-                        <Field data-invalid={showTopUpError} className="w-36">
-                          <InputGroup>
-                            <InputGroupAddon>$</InputGroupAddon>
-                            <InputGroupInput
-                              type="number"
-                              min={TOP_UP_MIN_USD}
-                              max={TOP_UP_MAX_USD}
-                              step={1}
-                              inputMode="numeric"
-                              aria-label="Top-up amount in USD"
-                              aria-invalid={showTopUpError}
-                              autoFocus
-                              value={topUpAmount}
-                              onChange={(e) => setTopUpAmount(e.target.value)}
-                            />
-                          </InputGroup>
-                        </Field>
-                        <Button
-                          className="h-10"
-                          pending={pendingAction === "topUp"}
-                          disabled={
-                            !isValidTopUp ||
-                            pendingAction !== null ||
-                            budgetSpent
-                          }
-                          onClick={() =>
-                            void runAction(
-                              "topUp",
-                              startTopUpCheckout,
-                              "We couldn't start the checkout. Please try again.",
-                            )
-                          }
-                        >
-                          {pendingAction === "topUp"
-                            ? "Redirecting to Stripe..."
-                            : `Buy $${parsedTopUpAmount} of credits`}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="h-10"
-                          disabled={pendingAction !== null}
-                          onClick={() => {
-                            setBuyingCredits(false);
-                            // A failed top-up's error belongs to that attempt.
-                            setError((e) => (e?.action === "topUp" ? null : e));
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                      {showTopUpError ? (
-                        <p className="text-xs text-destructive">
-                          Enter between ${TOP_UP_MIN_USD}–${TOP_UP_MAX_USD}.
-                        </p>
-                      ) : null}
-                      {budgetSpent ? (
-                        <p className="text-xs text-muted-foreground">
-                          You&rsquo;ve hit your monthly auto-reload budget.
-                          Raise it below to buy more.
-                        </p>
-                      ) : null}
-                      {actionError("topUp")}
+                      <ChangePlanButton planId={account.paidPlanId} />
                     </div>
-                  ) : null}
-                </BillingRow>
+                  )}
+                  {actionError("plan")}
+                </CardContent>
+              </Card>
 
-                {/* The sync turns auto-reload off when a plan ends; until that
+              {/* The sync turns auto-reload off when a plan ends; until that
                   lands, an owner who left the plan still sees it, so they can
                   turn it off. */}
-                {!isFreePlan || account.autoReload?.enabled ? (
-                  <AutoReloadSettings />
-                ) : (
-                  <BillingRow
-                    label="Auto-reload"
-                    summary="On a paid plan, buy more automatically when you run low, up to a monthly budget you set."
-                  />
-                )}
-              </>
-            ) : null}
-          </CreditsCard>
+              {canManageBilling &&
+              (!isFreePlan || account.autoReload?.enabled) ? (
+                <AutoReloadSettings />
+              ) : null}
+            </div>
+          </div>
         </>
       )}
 
@@ -369,21 +372,18 @@ function BillingPage() {
   );
 }
 
-/** The Plan and Credits cards' shape while the billing account loads. */
+/** The summary cards' shape while the billing account loads. */
 function BillingSummarySkeleton() {
   return (
-    <div aria-busy className="space-y-6">
-      {[0, 1].map((index) => (
-        <Card key={index}>
-          <CardHeader>
-            <Skeleton className="h-5 w-16" />
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Skeleton className="h-7 w-40" />
-            <Skeleton className="h-4 w-56" />
-          </CardContent>
-        </Card>
-      ))}
+    <div
+      aria-busy
+      className="grid gap-6 lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]"
+    >
+      <Skeleton className="h-80 rounded-xl" />
+      <div className="flex flex-col gap-6">
+        <Skeleton className="h-37 rounded-xl" />
+        <Skeleton className="h-37 rounded-xl" />
+      </div>
     </div>
   );
 }

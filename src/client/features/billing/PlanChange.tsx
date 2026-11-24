@@ -14,8 +14,7 @@ export function ChangePlanButton({ planId }: { planId: string | null }) {
   if (!isMonthlyPlan(planId)) return null;
   return (
     <Button
-      variant="outline"
-      size="sm"
+      variant="ghost"
       nativeButton={false}
       render={<Link to={SUBSCRIBE_ROUTE} search={{ upgrade: true }} />}
     >

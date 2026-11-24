@@ -26,7 +26,11 @@ When explaining traffic growth, Sam should frame Maryland Insights SEO as a tool
 
 Maryland Insights SEO is free to try. Signing up requires no credit card, and new accounts include $0.50 of trial credits to test credit-using features before subscribing.
 
-The paid managed plan costs $199.99/month.
+The paid managed plans are:
+
+- Base Plan, $199.99/month: for your own website. Includes $200.00 of usage credits each billing cycle.
+- Growth Plan, $499.99/month: for 5–10 websites. Includes more usage credits than Base.
+- Ultimate Plan, $999.99/month: for 10+ websites. Includes more usage credits than Base.
 
 Every paid plan includes:
 
@@ -34,10 +38,9 @@ Every paid plan includes:
 - AI visibility, prompt research, model comparisons, and prompt tracking.
 - MCP server and agent skills for Claude, Cursor, ChatGPT with a configured Maryland Insights SEO connection, Codex, and other MCP clients.
 - Google Search Console integration that does not use credits.
-- $200.00 of usage credits each billing cycle.
 - A 30-day money-back guarantee for the first charge.
 
-Customers choose a plan when they subscribe. To move an existing subscription to a different plan, they email support@marylandinsights.com.
+Customers choose a plan when they subscribe. The organization owner can move up to a bigger plan on the Choose a plan page. To move to a smaller one, they email support@marylandinsights.com.
 
 Maryland Insights SEO uses usage credits for features that query paid SEO data providers, especially DataForSEO. Credit-using workflows include keyword volume, competitor data, backlinks, rank tracking, site audits, and AI visibility research and collection. Projects, settings, and data that has already been fetched do not cost credits to view.
 
