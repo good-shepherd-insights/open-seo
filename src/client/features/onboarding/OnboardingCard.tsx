@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BrandWordmark } from "@/client/components/BrandIdentity";
+import { BrandIcon } from "@/client/components/BrandIdentity";
 import {
   Tooltip,
   TooltipContent,
@@ -21,9 +21,9 @@ export function OnboardingCard({
 }) {
   return (
     <div className="w-full max-w-xl py-8">
-      <div className="flex items-center justify-center gap-2 text-sm font-semibold">
-        <BrandWordmark />
-      </div>
+      <span className="mx-auto flex size-9 items-center justify-center rounded-[9px] bg-white">
+        <BrandIcon className="size-7 object-contain" />
+      </span>
       <main className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm md:mt-12 md:p-10">
         <nav className="-mt-3 mb-5 flex gap-2" aria-label="Onboarding steps">
           {steps.map((label, index) => (
