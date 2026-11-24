@@ -19,7 +19,7 @@ export function hasOperatorSecret(): boolean {
 
 export function isOperatorRequest(headers: Headers | undefined): boolean {
   const secret: unknown = Reflect.get(env, "OPENSEO_OPERATOR_SECRET");
-  const supplied = headers?.get("x-openseo-operator-secret");
+  const supplied = headers?.get("x-operator-secret");
   if (!hasOperatorSecret() || typeof secret !== "string" || !supplied)
     return false;
   const expectedBytes = Buffer.from(secret);

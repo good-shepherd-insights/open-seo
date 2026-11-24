@@ -71,7 +71,7 @@ function LegacyDockerBanner() {
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem(DOCKER_MOVE_DISMISSED_KEY) === "1",
   );
-  if (import.meta.env.VITE_OPENSEO_LEGACY_DOCKER !== "true" || dismissed) {
+  if (import.meta.env.VITE_LEGACY_DOCKER !== "true" || dismissed) {
     return null;
   }
   return (

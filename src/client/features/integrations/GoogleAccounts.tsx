@@ -180,7 +180,7 @@ function AccountRow({
               rel="noopener noreferrer"
               className="underline underline-offset-4"
             >
-              How to enable it ↗
+              Get help ↗
             </a>
           </>
         ) : null}

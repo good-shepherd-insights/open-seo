@@ -159,7 +159,7 @@ interface ImportMetaEnv {
   readonly OPENAI_SIWC_CLIENT_ID?: string;
   readonly VITE_E2E_DOMAIN_FIXTURES?: string;
   readonly VITE_E2E_KEYWORD_FIXTURES?: string;
-  readonly VITE_OPENSEO_LEGACY_DOCKER?: string;
+  readonly VITE_LEGACY_DOCKER?: string;
 }
 
 interface ImportMeta {

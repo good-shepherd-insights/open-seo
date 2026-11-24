@@ -2,7 +2,7 @@ import { build, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-const moduleId = "virtual:openseo-mcp-widget";
+const moduleId = "virtual:mcp-widget";
 const resolvedId = `\0${moduleId}`;
 
 // A separate browser bundle keeps React and the app's actual UI components out
@@ -11,7 +11,7 @@ const resolvedId = `\0${moduleId}`;
 // Embed links serve the same document (src/server/features/embeds).
 export function mcpWidgets(): Plugin {
   return {
-    name: "openseo-mcp-widgets",
+    name: "mcp-widgets",
     resolveId(id) {
       if (id === moduleId) return resolvedId;
     },
