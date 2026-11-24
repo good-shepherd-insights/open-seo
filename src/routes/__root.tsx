@@ -20,6 +20,7 @@ import { NotFound } from "@/client/components/NotFound";
 import { PrivacyBootstrap } from "@/client/components/PrivacyChoices";
 import { TooltipProvider } from "@/client/components/ui/tooltip";
 import appCss from "@/client/styles/app.css?url";
+import themeCss from "@/client/design/theme.css?url";
 import { Toaster } from "sonner";
 import { queryClient } from "@/client/tanstack-db";
 
@@ -70,6 +71,7 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: themeCss },
       {
         rel: "apple-touch-icon",
         sizes: "180x180",

@@ -36,6 +36,10 @@
     // Deleting the currently-unreferenced ones would break the centralization
     // this fork exists to maintain.
     "src/shared/branding.ts",
+    // Upstream pages the fork replaced (src/client/design/replaced.json), kept
+    // so upstream merges stay clean.
+    "src/client/layout/AppShell.tsx",
+    "src/client/features/backlinks/BacklinksPage.tsx",
   ],
   // tests/badseo/ is the standalone broken-SEO fixture worker (own deps/config),
   // like web/ it isn't part of the app's module graph.

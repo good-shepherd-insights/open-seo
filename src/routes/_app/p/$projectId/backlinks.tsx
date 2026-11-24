@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BacklinksPage } from "@/client/features/backlinks/BacklinksPage";
+import { BacklinksScreen } from "@/client/design/backlinks/BacklinksScreen";
 import {
   DEFAULT_BACKLINKS_PAGE_SIZE,
   backlinksSearchSchema,
@@ -30,7 +30,7 @@ function BacklinksRoute() {
   const scope = rawScope ?? defaultScopeForInput(target);
 
   return (
-    <BacklinksPage
+    <BacklinksScreen
       projectId={projectId}
       navigate={navigate}
       searchState={{

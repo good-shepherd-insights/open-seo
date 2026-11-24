@@ -62,6 +62,29 @@
   },
   "overrides": [
     {
+      "files": ["src/client/design/**/*View.tsx"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@/serverFunctions/*",
+                  "@/server/*",
+                  "@/db",
+                  "@/db/*",
+                  "@tanstack/react-query",
+                  "@tanstack/react-router"
+                ],
+                "message": "A view only draws its props. Fetch and navigate in the screen or its hook (docs/maintainers/ui-design.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["src/db/**", "src/lib/auth.ts"],
       "rules": {
         "eslint/no-restricted-imports": "off"

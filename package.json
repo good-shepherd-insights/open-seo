@@ -42,6 +42,7 @@
     "db:migrate:prod": "wrangler d1 migrations apply DB --remote",
     "db:migrate:pg": "drizzle-kit migrate --config drizzle/pg.config.ts",
     "knip": "knip",
+    "ui:drift": "node scripts/ui-drift.mjs",
     "release:notes": "node scripts/release-notes.mjs",
     "release:publish": "node scripts/publish-release.mjs",
     "sync-plugin-skills": "node scripts/sync-plugin-skills.mjs",

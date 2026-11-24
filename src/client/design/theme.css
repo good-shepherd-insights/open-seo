@@ -1,0 +1,188 @@
+/* The product theme. Loaded after app.css, which stays as upstream ships it.
+   Rules here are unlayered, so they win over utilities: match shared-kit parts
+   by data-slot, and sizes by the kit's own default class so a caller that
+   passes another size keeps it. */
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/onest-latin-ext-variable.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/onest-latin-variable.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+:root,
+html[data-theme="openseo"] {
+  --radius: 0.625rem;
+  --background: #f4f5f7;
+  --foreground: #1b1e24;
+  --card: #ffffff;
+  --card-foreground: #1b1e24;
+  --popover: #ffffff;
+  --popover-foreground: #1b1e24;
+  /* Amber text on white is unreadable, so light uses a darker amber. */
+  --primary: #855700;
+  --primary-foreground: #ffffff;
+  --secondary: #eceef1;
+  --secondary-foreground: #1b1e24;
+  --muted: #f0f1f4;
+  --muted-foreground: #596170;
+  --accent: #eceef1;
+  --accent-foreground: #1b1e24;
+  --destructive: #b3261e;
+  --border: #e1e4e9;
+  --input: #c9ced6;
+  --ring: #855700;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1b1e24;
+  --sidebar-primary: #855700;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eceef1;
+  --sidebar-accent-foreground: #1b1e24;
+  --sidebar-border: #e1e4e9;
+  --sidebar-ring: #855700;
+  --trend-bar: #8a93a3;
+}
+
+html[data-theme="openseo-dark"] {
+  --background: #17191d;
+  --foreground: #f2f3f5;
+  --card: #202329;
+  --card-foreground: #f2f3f5;
+  --popover: #262a31;
+  --popover-foreground: #f2f3f5;
+  --primary: #ffb612;
+  --primary-foreground: #17191d;
+  --secondary: #2b2f37;
+  --secondary-foreground: #f2f3f5;
+  --muted: #262a31;
+  --muted-foreground: #a3a9b4;
+  --accent: #323741;
+  --accent-foreground: #f2f3f5;
+  --destructive: #f29a9a;
+  --success: #7fd6a2;
+  --success-foreground: #17191d;
+  --warning: #ffcf66;
+  --warning-foreground: #17191d;
+  --border: #2b2f37;
+  --input: #363b45;
+  --ring: #ffb612;
+  --sidebar: #17191d;
+  --sidebar-foreground: #f2f3f5;
+  --sidebar-primary: #ffb612;
+  --sidebar-primary-foreground: #17191d;
+  --sidebar-accent: #262a31;
+  --sidebar-accent-foreground: #f2f3f5;
+  --sidebar-border: #2b2f37;
+  --sidebar-ring: #ffb612;
+  --trend-bar: #6f7786;
+}
+
+body {
+  font-family: "Onest", system-ui, sans-serif;
+}
+
+[data-slot="sidebar-inset"] h1 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+[data-slot="card"] {
+  border-color: transparent;
+  box-shadow: none;
+}
+html[data-theme="openseo"] [data-slot="card"] {
+  border-color: var(--border);
+}
+
+/* 44px controls. */
+[data-slot="button"].h-10,
+[data-slot="input"].h-10,
+[data-slot="select-trigger"][data-size="default"] {
+  height: 2.75rem;
+}
+[data-slot="button"].size-10 {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+[data-slot="button"].h-7 {
+  height: 2.25rem;
+  padding-inline: 0.75rem;
+}
+[data-slot="button"].size-7 {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+@media (pointer: coarse) {
+  [data-slot="button"].h-7 {
+    height: 2.75rem;
+  }
+  [data-slot="button"].size-7 {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+/* Every dropdown. */
+[data-slot="select-content"],
+[data-slot="combobox-content"],
+[data-slot="dropdown-menu-content"] {
+  border-radius: 0.75rem;
+}
+[data-slot="select-item"],
+[data-slot="combobox-item"],
+[data-slot="dropdown-menu-item"] {
+  min-height: 2.75rem;
+  padding-inline-start: 0.625rem;
+  border-radius: 0.5rem;
+}
+[data-slot="combobox-item"] > span:last-child > svg,
+[data-slot="select-item"] > span:last-child > svg {
+  color: var(--primary);
+}
+[data-slot="combobox-item"][data-selected],
+[data-slot="select-item"][data-selected] {
+  background-color: var(--accent);
+}
+
+/* Underlined tabs mark the active one in the accent color. */
+[data-slot="tabs-trigger"]::after {
+  background-color: var(--primary);
+}
+
+/* The phone menu fills the screen. */
+[data-slot="sidebar"][data-mobile="true"] {
+  width: 100% !important;
+  max-width: none;
+}
+
+/* Search fields line up with 44px buttons. */
+[data-slot="input-group"].h-10 {
+  height: 2.75rem;
+}
+
+/* Every page lines up with the header's 1200px column. */
+[data-slot="sidebar-inset"] .max-w-7xl {
+  max-width: 75rem;
+}
+
+/* The project switcher and phone menu rows. */
+[data-slot="combobox-trigger"][aria-label="Switch project"] {
+  min-height: 2.75rem;
+}
+[data-slot="sidebar"][data-mobile="true"] .peer\/menu-button {
+  min-height: 2.75rem;
+}

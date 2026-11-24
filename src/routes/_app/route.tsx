@@ -6,7 +6,7 @@ import { FreePlanBanner } from "@/client/features/billing/FreePlanBanner";
 import { TermsUpdateBanner } from "@/client/features/auth/TermsUpdateBanner";
 import { PageLoading } from "@/client/components/Spinner";
 import { getLastProjectId } from "@/client/lib/active-project";
-import { AuthenticatedAppLayout } from "@/client/layout/AppShell";
+import { AuthenticatedAppLayout } from "@/client/design/shell/AppShell";
 import { useOnboardingRedirect } from "@/client/features/onboarding/useOnboardingRedirect";
 
 export const Route = createFileRoute("/_app")({
