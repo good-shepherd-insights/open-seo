@@ -71,7 +71,7 @@ export function GetStartedStep({
             placeholder={field.placeholder}
             defaultValue={field.initial}
             readOnly={busy}
-            className="max-h-40 min-h-11 min-w-0 placeholder-shown:h-11 placeholder-shown:overflow-hidden placeholder-shown:whitespace-nowrap flex-[2_1_380px] resize-none"
+            className="max-h-40 min-h-11 min-w-0 py-[9px] md:py-[11px] placeholder-shown:h-11 placeholder-shown:overflow-hidden placeholder-shown:whitespace-nowrap flex-[2_1_380px] resize-none"
             onChange={() => setInvalid(undefined)}
             onKeyDown={(event) => {
               if (
