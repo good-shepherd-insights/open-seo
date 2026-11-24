@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { PRODUCT_NAME } from "@/shared/branding";
-import { AppBanner } from "@/client/layout/AppBanner";
+import { DismissibleBanner } from "@/client/features/billing/DismissibleBanner";
 import { useCreditBalance } from "@/client/features/billing/useCreditBalance";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
@@ -35,7 +35,7 @@ export function FreePlanBanner() {
   if (isPausedByBudget && autoReload) {
     const until = refillDate ? ` until ${refillDate}` : "";
     return (
-      <AppBanner variant="warning">
+      <DismissibleBanner id="paused" variant="warning">
         {canManageBilling ? (
           <>
             You&rsquo;ve hit your ${autoReload.monthlyLimitUsd} monthly
@@ -54,7 +54,7 @@ export function FreePlanBanner() {
             paused{until}. Ask the owner to raise it.
           </>
         )}
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 
@@ -62,10 +62,10 @@ export function FreePlanBanner() {
   // the card right now; a "buy more" notice would have them pay twice.
   if (!isFreePlan && isOutOfCredits && autoReloadState === "on" && autoReload) {
     return (
-      <AppBanner variant="info">
+      <DismissibleBanner id="reloading" variant="info">
         You&rsquo;re out of credits. Auto-reload is adding $
         {autoReload.amountUsd} now.
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 
@@ -73,7 +73,10 @@ export function FreePlanBanner() {
   // everyone else to a page where they can't act.
   if (!canManageBilling && (isOutOfCredits || isLowCredits)) {
     return (
-      <AppBanner variant={isOutOfCredits ? "destructive" : "warning"}>
+      <DismissibleBanner
+        id={isOutOfCredits ? "out" : "low"}
+        variant={isOutOfCredits ? "destructive" : "warning"}
+      >
         {isOutOfCredits
           ? autoReloadState === "card_failed"
             ? "Your organization is out of credits and its card was declined."
@@ -81,7 +84,7 @@ export function FreePlanBanner() {
           : "Your organization is running low on credits."}{" "}
         Ask your organization owner to{" "}
         {autoReloadState === "card_failed" ? "update it" : "add more"}.
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 
@@ -104,7 +107,7 @@ export function FreePlanBanner() {
 
   if (isOutOfCredits) {
     return (
-      <AppBanner variant="destructive">
+      <DismissibleBanner id="out" variant="destructive">
         {isFreePlan ? (
           <>
             You&rsquo;ve used your Starter credits.{" "}
@@ -148,22 +151,22 @@ export function FreePlanBanner() {
             {refillDate ? `, or wait for them to refill on ${refillDate}` : ""}.
           </>
         )}
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 
   if (isLowCredits) {
     return (
-      <AppBanner variant="warning">
+      <DismissibleBanner id="low" variant="warning">
         You&rsquo;re running low on credits. {creditsActionLink} to keep using{" "}
         {PRODUCT_NAME}.
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 
   if (isFreePlan) {
     return (
-      <AppBanner variant="info">
+      <DismissibleBanner id="greeting" variant="info">
         We hope you&rsquo;re enjoying {PRODUCT_NAME}!{" "}
         <Link
           to={SUBSCRIBE_ROUTE}
@@ -180,7 +183,7 @@ export function FreePlanBanner() {
           reach out with questions
         </Link>
         .
-      </AppBanner>
+      </DismissibleBanner>
     );
   }
 

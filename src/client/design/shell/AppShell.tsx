@@ -17,6 +17,7 @@ import {
 import { getLastProjectId } from "@/client/lib/active-project";
 import { PRODUCT_NAME } from "@/shared/branding";
 import { AccountMenu } from "./AccountMenu";
+import { NavBalance } from "./NavBalance";
 import { PageScroll } from "./PageScroll";
 import { PhoneMenu } from "./PhoneMenu";
 import { ProjectMenu } from "./ProjectMenu";
@@ -90,6 +91,10 @@ function ShellHeader(project: ShellProject) {
       <BrandIcon className="size-7 object-contain" />
     </Link>
   );
+  const balance =
+    ready && account.hasAccount && account.hasBilling ? (
+      <NavBalance isMobile={isMobile} onNavigate={close} />
+    ) : null;
   if (isMobile) {
     return (
       <header
@@ -105,15 +110,18 @@ function ShellHeader(project: ShellProject) {
         }}
       >
         <div className="flex min-h-13 items-center">{logo}</div>
-        <button
-          type="button"
-          aria-expanded={menuOpen}
-          aria-controls="phone-menu"
-          className="min-h-11 cursor-pointer text-[15px] text-muted-foreground"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "Close" : "Menu"}
-        </button>
+        <div className="flex items-center gap-5">
+          {balance}
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="phone-menu"
+            className="min-h-11 cursor-pointer text-[15px] text-muted-foreground"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
         {menuOpen ? (
           <PhoneMenu {...project} account={account} onClose={close} />
         ) : null}
@@ -139,7 +147,8 @@ function ShellHeader(project: ShellProject) {
           </div>
         </div>
         {logo}
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end gap-6">
+          {balance}
           <AccountMenu account={account} />
         </div>
       </div>
