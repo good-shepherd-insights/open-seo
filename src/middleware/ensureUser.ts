@@ -1,4 +1,5 @@
 import { createMiddleware } from "@tanstack/react-start";
+import { withTenant } from "@/db";
 import { getRequest } from "@tanstack/react-start/server";
 import { resolveUserContextFromHeaders } from "@/middleware/ensure-user/resolve";
 import type { EnsuredProject } from "@/middleware/ensure-user/types";
@@ -39,10 +40,6 @@ export const ensureUserMiddleware = createMiddleware({
     }
   }
 
-  return next({
-    context: {
-      ...context,
-      project,
-    },
-  });
+  const run = () => next({ context: { ...context, project } });
+  return project ? withTenant(context, run) : run();
 });
