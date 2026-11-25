@@ -29,5 +29,18 @@
       "src/client/features/dashboard/DashboardSetupAction.tsx"
     ],
     "reviewed": "d0034c32"
+  },
+  {
+    "name": "Audit report",
+    "ours": "src/client/design/audit",
+    "upstream": [
+      "src/client/features/audit/results/ResultsView.tsx",
+      "src/client/features/audit/results/IssuesView.tsx",
+      "src/client/features/audit/results/PagesTable.tsx",
+      "src/client/features/audit/results/ResultsTables.tsx",
+      "src/client/features/audit/results/RenderingWarnings.tsx",
+      "src/client/features/audit/results/AuditResultsTableFilters.tsx"
+    ],
+    "reviewed": "d0034c32"
   }
 ]

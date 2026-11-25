@@ -304,7 +304,7 @@ export function AuditHealthCard({
         <Link
           to="/p/$projectId/audit"
           params={{ projectId }}
-          search={{ auditId: audit.id, tab: "issues" }}
+          search={{ auditId: audit.id, tab: "overview" }}
           className={moreDetailsClass}
         >
           Review issues

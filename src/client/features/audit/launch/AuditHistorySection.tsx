@@ -138,7 +138,7 @@ function HistoryActions({
           <Link
             to="/p/$projectId/audit"
             params={{ projectId }}
-            search={{ auditId, tab: "pages" }}
+            search={{ auditId, tab: "overview" }}
           />
         }
       >

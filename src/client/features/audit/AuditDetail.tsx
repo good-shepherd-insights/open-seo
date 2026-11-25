@@ -27,7 +27,10 @@ import {
   getAuditStatus,
   getCrawlProgress,
 } from "@/serverFunctions/audit";
-import { ResultsView } from "@/client/features/audit/results/ResultsView";
+import {
+  AuditReport,
+  type AuditReportTab,
+} from "@/client/design/audit/AuditReport";
 import {
   extractHostname,
   extractPathname,
@@ -42,14 +45,20 @@ export function AuditDetail({
   projectId,
   auditId,
   tab,
+  pageUrl,
   onBack,
   onTabChange,
+  onOpenPage,
+  onClosePage,
 }: {
   projectId: string;
   auditId: string;
-  tab: string;
+  tab: AuditReportTab;
+  pageUrl?: string;
   onBack: () => void;
-  onTabChange: (tab: "issues" | "pages" | "performance") => void;
+  onTabChange: (tab: AuditReportTab) => void;
+  onOpenPage: (url: string) => void;
+  onClosePage: () => void;
 }) {
   const statusQuery = useQuery({
     queryKey: ["audit-status", projectId, auditId],
@@ -102,6 +111,26 @@ export function AuditDetail({
   const failedWithoutResults =
     isFailed && resultsQuery.isSuccess && !failedWithResults;
 
+  if (resultsQuery.data && (!isFailed || failedWithResults)) {
+    return (
+      <div className="px-4 py-4 md:px-6 md:py-6 pb-24 md:pb-8 overflow-auto">
+        <div className="mx-auto max-w-7xl">
+          <AuditReport
+            key={auditId}
+            projectId={projectId}
+            data={resultsQuery.data}
+            tab={tab}
+            pageUrl={pageUrl}
+            onBack={onBack}
+            onTabChange={onTabChange}
+            onOpenPage={onOpenPage}
+            onClosePage={onClosePage}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="px-4 py-4 md:px-6 md:py-6 pb-24 md:pb-8 overflow-auto">
       <div className="mx-auto max-w-7xl space-y-4">
@@ -147,37 +176,12 @@ export function AuditDetail({
           </Alert>
         )}
 
-        {failedWithResults && (
-          <Alert variant="warning">
-            <AlertCircle />
-            <AlertTitle>
-              This audit stopped early after {partialPageCount} page
-              {partialPageCount === 1 ? "" : "s"}.
-            </AlertTitle>
-            <AlertDescription>
-              The results below cover everything crawled before it stopped. Run
-              a new audit to try again, or email{" "}
-              <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> if this
-              keeps happening.
-            </AlertDescription>
-          </Alert>
-        )}
-
         {isFinished && (
           <QueryState
             query={resultsQuery}
             errorFallback="Failed to load the audit results"
           >
-            {(data) =>
-              (!isFailed || failedWithResults) && (
-                <ResultsView
-                  projectId={projectId}
-                  data={data}
-                  tab={tab}
-                  onTabChange={onTabChange}
-                />
-              )
-            }
+            {() => null}
           </QueryState>
         )}
       </div>

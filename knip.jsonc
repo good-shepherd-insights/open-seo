@@ -39,6 +39,7 @@
     // Upstream pages the fork replaced (src/client/design/replaced.json), kept
     // so upstream merges stay clean.
     "src/client/layout/AppShell.tsx",
+    "src/client/features/audit/results/ResultsView.tsx",
     "src/client/features/backlinks/BacklinksPage.tsx",
     "src/client/features/dashboard/DashboardOnboarding.tsx",
   ],

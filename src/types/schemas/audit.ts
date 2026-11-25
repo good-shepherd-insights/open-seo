@@ -94,11 +94,13 @@ export const getCrawlProgressSchema = z.object({
 
 // ─── URL search params schema for /p/$projectId/audit ────────────────────────
 
-const auditTabs = ["issues", "pages", "performance"] as const;
+const auditTabs = ["overview", "issues", "pages", "performance"] as const;
 
 export const auditSearchSchema = z.object({
   auditId: z.string().optional().catch(undefined),
   // Pre-fills the launch form (the dashboard's "Audit your site" step).
   url: z.string().optional().catch(undefined),
-  tab: z.enum(auditTabs).catch("issues").default("issues"),
+  tab: z.enum(auditTabs).catch("overview").default("overview"),
+  // The crawled page open in the report.
+  pageUrl: z.string().optional().catch(undefined),
 });

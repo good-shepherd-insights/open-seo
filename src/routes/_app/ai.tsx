@@ -24,7 +24,7 @@ import {
   getAgentSetupPrompt,
 } from "@/client/features/ai-mcp/agentSetupPrompt";
 import { CopyButton } from "@/client/components/CopyButton";
-import { AgentList } from "@/client/features/ai-mcp/AgentList";
+import { ConnectAgents } from "@/client/design/agents/ConnectAgents";
 import { pageHead } from "@/client/lib/pageHead";
 
 const LINK_CLASS =
@@ -107,31 +107,30 @@ function AiPage() {
             ) : (
               <>
                 <div className="mt-6 space-y-5">
+                  <ConnectAgents mcpUrl={mcpUrl} />
+
                   <Card size="lg">
                     <CardHeader>
                       <CardTitle>
-                        <h2>Set up your agent</h2>
+                        <h2>Add the SEO skills</h2>
                       </CardTitle>
                       <CardDescription>
-                        Paste the setup prompt into your agent to connect
-                        {PRODUCT_NAME} and install its SEO skills. It will guide
-                        you through any manual steps.
+                        Connecting gives your agent the tools. The skills teach
+                        it how to run audits and research. Paste this prompt
+                        once you’re connected. It also sets up any agent not
+                        listed here.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <AgentList />
-                      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
-                        <CopyButton
-                          variant="default"
-                          size="lg"
-                          value={prompt}
-                          label="Copy setup prompt"
-                          successMessage="Setup prompt copied"
-                          onCopy={() =>
-                            captureClientEvent("mcp:setup_prompt_copy")
-                          }
-                        />
-                      </div>
+                      <CopyButton
+                        size="lg"
+                        value={prompt}
+                        label="Copy setup prompt"
+                        successMessage="Setup prompt copied"
+                        onCopy={() =>
+                          captureClientEvent("mcp:setup_prompt_copy")
+                        }
+                      />
                     </CardContent>
                   </Card>
 
