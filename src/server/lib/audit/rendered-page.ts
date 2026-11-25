@@ -1,8 +1,5 @@
 import { z } from "zod";
-import type {
-  BrowserRun,
-  Response as BrowserResponse,
-} from "@cloudflare/workers-types";
+import type { Response as BrowserResponse } from "@cloudflare/workers-types";
 import {
   CLOUDFLARE_RENDER_TIMEOUT_MS,
   type RenderUsage,
@@ -18,10 +15,22 @@ import {
   renderInvalidTarget,
 } from "@/shared/errors";
 
+/** The one Browser Run action audits use, over its binding or its REST API. */
+export type ContentBrowser = {
+  quickAction(
+    action: "content",
+    options: {
+      url: string;
+      cacheTTL: number;
+      gotoOptions: { waitUntil: "networkidle2"; timeout: number };
+    },
+  ): Promise<Response | BrowserResponse>;
+};
+
 type RenderOptions = {
-  // Either renderer may be missing: Docker has no browser binding, and the
+  // Either renderer may be missing: both need credentials on Docker, and the
   // Context key is optional on self-hosted Cloudflare deployments.
-  browser?: Pick<BrowserRun, "quickAction">;
+  browser?: ContentBrowser;
   // Reaches Context.dev authenticated (provider-access.ts).
   contextFetch?: typeof fetch | null;
   /** Logged with each attempt; reads outside an audit have none. */
@@ -85,7 +94,7 @@ export type RenderedPage = { html: string; status: number | null };
 /** Null when Cloudflare failed, was blocked, or saw an origin error. */
 async function renderWithCloudflare(
   url: string,
-  browser: Pick<BrowserRun, "quickAction">,
+  browser: ContentBrowser,
 ): Promise<RenderedPage | null> {
   try {
     const response = await browser.quickAction("content", {

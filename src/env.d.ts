@@ -9,8 +9,11 @@ declare namespace Cloudflare {
     // oxlint-disable-next-line typescript-eslint/consistent-type-imports
     BROWSER?: import("@cloudflare/workers-types").BrowserRun;
     // Context.dev key: the rendering fallback when Browser Run fails or is
-    // blocked, and the only renderer on Docker.
+    // blocked.
     CONTEXT_API_KEY?: string;
+    // Browser Run over its REST API, where there is no binding (Docker).
+    BROWSER_RUN_ACCOUNT_ID?: string;
+    BROWSER_RUN_API_TOKEN?: string;
     OAUTH_KV: KVNamespace;
 
     // Durable Object backing the SAM in-app agent (see wrangler.jsonc).

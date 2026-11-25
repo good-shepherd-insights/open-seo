@@ -350,8 +350,10 @@ async function runCrawlChunk(
     ? async (url: string) => {
         const { RenderedPageService } =
           await import("@/server/lib/audit/rendered-page");
+        const { getBrowserRunApi } =
+          await import("@/server/lib/audit/browser-run");
         return RenderedPageService.renderPage(url, {
-          browser: env.BROWSER,
+          browser: env.BROWSER ?? (await getBrowserRunApi()),
           // Behind an Every App gateway its calls are the audit's
           // organization's, named around the Workflow's run() and carried
           // into this step by pgStep.
