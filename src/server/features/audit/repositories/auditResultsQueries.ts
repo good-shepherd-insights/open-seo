@@ -104,7 +104,10 @@ function containsText(column: AnyColumn, needle: string) {
   return sql`lower(${column}) like ${`%${escapeLike(needle)}%`} escape '\\'`;
 }
 
-function buildPagesWhere(auditId: string, params: AuditPagesParams) {
+export function buildPagesWhere(
+  auditId: string,
+  params: Omit<AuditPagesParams, "page" | "pageSize" | "sort" | "order">,
+) {
   const clauses: (SQL | undefined)[] = [eq(auditPages.auditId, auditId)];
   const query = params.query?.toLocaleLowerCase();
   if (query) {

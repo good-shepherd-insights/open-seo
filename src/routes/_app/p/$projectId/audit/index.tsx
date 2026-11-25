@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_app/p/$projectId/audit/")({
 
 function SiteAuditPage() {
   const { projectId } = Route.useParams();
-  const { auditId, tab, url } = Route.useSearch();
+  const { auditId, tab, url, pageUrl } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
   const setSearchParams = useCallback(
@@ -43,8 +43,15 @@ function SiteAuditPage() {
       projectId={projectId}
       auditId={auditId}
       tab={tab}
+      pageUrl={pageUrl}
       onBack={() => setSearchParams({ auditId: undefined })}
-      onTabChange={(nextTab) => setSearchParams({ tab: nextTab })}
+      onOpenPage={(next) =>
+        void navigate({ search: (prev) => ({ ...prev, pageUrl: next }) })
+      }
+      onClosePage={() => setSearchParams({ pageUrl: undefined })}
+      onTabChange={(nextTab) =>
+        setSearchParams({ tab: nextTab, pageUrl: undefined })
+      }
     />
   );
 }

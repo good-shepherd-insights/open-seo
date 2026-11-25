@@ -33,7 +33,7 @@ export function useRerunAudit({
       void navigate({
         to: "/p/$projectId/audit",
         params: { projectId },
-        search: { auditId: result.auditId, tab: "issues" },
+        search: { auditId: result.auditId, tab: "overview" },
       });
     },
   });
