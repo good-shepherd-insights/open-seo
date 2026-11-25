@@ -1,9 +1,26 @@
 import { AppError } from "@/server/lib/errors";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
-import {   resolveBacklinksScope,
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
+import {
+  resolveBacklinksScope,
   type BacklinksScopeWithLegacy,
 } from "@/types/schemas/backlinks";
-import {   parseResearchTarget,
+import {
+  parseBacklinksTarget,
   type ResearchScope,
 } from "@/shared/researchScope";
 
@@ -39,7 +56,7 @@ export function normalizeBacklinksTarget(
     ? resolveBacklinksScope(options.scope)
     : undefined;
 
-  const parsed = parseResearchTarget(trimmed, requestedScope);
+  const parsed = parseBacklinksTarget(trimmed, requestedScope);
   if (!parsed.ok) {
     throw new AppError(urlInvalid.code, urlInvalid.message);
   }
@@ -56,14 +73,11 @@ export function normalizeBacklinksTarget(
     };
   }
 
-  // Query strings and fragments would target a different page than the one
-  // the user sees, so a page lookup rejects them rather than dropping them.
-  if (/[?#]/.test(trimmed)) {
-    throw new AppError(domainInvalid.code, domainInvalid.message)
-  }
-
   const protocol = /^http:\/\//i.test(trimmed) ? "http" : "https";
-  const pageUrl = `${protocol}://${target.urlHostname}${target.path || "/"}`;
+  // DataForSEO matches page URLs exactly, so /post/ and /post are different
+  // pages. Keep the trailing slash the user typed (query/fragment are rejected).
+  const trailingSlash = target.path && trimmed.endsWith("/") ? "/" : "";
+  const pageUrl = `${protocol}://${target.urlHostname}${target.path || "/"}${trailingSlash}`;
   return {
     apiTarget: pageUrl,
     displayTarget: pageUrl,

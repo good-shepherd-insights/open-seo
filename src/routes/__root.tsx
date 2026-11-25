@@ -4,6 +4,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  ScriptOnce,
   createRootRoute,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -14,30 +15,35 @@ import { DefaultCatchBoundary } from "@/client/components/DefaultCatchBoundary";
 import { captureGoogleLinkError } from "@/client/features/integrations/googleLinkError";
 import { ExportToSheetsModal } from "@/client/components/table/ExportToSheetsModal";
 import { themePreferenceInitScript } from "@/client/lib/theme";
-import {
-  identifyAnalyticsUser,
-  resetAnalyticsUser,
-  startAnalyticsCapture,
-  stopAnalyticsCapture,
-} from "@/client/lib/posthog";
+import { runtimeAuthModeScript } from "@/lib/auth-mode";
 import { NotFound } from "@/client/components/NotFound";
+import { PrivacyBootstrap } from "@/client/components/PrivacyChoices";
 import { TooltipProvider } from "@/client/components/ui/tooltip";
+import { memo } from "react";
 import appCss from "@/client/styles/app.css?url";
-import { useSession } from "@/lib/auth-client";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import themeCss from "@/client/design/theme.css?url";
 import { Toaster } from "sonner";
 import { queryClient } from "@/client/tanstack-db";
-import { getActiveOrganizationId } from "@/lib/auth-session";
 
 // Capture Google link error params before the router starts — a route loader
 // redirect would otherwise replace the URL and lose them. See googleLinkError.ts.
 captureGoogleLinkError();
 
+// Zod speeds up object parsing with `new Function`, after probing once whether
+// the page allows it. A Content-Security-Policy without 'unsafe-eval' refuses
+// the probe and reports it on every page load, so the browser is told not to
+// try. Zod reads this global when it loads, which is before any app module
+// could call `z.config`.
+//
+// The three inline scripts below go through ScriptOnce, which gives each the
+// response's Content-Security-Policy nonce (router.tsx).
+const zodJitlessScript = "globalThis.__zod_globalConfig={jitless:true}";
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        title: "OpenSEO",
+        title: "Maryland Insights SEO",
       },
       {
         charSet: "utf-8",
@@ -66,6 +72,7 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: themeCss },
       {
         rel: "apple-touch-icon",
         sizes: "180x180",
@@ -98,33 +105,27 @@ function AppLayout() {
   return <Outlet />;
 }
 
-function PostHogBootstrap() {
-  const isHostedMode = isHostedClientAuthMode();
-  const { data: session, isPending: isSessionPending } = useSession();
-  const userId = session?.user?.id ?? null;
-  const optedOut = session?.user?.analyticsOptedOut === true;
-  const organizationId = getActiveOrganizationId(session);
-  const previousUserIdRef = React.useRef<string | null>(null);
-
-  React.useEffect(() => {
-    if (!isHostedMode || isSessionPending) {
-      return;
-    }
-
-    if (userId && !optedOut) {
-      startAnalyticsCapture();
-      identifyAnalyticsUser({ userId, organizationId });
-      previousUserIdRef.current = userId;
-    } else if (userId && optedOut) {
-      stopAnalyticsCapture();
-    } else if (previousUserIdRef.current) {
-      previousUserIdRef.current = null;
-      resetAnalyticsUser();
-    }
-  }, [isHostedMode, isSessionPending, optedOut, organizationId, userId]);
-
-  return null;
-}
+// RootDocument re-renders on every navigation; these never need to.
+const DocumentHead = memo(function DocumentHead() {
+  return (
+    <head>
+      <ScriptOnce>{themePreferenceInitScript}</ScriptOnce>
+      <ScriptOnce>{runtimeAuthModeScript()}</ScriptOnce>
+      <ScriptOnce>{zodJitlessScript}</ScriptOnce>
+      <HeadContent />
+    </head>
+  );
+});
+const AppOverlays = memo(function AppOverlays() {
+  return (
+    <>
+      <ExportToSheetsModal />
+      <Toaster position="bottom-right" mobileOffset={{ bottom: 100 }} />
+    </>
+  );
+});
+const StaticPrivacy = memo(PrivacyBootstrap);
+const StaticScripts = memo(Scripts);
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const showDevtools =
@@ -132,20 +133,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
   return (
     <html suppressHydrationWarning translate="no">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{ __html: themePreferenceInitScript }}
-        />
-        <HeadContent />
-      </head>
+      <DocumentHead />
       <body>
         <ClientOnly>
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
-              <PostHogBootstrap />
+              <StaticPrivacy />
               {children}
-              <ExportToSheetsModal />
-              <Toaster position="bottom-right" mobileOffset={{ bottom: 100 }} />
+              <AppOverlays />
               {showDevtools ? (
                 <TanStackDevtools
                   config={{ position: "bottom-right" }}
@@ -162,7 +157,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </TooltipProvider>
           </QueryClientProvider>
         </ClientOnly>
-        <Scripts />
+        <StaticScripts />
       </body>
     </html>
   );

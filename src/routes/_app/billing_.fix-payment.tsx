@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from "@/shared/branding";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { isHostedClientAuthMode } from "@/lib/auth-mode";
@@ -18,8 +19,7 @@ import { QueryError } from "@/client/components/QueryState";
 import { SkeletonPage } from "@/client/components/SkeletonPresets";
 import { Spinner } from "@/client/components/Spinner";
 import { Button } from "@/client/components/ui/button";
-
-const SUPPORT_EMAIL = "support@openseo.so";
+import { pageHead } from "@/client/lib/pageHead";
 
 // How long the post-portal "checking" screen polls Autumn before telling the
 // user the retry is still pending, and how often it polls.
@@ -30,6 +30,7 @@ const CHECKING_POLL_MS = 1000;
 // one problem, one fix. The Stripe portal both saves the new card as the
 // default and lets the customer pay the open invoice, so it is the only action.
 export const Route = createFileRoute("/_app/billing_/fix-payment")({
+  head: () => pageHead("Billing"),
   // The loader fills the module-scoped query client, so keep it out of server
   // requests: one worker isolate must not cache another account's billing.
   ssr: false,

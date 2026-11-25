@@ -1,9 +1,6 @@
 import { normalizeBacklinksTarget } from "@/server/lib/dataforseoBacklinksTarget";
 import { AppError } from "@/server/lib/errors";
-import {
-  nameRequired,
-  urlInvalid,
-} from "@/shared/errors";
+import { nameRequired, urlInvalid } from "@/shared/errors";
 import {
   CUSTOM_SECTION_KEY_PREFIX,
   PROSE_MAX_CHARS,
@@ -63,6 +60,7 @@ function dedupeBy<T>(rows: T[], key: (row: T) => string): T[] {
 // The write each patch op resolves to, once its content is trimmed, its
 // domains/urls are normalized and the caps have been checked.
 type ResolvedOp =
+  | { kind: "setBrandName"; brandName: string | null }
   | {
       kind: "upsertSection";
       key: string;
@@ -106,6 +104,14 @@ export function resolveContextUpdates(
   const resolved: ResolvedOp[] = [];
 
   const resolveOne = (update: ProjectContextUpdate) => {
+    if ("brandName" in update) {
+      resolved.push({
+        kind: "setBrandName",
+        brandName: update.brandName || null,
+      });
+      return;
+    }
+
     if ("section" in update) {
       const content = update.content.trim();
       assertProseFits(content);

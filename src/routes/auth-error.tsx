@@ -1,14 +1,17 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
 import { Button } from "@/client/components/ui/button";
 import { AuthPageCard, AuthPageShell } from "@/client/features/auth/AuthPage";
 import { googleAuthErrorCopy } from "@/client/features/integrations/googleAuthErrorCopy";
+import { pageHead } from "@/client/lib/pageHead";
 
 const authErrorSearchSchema = z.object({
   error: z.string().optional(),
 });
 
 export const Route = createFileRoute("/auth-error")({
+  head: () => pageHead("Connection error"),
   validateSearch: authErrorSearchSchema,
   component: AuthErrorPage,
 });
@@ -43,7 +46,7 @@ function AuthErrorPage() {
           variant="secondary"
           className="w-full"
         >
-          Back to OpenSEO
+          Back to {PRODUCT_NAME}
         </Button>
       </AuthPageCard>
     </AuthPageShell>

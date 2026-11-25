@@ -42,7 +42,8 @@ export function PaidPlanGate({
             <p className="max-w-xl">
               It runs on costlier AI data, so it&apos;s part of the{" "}
               {BASE_PLAN_OFFER.name}: ${BASE_PLAN_OFFER.priceUsd} a month, with
-              ${BASE_PLAN_OFFER.monthlyCreditsUsd} of usage credits included.
+              ${BASE_PLAN_OFFER.monthlyCreditsUsd.toFixed(2)} of usage credits
+              included.
             </p>
           </>
         }

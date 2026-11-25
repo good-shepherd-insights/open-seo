@@ -1,9 +1,8 @@
 import { DataTableTabs } from "@/client/components/table/DataTableToolbar";
-import { TableCard } from "@/client/components/ui/table";
+import { Card } from "@/client/components/ui/card";
 import { TabsTrigger } from "@/client/components/ui/tabs";
-import { BillingFeatureBreakdown } from "@/client/features/billing/BillingFeatureBreakdown";
 import { BillingInvoices } from "@/client/features/billing/BillingInvoices";
-import { BillingUsageChart } from "@/client/features/billing/BillingUsageChart";
+import { BillingUsage } from "@/client/features/billing/BillingUsage";
 import { BILLING_TABS, type BillingTab } from "@/shared/billing";
 
 /**
@@ -23,7 +22,7 @@ export function BillingTabs({
   const showInvoices = invoiceEmailsEnabled !== null && tab === "invoices";
 
   return (
-    <TableCard>
+    <Card size="lg" className="gap-0 py-0">
       {invoiceEmailsEnabled !== null ? (
         <DataTableTabs
           value={tab}
@@ -33,22 +32,19 @@ export function BillingTabs({
           }}
         >
           {BILLING_TABS.map((item) => (
-            <TabsTrigger key={item.value} value={item.value}>
+            <TabsTrigger key={item.value} value={item.value} className="h-11">
               {item.label}
             </TabsTrigger>
           ))}
         </DataTableTabs>
       ) : null}
-      <div className="space-y-6 p-4">
+      <div className="p-4 md:p-6">
         {showInvoices ? (
           <BillingInvoices invoiceEmailsEnabled={invoiceEmailsEnabled} />
         ) : (
-          <>
-            <BillingUsageChart />
-            <BillingFeatureBreakdown />
-          </>
+          <BillingUsage />
         )}
       </div>
-    </TableCard>
+    </Card>
   );
 }

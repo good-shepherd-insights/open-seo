@@ -13,6 +13,6 @@ export function requireOrgPermission(
   permissions: OrgPermissionRequest,
 ) {
   if (!hasOrgPermission(context.role, permissions)) {
-    throw new AppError(forbidden.code, forbidden.message)
+    throw new AppError(forbidden.code, forbidden.message);
   }
 }

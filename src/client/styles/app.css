@@ -2,10 +2,60 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/onest-latin-600.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+.brand-wordmark {
+  --brand-wordmark-font-size: calc(25px * var(--brand-logo-scale));
+  gap: calc(8px * var(--brand-logo-scale));
+}
+
+.brand-standalone-icon,
+.brand-lockup-icon {
+  width: var(--brand-mark-mobile);
+  height: var(--brand-mark-mobile);
+}
+
+.brand-wordmark-text,
+.brand-wordmark-seo {
+  font-family: "Onest", sans-serif;
+  font-size: var(--brand-wordmark-font-size);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.brand-wordmark-seo {
+  white-space: nowrap;
+}
+
+.brand-wordmark-divider {
+  flex: none;
+  width: 1px;
+  height: calc(var(--brand-wordmark-font-size) * 2.1);
+  margin-inline: calc(8px * var(--brand-logo-scale));
+  background-color: currentColor;
+}
+
+@media (min-width: 768px) {
+  .brand-wordmark {
+    --brand-wordmark-font-size: calc(29px * var(--brand-logo-scale));
+  }
+  .brand-lockup-icon {
+    width: var(--brand-mark-desktop);
+    height: var(--brand-mark-desktop);
+  }
+}
+
 /* shadcn components here are built on Base UI. The shadcn variables below are
    the source of truth for theme colors. */
 
-@custom-variant dark (&:where([data-theme=openseo-dark], [data-theme=openseo-dark] *));
+@custom-variant dark (&:where([data-theme=mi-dark], [data-theme=mi-dark] *));
 
 @theme {
   --container-8xl: 88rem;
@@ -62,7 +112,7 @@
 }
 
 :where(:root),
-[data-theme="openseo"] {
+[data-theme="mi-light"] {
   color-scheme: light;
   --radius: 0.5rem;
   --background: oklch(95.5% 0 0);
@@ -79,8 +129,8 @@
   --muted-foreground: oklch(20% 0 0 / 60%);
   --accent: oklch(97% 0 0);
   --accent-foreground: oklch(20% 0 0);
-  --destructive: oklch(65% 0.2 25);
-  --success: oklch(65% 0.18 145);
+  --destructive: oklch(51% 0.2 25);
+  --success: oklch(48% 0.15 145);
   --success-foreground: oklch(100% 0 0);
   --warning: oklch(80% 0.15 80);
   --warning-foreground: oklch(25% 0.05 80);
@@ -104,7 +154,7 @@
   --sidebar-ring: oklch(50% 0.12 262);
 }
 
-[data-theme="openseo-dark"] {
+[data-theme="mi-dark"] {
   color-scheme: dark;
   --background: oklch(18% 0 0);
   --foreground: oklch(92% 0 0);
@@ -120,7 +170,7 @@
   --muted-foreground: oklch(92% 0 0 / 60%);
   --accent: oklch(28% 0 0);
   --accent-foreground: oklch(92% 0 0);
-  --destructive: oklch(65% 0.2 25);
+  --destructive: oklch(74% 0.16 25);
   --success: oklch(65% 0.18 145);
   --success-foreground: oklch(100% 0 0);
   --warning: oklch(80% 0.15 80);
@@ -246,28 +296,28 @@ select:not([data-slot]) {
   --tw-ring-color: color-mix(in oklab, #d946ef 30%, transparent);
 }
 
-html[data-theme="openseo-dark"] .tag-chip-slate {
+html[data-theme="mi-dark"] .tag-chip-slate {
   color: #cbd5e1;
 }
-html[data-theme="openseo-dark"] .tag-chip-rose {
+html[data-theme="mi-dark"] .tag-chip-rose {
   color: #fda4af;
 }
-html[data-theme="openseo-dark"] .tag-chip-amber {
+html[data-theme="mi-dark"] .tag-chip-amber {
   color: #fcd34d;
 }
-html[data-theme="openseo-dark"] .tag-chip-lime {
+html[data-theme="mi-dark"] .tag-chip-lime {
   color: #d9f99d;
 }
-html[data-theme="openseo-dark"] .tag-chip-emerald {
+html[data-theme="mi-dark"] .tag-chip-emerald {
   color: #6ee7b7;
 }
-html[data-theme="openseo-dark"] .tag-chip-sky {
+html[data-theme="mi-dark"] .tag-chip-sky {
   color: #7dd3fc;
 }
-html[data-theme="openseo-dark"] .tag-chip-violet {
+html[data-theme="mi-dark"] .tag-chip-violet {
   color: #c4b5fd;
 }
-html[data-theme="openseo-dark"] .tag-chip-fuchsia {
+html[data-theme="mi-dark"] .tag-chip-fuchsia {
   color: #f5d0fe;
 }
 
@@ -318,29 +368,29 @@ html[data-theme="openseo-dark"] .tag-chip-fuchsia {
   --tw-ring-color: color-mix(in oklab, #b91c1c 32%, transparent);
 }
 
-html[data-theme="openseo-dark"] .score-tier-na {
+html[data-theme="mi-dark"] .score-tier-na {
   color: #cbd5e1;
 }
-html[data-theme="openseo-dark"] .score-tier-1 {
+html[data-theme="mi-dark"] .score-tier-1 {
   color: #6ee7b7;
 }
-html[data-theme="openseo-dark"] .score-tier-2 {
+html[data-theme="mi-dark"] .score-tier-2 {
   color: #bef264;
 }
-html[data-theme="openseo-dark"] .score-tier-3 {
+html[data-theme="mi-dark"] .score-tier-3 {
   color: #fde047;
 }
-html[data-theme="openseo-dark"] .score-tier-4 {
+html[data-theme="mi-dark"] .score-tier-4 {
   color: #fdba74;
 }
-html[data-theme="openseo-dark"] .score-tier-5 {
+html[data-theme="mi-dark"] .score-tier-5 {
   color: #fca5a5;
 }
-html[data-theme="openseo-dark"] .score-tier-6 {
+html[data-theme="mi-dark"] .score-tier-6 {
   color: #fda4af;
 }
 
-html[data-theme="openseo-dark"] {
+html[data-theme="mi-dark"] {
   --trend-grid-color: oklch(78% 0.01 255 / 0.22);
   --trend-axis-color: oklch(84% 0.01 255 / 0.62);
   --trend-fill-start-opacity: 0.24;

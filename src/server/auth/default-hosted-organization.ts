@@ -1,8 +1,24 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { AppError } from "@/server/lib/errors";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { markDubReferredOrganization } from "@/server/referrals/dub";
-import { slugify, toHex } from "./org-slug";
+import { toHex } from "./org-slug";
 
 type HostedUser = {
   id: string;
@@ -21,22 +37,23 @@ type HostedOrganizationCreator = (
 ) => Promise<{ id: string }>;
 
 function getDefaultHostedOrganizationName(user: HostedUser) {
-  const name = user.name?.trim() || user.email.split("@")[0] || "OpenSEO";
+  const name = user.name?.trim() || user.email.split("@")[0] || PRODUCT_NAME;
   return `${name}'s organization`;
 }
 
+// Keyed on the user id alone, never the editable display name: the slug is
+// unique, so a second default organization for the same user fails. A user
+// who hands their org to someone else and leaves would otherwise get a fresh
+// org, and a fresh free-plan credit grant, on every sign-in after a rename.
 function getDefaultHostedOrganizationSlug(user: HostedUser) {
-  const slugSource =
-    user.name?.trim() || user.email.split("@")[0] || "organization";
-  const suffix = toHex(user.id).slice(0, 12);
-  return `${slugify(slugSource)}-${suffix}`;
+  return `org-${toHex(user.id)}`;
 }
 
 async function getHostedUser(userId: string) {
   const hostedUser = await AuthRepository.getHostedUser(userId);
 
   if (!hostedUser?.email) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
 
   return hostedUser;
@@ -151,21 +168,6 @@ export async function resolveActiveHostedOrganization(
   );
   await repairDubReferralPin(userId);
   return created;
-}
-
-// Same as resolveActiveHostedOrganization, but never mints a default
-// organization. Used by API-key authentication: a user with no memberships has
-// no org to bill or authorize, so credentials should be rejected instead of
-// silently spinning up a new workspace.
-export async function resolveExistingActiveHostedOrganization(
-  userId: string,
-): Promise<ActiveHostedOrganization | null> {
-  const existing = await findExistingActiveOrganization(userId);
-  if (!existing) {
-    return null;
-  }
-  await repairDubReferralPin(userId);
-  return existing;
 }
 
 // Sign-in (session-create hook) variant: same resolution, except a user with

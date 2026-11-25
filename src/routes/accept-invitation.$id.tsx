@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { Spinner } from "@/client/components/Spinner";
 import { Alert, AlertDescription } from "@/client/components/ui/alert";
 import { Button } from "@/client/components/ui/button";
@@ -8,11 +9,13 @@ import { AuthPageCard, AuthPageShell } from "@/client/features/auth/AuthPage";
 import { clearLastProjectId } from "@/client/lib/active-project";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { authClient, signOutAndRedirect, useSession } from "@/lib/auth-client";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { usesBetterAuthClient } from "@/lib/auth-mode";
+import { pageHead } from "@/client/lib/pageHead";
 
 export const Route = createFileRoute("/accept-invitation/$id")({
+  head: () => pageHead("Accept invitation"),
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) {
+    if (!usesBetterAuthClient()) {
       throw notFound();
     }
   },
@@ -45,8 +48,9 @@ function SignedOutInvitationCard({ invitationId }: { invitationId: string }) {
   return (
     <AuthPageCard title="You&rsquo;re invited">
       <p className="text-sm text-muted-foreground">
-        You&rsquo;ve been invited to join an organization on OpenSEO. Sign in
-        with the email address that received the invitation to accept it.
+        You&rsquo;ve been invited to join an organization on {PRODUCT_NAME}.
+        Sign in with the email address that received the invitation, or create
+        an account with it, to accept.
       </p>
       <div className="space-y-2">
         <Button
@@ -114,10 +118,13 @@ function InvitationCard({
 
       // Accepting updates the session row but not the session cookie cache;
       // setActive refreshes the cookie so the app opens in the joined org
-      // immediately instead of after the cache expires.
-      await authClient.organization.setActive({
-        organizationId: accepted.data.invitation.organizationId,
-      });
+      // immediately instead of after the cache expires. The invitation is
+      // already accepted here, so a failed refresh must not report otherwise.
+      await authClient.organization
+        .setActive({
+          organizationId: accepted.data.invitation.organizationId,
+        })
+        .catch(() => undefined);
       captureClientEvent("team:invitation_accept");
       // Full navigation: every cached query in this tab, and the remembered
       // project, belong to the old workspace.
@@ -234,7 +241,7 @@ function InvitationCard({
         <span className="font-medium">
           {invitationQuery.data.organizationName}
         </span>{" "}
-        on OpenSEO.
+        on {PRODUCT_NAME}.
       </p>
       {actionError ? (
         <Alert variant="destructive">

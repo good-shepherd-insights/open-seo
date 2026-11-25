@@ -1,53 +1,68 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { PRODUCT_NAME } from "@/shared/branding";
 import {
+  CommandBlock,
   helpLinkClassName,
   SecretHelpPage,
 } from "@/client/features/help/SecretHelpPage";
+import { pageHead } from "@/client/lib/pageHead";
 
 const OPENROUTER_KEYS_URL = "https://openrouter.ai/settings/keys";
 
 export const Route = createFileRoute("/_app/help/openrouter-api-key")({
+  // Server setup steps, so users never reach it.
+  beforeLoad: () => {
+    throw notFound();
+  },
+  head: () => pageHead("OpenRouter API key"),
   component: OpenrouterApiKeyHelpPage,
 });
 
 function OpenrouterApiKeyHelpPage() {
+  const accountStep = (
+    <li>
+      Create an account at{" "}
+      <a
+        className={helpLinkClassName}
+        href="https://openrouter.ai"
+        target="_blank"
+        rel="noreferrer"
+      >
+        openrouter.ai
+      </a>{" "}
+      and add credits (pay-as-you-go, like DataForSEO).
+    </li>
+  );
+  const keyStep = (
+    <li>
+      Go to{" "}
+      <a
+        className={helpLinkClassName}
+        href={OPENROUTER_KEYS_URL}
+        target="_blank"
+        rel="noreferrer"
+      >
+        OpenRouter API Keys
+      </a>{" "}
+      and click "Create API Key".
+    </li>
+  );
   return (
     <SecretHelpPage
       title="Set up your OpenRouter API key"
       intro={
         <>
-          OpenSEO needs the <code>OPENROUTER_API_KEY</code> secret before AI
-          features like SAM, the in-app SEO agent, can run. It is optional —
-          everything else in OpenSEO works without it.
+          {PRODUCT_NAME} needs the <code>OPENROUTER_API_KEY</code> secret before
+          AI features like SAM, the in-app SEO agent, can run. It is optional —
+          everything else in {PRODUCT_NAME} works without it.
         </>
       }
+      everyAppIntro="SAM, prompt suggestions and website research run on OpenRouter. On Every App the gateway holds the key once, for every app."
       secretName="OPENROUTER_API_KEY"
       steps={
         <>
-          <li>
-            Create an account at{" "}
-            <a
-              className={helpLinkClassName}
-              href="https://openrouter.ai"
-              target="_blank"
-              rel="noreferrer"
-            >
-              openrouter.ai
-            </a>{" "}
-            and add credits (pay-as-you-go, like DataForSEO).
-          </li>
-          <li>
-            Go to{" "}
-            <a
-              className={helpLinkClassName}
-              href={OPENROUTER_KEYS_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              OpenRouter API Keys
-            </a>{" "}
-            and click "Create API Key".
-          </li>
+          {accountStep}
+          {keyStep}
           <li>
             Save the key as the <code>OPENROUTER_API_KEY</code> secret in your
             environment:
@@ -61,7 +76,19 @@ function OpenrouterApiKeyHelpPage() {
               </li>
             </ul>
           </li>
-          <li>Restart OpenSEO.</li>
+          <li>Restart {PRODUCT_NAME}.</li>
+        </>
+      }
+      everyAppSteps={
+        <>
+          {accountStep}
+          {keyStep}
+          <li>
+            An owner or admin runs this from the Every App checkout and pastes
+            the key:
+            <CommandBlock command="pnpm everyapp secret set OPENROUTER_API_KEY" />
+          </li>
+          <li>Reload {PRODUCT_NAME}.</li>
         </>
       }
       dashboardPasteStep="Paste your OpenRouter API key and save."

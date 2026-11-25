@@ -1,30 +1,49 @@
 import { waitUntil } from "cloudflare:workers";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { identity, sortBy } from "remeda";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 import { createDataforseoClient } from "@/server/lib/dataforseo";
-import {   buildLlmTarget,
+import {
+  buildLlmTarget,
   CHATGPT_LANGUAGE_CODE,
   CHATGPT_LOCATION_CODE,
   type LlmPlatform,
 } from "@/server/lib/dataforseo";
-import type { LlmCrossAggregatedItem } from "@/server/lib/dataforseoLlmSchemas";
 import { AppError } from "@/server/lib/errors";
 import { buildCacheKey, getCached, setCached } from "@/server/lib/r2-cache";
-import {   resolveCompetitorGroups,
+import {
+  resolveCompetitorGroups,
   type CompetitorGroup,
   type CrossOutcome,
 } from "@/server/features/ai-search/services/shareOfVoice";
-import {   shapeResult,
+import {
+  shapeResult,
   type PlatformBundle,
   type PlatformOutcome,
 } from "@/server/features/ai-search/services/brandLookupShaping";
-import {   brandLookupResultSchema,
+import {
+  brandLookupResultSchema,
   type BrandLookupInput,
   type BrandLookupResult,
 } from "@/types/schemas/ai-search";
 import { detectTarget } from "@/shared/targetDetection";
-import {   parseResearchTarget,
+import {
+  parseResearchTarget,
   type ResearchTarget,
 } from "@/shared/researchScope";
 
@@ -100,14 +119,13 @@ export async function getBrandLookup(
 
   const dataforseo = createDataforseoClient(billingCustomer);
 
-  // Settle each platform independently so a failure in one doesn't discard the
-  // other. Keep the metered DataForSEO calls sequenced: in hosted mode each
-  // call checks balance before execution and records spend after, so parallel
-  // fan-out can overrun a low remaining balance.
-  const settled: Array<PromiseSettledResult<PlatformBundle>> = [];
-  for (const platform of PLATFORMS) {
-    settled.push(
-      await settle(() =>
+  // Every call runs at once and settles on its own, so one failure doesn't
+  // discard the others. Hosted billing reserves an atomic credit hold per call
+  // before it runs, so concurrent calls can't overspend, and request-slots.ts
+  // caps how many DataForSEO calls a request has in flight.
+  const [settled, crossOutcomes] = await Promise.all([
+    Promise.allSettled(
+      PLATFORMS.map((platform) =>
         fetchPlatformData(
           platform,
           detected,
@@ -116,27 +134,19 @@ export async function getBrandLookup(
           dataforseo,
         ),
       ),
-    );
-  }
-
-  rethrowIfBlockingAiSearchError(settled);
-
-  const crossSettled =
+    ),
+    // Settles per platform itself; rejects only on a blocking billing error.
     competitorGroups.length > 0
-      ? await settle(() =>
-          fetchCrossAggregated(
-            detected,
-            competitorGroups,
-            includeSubdomains,
-            input,
-            dataforseo,
-          ),
+      ? fetchCrossAggregated(
+          detected,
+          competitorGroups,
+          includeSubdomains,
+          input,
+          dataforseo,
         )
-      : ({ status: "fulfilled", value: [] } as PromiseFulfilledResult<
-          CrossOutcome[]
-        >);
-  if (crossSettled.status === "rejected") throw crossSettled.reason;
-  const crossOutcomes = crossSettled.value;
+      : [],
+  ]);
+  rethrowIfBlockingAiSearchError(settled);
 
   const platformBundles: PlatformOutcome[] = settled.map((settledResult, i) => {
     const platform = PLATFORMS[i];
@@ -194,20 +204,11 @@ function resolveResearchTarget(
   if (!parsed.ok) {
     // An explicit scope that doesn't fit the input (Subfolder without a path)
     // must error, not silently run an unscoped lookup.
-    if (input.scope) throw new AppError(domainInvalid.code, domainInvalid.message);
+    if (input.scope)
+      throw new AppError(domainInvalid.code, domainInvalid.message);
     return null;
   }
   return parsed.target;
-}
-
-async function settle<T>(
-  execute: () => Promise<T>,
-): Promise<PromiseSettledResult<T>> {
-  try {
-    return { status: "fulfilled", value: await execute() };
-  } catch (reason) {
-    return { status: "rejected", reason };
-  }
 }
 
 type PlatformFetchInput = Pick<
@@ -234,9 +235,9 @@ async function fetchPlatformData(
   const languageCode =
     platform === "chat_gpt" ? CHATGPT_LANGUAGE_CODE : input.languageCode;
 
-  // Settle sub-calls independently so one failure doesn't discard the others we
-  // already paid for, but keep them sequenced for hosted billing checks.
-  const aggregated = await settle(() =>
+  // Settle sub-calls independently so one failure doesn't discard the others
+  // we already paid for.
+  const [aggregated, topPages, mentions] = await Promise.allSettled([
     dataforseo.aiSearch.aggregatedMetrics({
       target,
       platform,
@@ -244,8 +245,6 @@ async function fetchPlatformData(
       languageCode,
       internalListLimit: 20,
     }),
-  );
-  const topPages = await settle(() =>
     dataforseo.aiSearch.topPages({
       target,
       platform,
@@ -253,8 +252,6 @@ async function fetchPlatformData(
       languageCode,
       itemsListLimit: TOP_SOURCES_PER_PLATFORM,
     }),
-  );
-  const mentions = await settle(() =>
     dataforseo.aiSearch.mentionsSearch({
       target,
       platform,
@@ -262,7 +259,7 @@ async function fetchPlatformData(
       languageCode,
       limit: MENTIONS_PER_PLATFORM,
     }),
-  );
+  ]);
 
   rethrowIfBlockingAiSearchError([aggregated, topPages, mentions]);
 
@@ -322,26 +319,19 @@ async function fetchCrossAggregated(
     })),
   ];
 
-  const settled: Array<PromiseSettledResult<LlmCrossAggregatedItem[]>> = [];
-  for (const platform of PLATFORMS) {
-    settled.push(
-      await settle(() =>
-        dataforseo.aiSearch.crossAggregatedMetrics({
-          groups,
-          platform,
-          // ChatGPT mentions DB only contains US/en data per DataForSEO docs.
-          locationCode:
-            platform === "chat_gpt"
-              ? CHATGPT_LOCATION_CODE
-              : input.locationCode,
-          languageCode:
-            platform === "chat_gpt"
-              ? CHATGPT_LANGUAGE_CODE
-              : input.languageCode,
-        }),
-      ),
-    );
-  }
+  const settled = await Promise.allSettled(
+    PLATFORMS.map((platform) =>
+      dataforseo.aiSearch.crossAggregatedMetrics({
+        groups,
+        platform,
+        // ChatGPT mentions DB only contains US/en data per DataForSEO docs.
+        locationCode:
+          platform === "chat_gpt" ? CHATGPT_LOCATION_CODE : input.locationCode,
+        languageCode:
+          platform === "chat_gpt" ? CHATGPT_LANGUAGE_CODE : input.languageCode,
+      }),
+    ),
+  );
 
   rethrowIfBlockingAiSearchError(settled);
 

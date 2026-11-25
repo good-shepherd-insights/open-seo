@@ -6,15 +6,13 @@ import { StatusScreen } from "@/client/components/StatusScreen";
 import { Button } from "@/client/components/ui/button";
 import { useSamAccess } from "./useSamAccess";
 import { useSamSessions } from "./useSamSessions";
-import { optInToSamBeta, useSamBetaOptIn } from "./samBetaOptIn";
-import { SamBetaGate } from "./SamBetaGate";
 import { SamSetupGate } from "./SamSetupGate";
 import { SamConversation } from "./SamConversation";
 
 /**
  * The SAM route's content: the active conversation, full-width. The chat
  * history list lives in the app sidebar's Chat tab (SamSidebarPanel); this
- * component gates on the beta opt-in, then lands the user in the most recent
+ * component lands the user in the most recent
  * session, creating one when the project has none.
  */
 export function SamChat({
@@ -24,7 +22,6 @@ export function SamChat({
   projectId: string;
   activeSessionId: string | undefined;
 }) {
-  const optedIn = useSamBetaOptIn();
   const access = useSamAccess(projectId);
 
   // The ref (not isPending) guards the auto-create below: React can re-run the
@@ -54,7 +51,7 @@ export function SamChat({
   // chat when the project has none.
   const firstSessionId = sessions[0]?.id;
   useEffect(() => {
-    if (activeSessionId || !optedIn || access.status !== "ready") return;
+    if (activeSessionId || access.status !== "ready") return;
     if (firstSessionId) {
       goToSession(firstSessionId);
       return;
@@ -63,7 +60,6 @@ export function SamChat({
     startChat();
   }, [
     activeSessionId,
-    optedIn,
     access.status,
     firstSessionId,
     sessionsQuery.isSuccess,
@@ -91,14 +87,6 @@ export function SamChat({
       setRecheckedSessionId(activeSessionId),
     );
   }, [isMissing, recheckedSessionId, activeSessionId, refetchSessions]);
-
-  if (!optedIn) {
-    return (
-      <StatusScreen>
-        <SamBetaGate onContinue={optInToSamBeta} />
-      </StatusScreen>
-    );
-  }
 
   if (access.status === "checking") {
     return <StatusScreen pending />;

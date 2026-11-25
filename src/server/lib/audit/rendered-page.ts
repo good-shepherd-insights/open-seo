@@ -1,8 +1,5 @@
 import { z } from "zod";
-import type {
-  BrowserRun,
-  Response as BrowserResponse,
-} from "@cloudflare/workers-types";
+import type { Response as BrowserResponse } from "@cloudflare/workers-types";
 import {
   CLOUDFLARE_RENDER_TIMEOUT_MS,
   type RenderUsage,
@@ -18,12 +15,26 @@ import {
   renderInvalidTarget,
 } from "@/shared/errors";
 
+/** The one Browser Run action audits use, over its binding or its REST API. */
+export type ContentBrowser = {
+  quickAction(
+    action: "content",
+    options: {
+      url: string;
+      cacheTTL: number;
+      gotoOptions: { waitUntil: "networkidle2"; timeout: number };
+    },
+  ): Promise<Response | BrowserResponse>;
+};
+
 type RenderOptions = {
-  // Either renderer may be missing: Docker has no browser binding, and the
+  // Either renderer may be missing: both need credentials on Docker, and the
   // Context key is optional on self-hosted Cloudflare deployments.
-  browser?: Pick<BrowserRun, "quickAction">;
-  contextApiKey?: string;
-  auditId: string;
+  browser?: ContentBrowser;
+  // Reaches Context.dev authenticated (provider-access.ts).
+  contextFetch?: typeof fetch | null;
+  /** Logged with each attempt; reads outside an audit have none. */
+  auditId?: string;
   // Counts every provider attempt, including rejected ones: both providers
   // bill a request whether or not the HTML turned out to be usable.
   usage: RenderUsage;
@@ -72,7 +83,8 @@ function usableHtml(url: string, finalUrl: string, html: string) {
   if (normalizeUrl(finalUrl, url) !== normalizeUrl(url, url)) {
     throw new AppError(renderInvalidTarget.code, renderInvalidTarget.message);
   }
-  if (!html.trim()) throw new AppError(renderEmptyResponse.code, renderEmptyResponse.message);
+  if (!html.trim())
+    throw new AppError(renderEmptyResponse.code, renderEmptyResponse.message);
   return truncateToBytes(html, MAX_HTML_BYTES);
 }
 
@@ -82,7 +94,7 @@ export type RenderedPage = { html: string; status: number | null };
 /** Null when Cloudflare failed, was blocked, or saw an origin error. */
 async function renderWithCloudflare(
   url: string,
-  browser: Pick<BrowserRun, "quickAction">,
+  browser: ContentBrowser,
 ): Promise<RenderedPage | null> {
   try {
     const response = await browser.quickAction("content", {
@@ -119,7 +131,7 @@ async function renderWithCloudflare(
 
 async function renderWithContext(
   url: string,
-  contextApiKey: string,
+  contextFetch: typeof fetch,
 ): Promise<{
   html: string | null;
   credits: number;
@@ -140,8 +152,7 @@ async function renderWithContext(
   let creditsUsed: number | null = null;
   let httpStatus: number | null = null;
   try {
-    const response = await fetch(endpoint, {
-      headers: { Authorization: `Bearer ${contextApiKey}` },
+    const response = await contextFetch(endpoint, {
       signal: AbortSignal.timeout(35_000),
     });
     httpStatus = response.status;
@@ -151,7 +162,8 @@ async function renderWithContext(
     creditsUsed = usage.success
       ? (usage.data.key_metadata?.credits_consumed ?? null)
       : null;
-    if (!response.ok) throw new AppError(renderFailed.code, renderFailed.message);
+    if (!response.ok)
+      throw new AppError(renderFailed.code, renderFailed.message);
     const data = contextSchema.parse(json);
     html = usableHtml(url, data.metadata.finalUrl, data.html);
   } catch {
@@ -187,10 +199,10 @@ async function renderPage(
     if (page) return page;
   }
 
-  if (options.contextApiKey) {
+  if (options.contextFetch) {
     const { html, credits, httpStatus } = await renderWithContext(
       url,
-      options.contextApiKey,
+      options.contextFetch,
     );
     options.usage.contextCredits += credits;
     console.info("site_audit:render", {

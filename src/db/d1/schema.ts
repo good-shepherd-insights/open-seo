@@ -13,3 +13,7 @@ export * from "../ga4.schema";
 export * from "../gsc.schema";
 export * from "../telemetry.schema";
 export * from "../ai-visibility.schema";
+export * from "../local-seo.schema";
+export * from "../stripe-projects.schema";
+export * from "../embeds.schema";
+export * from "../every-app-transfer.schema";

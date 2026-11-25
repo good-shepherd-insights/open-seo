@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Shell",
+    "ours": "src/client/design/shell",
+    "upstream": [
+      "src/client/layout/AppShell.tsx",
+      "src/client/components/Sidebar.tsx",
+      "src/client/navigation/items.ts",
+      "src/client/features/projects/ProjectSwitcher.tsx"
+    ],
+    "reviewed": "d0034c32"
+  },
+  {
+    "name": "Backlinks",
+    "ours": "src/client/design/backlinks",
+    "upstream": [
+      "src/client/features/backlinks/BacklinksPage.tsx",
+      "src/client/features/backlinks/BacklinksPageContent.tsx",
+      "src/client/features/backlinks/BacklinksOverviewPanels.tsx",
+      "src/client/features/backlinks/BacklinksPageCharts.tsx"
+    ],
+    "reviewed": "d0034c32"
+  },
+  {
+    "name": "Get started",
+    "ours": "src/client/design/dashboard",
+    "upstream": [
+      "src/client/features/dashboard/DashboardOnboarding.tsx",
+      "src/client/features/dashboard/DashboardSetupAction.tsx"
+    ],
+    "reviewed": "d0034c32"
+  }
+]

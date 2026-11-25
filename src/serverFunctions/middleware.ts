@@ -1,5 +1,20 @@
 import { createMiddleware } from "@tanstack/react-start";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { z } from "zod";
 import { AppError } from "@/server/lib/errors";
 import { errorHandlingMiddleware } from "@/middleware/errorHandling";
@@ -18,7 +33,7 @@ const ensuredUserContextSchema: z.ZodType<EnsuredUserContext> = z.object({
 function getAuthenticatedContext(context: unknown): EnsuredUserContext {
   const result = ensuredUserContextSchema.safeParse(context);
   if (!result.success) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
   return result.data;
 }
@@ -43,7 +58,7 @@ export const requireProjectContext = [
     const authenticatedContext = getAuthenticatedContext(context);
 
     if (!authenticatedContext.project) {
-      throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+      throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
     }
 
     return next({

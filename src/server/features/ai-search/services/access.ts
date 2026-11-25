@@ -1,4 +1,4 @@
-import { customerHasPaidPlan } from "@/server/billing/subscription";
+import { customerHasFeatureAccess } from "@/server/billing/subscription";
 import { AppError } from "@/server/lib/errors";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 
@@ -8,7 +8,7 @@ export async function assertPaidAiSearchPlan(
   feature: string,
 ) {
   if (!(await isHostedServerAuthMode())) return;
-  if (await customerHasPaidPlan(organizationId)) return;
+  if (await customerHasFeatureAccess(organizationId)) return;
   throw new AppError(
     "PAYMENT_REQUIRED",
     `Upgrade to the paid plan to use ${feature}`,

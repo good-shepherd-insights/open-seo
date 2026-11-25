@@ -9,19 +9,37 @@ export const dashboardSetupStepSchema = z.enum([
   "keywords",
   "audit",
   "mcp",
+  "skills",
   "team",
   "project",
 ]);
 export type DashboardSetupStep = z.infer<typeof dashboardSetupStepSchema>;
-// Steps that complete on click-through rather than from product state.
-export const dashboardClickStepSchema = z.enum(["competitor", "keywords"]);
-export type DashboardClickStep = z.infer<typeof dashboardClickStepSchema>;
-export const dashboardStepClickSchema = dashboardProjectInputSchema.extend({
-  step: dashboardClickStepSchema,
-});
+// Steps that complete when the workspace first runs that research, from the
+// app or an agent.
+export type DashboardResearchStep = Extract<
+  DashboardSetupStep,
+  "competitor" | "keywords"
+>;
 export const dashboardStepDismissalSchema = dashboardProjectInputSchema.extend({
   step: dashboardSetupStepSchema,
   dismissed: z.boolean(),
+});
+
+export const overviewCardIdSchema = z.enum([
+  "newQueries",
+  "gsc",
+  "ga4",
+  "audit",
+  "backlinks",
+]);
+export type OverviewCardId = z.infer<typeof overviewCardIdSchema>;
+export const overviewCardOrderInputSchema = dashboardProjectInputSchema.extend({
+  order: z
+    .array(overviewCardIdSchema)
+    .length(overviewCardIdSchema.options.length)
+    .refine((order) => new Set(order).size === order.length, {
+      message: "Each overview card must appear exactly once.",
+    }),
 });
 
 export const dashboardSiteTabSchema = z.enum([

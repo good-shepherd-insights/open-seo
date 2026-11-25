@@ -1,4 +1,3 @@
-import { PostHog } from "posthog-node";
 import { and, count, eq, isNull, lt, or, sql } from "drizzle-orm";
 import { version } from "../../../package.json";
 import { db } from "@/db";
@@ -13,17 +12,13 @@ import {
   telemetryState,
   user,
 } from "@/db/schema";
-import { getAuthMode } from "@/lib/auth-mode";
+import { getAuthMode, isEveryAppAuthMode } from "@/lib/auth-mode";
 import {
   getOptionalEnvValue,
   isHostedServerAuthMode,
 } from "@/server/lib/runtime-env";
 import { getSetupIssueSummary } from "@/server/lib/setup-status";
 import { isTelemetryOptOutValue } from "@/shared/selfhost-checks";
-
-const SELF_HOST_POSTHOG_KEY =
-  "phc_xaXj4vE4LikxfvR7q6EHemAYNBSZW4hQkqor7fpf8aGT";
-const SELF_HOST_POSTHOG_HOST = "https://us.i.posthog.com";
 
 const DAILY_HEARTBEAT_INTERVAL_MS = 24 * 60 * 60 * 1000;
 // During the first two hours after install, heartbeat every 5 minutes so the
@@ -125,6 +120,8 @@ function isNonProductionBuild() {
 
 async function telemetryIsDisabled() {
   if (await isHostedServerAuthMode()) return true;
+  // Off on Every App installs for now.
+  if (isEveryAppAuthMode(await getOptionalEnvValue("AUTH_MODE"))) return true;
   if (
     isTelemetryOptOutValue(
       await getOptionalEnvValue("OPENSEO_TELEMETRY_DISABLED"),
@@ -226,27 +223,8 @@ async function collectCounts(): Promise<HeartbeatCounts> {
   };
 }
 
-async function sendHeartbeat(
-  installId: string,
-  properties: HeartbeatProperties,
-) {
-  const client = new PostHog(SELF_HOST_POSTHOG_KEY, {
-    host: SELF_HOST_POSTHOG_HOST,
-    flushAt: 1,
-    flushInterval: 0,
-    disableGeoip: true,
-  });
-
-  try {
-    client.capture({
-      distinctId: installId,
-      event: "self_host.heartbeat",
-      properties,
-    });
-  } finally {
-    await client.shutdown();
-  }
-}
+// This fork reports nothing upstream, and nothing calls the heartbeat.
+async function sendHeartbeat() {}
 
 async function markHeartbeatSent(
   currentVersion: string,

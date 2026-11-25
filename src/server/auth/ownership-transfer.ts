@@ -1,5 +1,21 @@
 import type { OrgPermissionRequest } from "@/lib/org-permissions";
-import { insufficientCredits, projectDefault, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  projectDefault,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import type { EnsuredUserContext } from "@/middleware/ensure-user/types";
 import { requireOrgPermission } from "@/server/auth/org-gate";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
@@ -26,7 +42,7 @@ export async function transferOrganizationOwnership(
     throw new AppError(notFound.code, notFound.message);
   }
   if (newOwner.userId === context.userId) {
-    throw new AppError(domainInvalid.code, domainInvalid.message)
+    throw new AppError(domainInvalid.code, domainInvalid.message);
   }
 
   await AuthRepository.transferOwnership({

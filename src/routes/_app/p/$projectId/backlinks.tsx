@@ -1,12 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BacklinksPage } from "@/client/features/backlinks/BacklinksPage";
+import { BacklinksScreen } from "@/client/design/backlinks/BacklinksScreen";
 import {
   DEFAULT_BACKLINKS_PAGE_SIZE,
   backlinksSearchSchema,
 } from "@/types/schemas/backlinks";
 import { defaultScopeForInput } from "@/shared/researchScope";
+import { pageHead } from "@/client/lib/pageHead";
 
 export const Route = createFileRoute("/_app/p/$projectId/backlinks")({
+  head: () => pageHead("Backlinks"),
   validateSearch: backlinksSearchSchema,
   component: BacklinksRoute,
 });
@@ -28,7 +30,7 @@ function BacklinksRoute() {
   const scope = rawScope ?? defaultScopeForInput(target);
 
   return (
-    <BacklinksPage
+    <BacklinksScreen
       projectId={projectId}
       navigate={navigate}
       searchState={{

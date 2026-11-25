@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { domainInvalid, insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid } from "@/shared/errors";
+import {
+  domainInvalid,
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+} from "@/shared/errors";
 import { supportsWebSearchCountry } from "@/shared/prompt-search-countries";
 import {
   llmAggregatedTotalSchema,

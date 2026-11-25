@@ -1,5 +1,7 @@
 /* eslint-disable max-lines */
+import { PRODUCT_NAME } from "@/shared/branding";
 import { z } from "zod";
+import { searchConsoleSchema } from "@/shared/mcp-contracts";
 import { buildProjectMeta } from "@/server/mcp/context";
 import { mcpResponse } from "@/server/mcp/formatters";
 import { optionalMetaOutputSchema } from "@/server/mcp/output-schemas";
@@ -11,7 +13,8 @@ import {
   type McpTableColumn,
 } from "@/server/mcp/table";
 import { projectIdSchema } from "@/server/mcp/schemas";
-import { buildDashboardUrl } from "@/server/mcp/urls";
+import { buildConnectGscUrl } from "@/server/mcp/urls";
+import { getGoogleAccessMode } from "@/server/features/google/googleAccess";
 import { hasGoogleOAuthConfig } from "@/server/features/google/oauth-config";
 import { GscService } from "@/server/features/gsc/services/GscService";
 import {
@@ -29,7 +32,10 @@ import {
   GscNotConnectedError,
   GscTokenError,
 } from "@/server/lib/gscErrors";
-import { GSC_SELF_HOSTED_SETUP_DOCS_URL } from "@/shared/gsc";
+import {
+  GSC_BRANDED_CLASSIFICATIONS,
+  GSC_SELF_HOSTED_SETUP_DOCS_URL,
+} from "@/shared/gsc";
 
 type GscPerfRow = {
   keys?: string[];
@@ -52,12 +58,6 @@ type ProjectAuthContext = {
   baseUrl: string;
 };
 
-function connectGscUrl(baseUrl: string, projectId: string): string {
-  // GSC Insights hosts the connection card AND the data the user came for,
-  // so land them there rather than in settings.
-  return buildDashboardUrl(baseUrl, `/p/${projectId}/search-performance`);
-}
-
 /** Self-hosted GSC requires the operator to provide a Google OAuth client and
  *  BETTER_AUTH_SECRET. Return this setup nudge before attempting a token lookup
  *  when either is missing. */
@@ -67,8 +67,20 @@ async function missingSelfHostedGoogleClientResponse(
 ) {
   if (await hasGoogleOAuthConfig()) return null;
 
+  if ((await getGoogleAccessMode()) === "gateway") {
+    return mcpResponse({
+      text: "Google isn't set up in Every App yet. An owner or admin adds it once: create a Google OAuth client with the redirect URI https://<your gateway>/connect/google-workspace/callback, then paste it in Every App under Manage workspace → Providers, or run `pnpm everyapp secret set GOOGLE_WORKSPACE_CLIENT_ID GOOGLE_WORKSPACE_CLIENT_SECRET` (guide: https://everyapp.com/docs/providers/google#connect-accounts). Then connect Search Console from the project's settings page.",
+      meta: buildProjectMeta(context, projectId),
+      structuredContent: {
+        ok: false,
+        connected: false,
+        reason: "gsc_oauth_not_configured",
+      },
+    });
+  }
+
   return mcpResponse({
-    text: `This self-hosted OpenSEO deployment is not configured for Search Console yet. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and BETTER_AUTH_SECRET, then reconnect Search Console from the project's settings page. Setup docs: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`,
+    text: `Search Console isn't available in ${PRODUCT_NAME} right now. Please try again later or contact support: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`,
     meta: buildProjectMeta(context, projectId),
     structuredContent: {
       ok: false,
@@ -99,7 +111,7 @@ function describeGscError(error: unknown): string {
   }
   if (error instanceof GscApiError) {
     return error.apiDisabled
-      ? `${GSC_API_DISABLED_MESSAGE} Setup docs: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`
+      ? `${GSC_API_DISABLED_MESSAGE} Support: ${GSC_SELF_HOSTED_SETUP_DOCS_URL}`
       : error.message;
   }
   return error instanceof Error ? error.message : String(error);
@@ -172,7 +184,7 @@ const perfInputSchema = {
     .max(4)
     .optional()
     .describe(
-      "Group rows by these dimensions. Default ['query']. Use ['page'] for top pages, ['query','page'] to map queries to pages / spot cannibalization, ['date'] for a time series.",
+      "Group rows by these dimensions. Default ['query']. Use ['page'] for top pages, ['query','page'] to map queries to pages / spot cannibalization, ['date'] for a time series, ['brandedClassification'] for Google's branded vs non-branded split.",
     ),
   dateRange: z
     .enum(GSC_DATE_RANGES)
@@ -195,7 +207,7 @@ const perfInputSchema = {
     .max(5)
     .optional()
     .describe(
-      "AND-combined filters. To get the queries for one page: [{dimension:'page',operator:'equals',expression:'https://example.com/post'}] with dimensions ['query'].",
+      "AND-combined filters. To get the queries for one page: [{dimension:'page',operator:'equals',expression:'https://example.com/post'}] with dimensions ['query']. For branded or non-branded queries only: {dimension:'brandedClassification',operator:'equals',expression:'BRANDED' or 'NON_BRANDED'}; Google can't combine that with a query filter.",
     ),
   rowLimit: z
     .number()
@@ -242,38 +254,9 @@ export const getSearchConsolePerformanceTool = {
   config: {
     title: "Get Google Search Console performance",
     description:
-      "Query the connected Search Console property's Search Analytics: clicks, impressions, CTR, and average position by query/page/country/device/date. First-party data — use it for what already ranks, near-ranking queries, and pages with real demand. Google sorts by clicks and can't filter by position, so minPosition/maxPosition/minImpressions are applied server-side over the top 1000 rows of the window — use them instead of fetching everything. ctr is a 0-1 fraction; position is a 1-based average and is omitted from rows when type is 'discover' or 'googleNews' (Google does not report it there — treat it as unavailable, not a failure); dates are Pacific Time; the last ~3 days may be incomplete. Reads only the Search Console property already connected to an OpenSEO project the caller is authorized to access. The server selects the Google account and property from that project's saved connection. Read-only; uses no credits.",
+      "Get Google Search Console performance for the project's connected property: clicks, impressions, CTR, and average position by query, page, country, device, date, or brandedClassification. This is first-party data: use it for what already ranks, near-ranking queries, and pages with real demand. Use minPosition, maxPosition, and minImpressions instead of fetching everything: Google can't filter by position, so they are applied server-side over the top 1000 rows by clicks. ctr is a 0-1 fraction; position is a 1-based average, omitted for type 'discover' or 'googleNews' because Google does not report it there. Dates are Pacific Time, and the last ~3 days may be incomplete. Google's branded classification starts on 2026-02-21 and covers only top-level properties with enough traffic; for other properties it returns no rows. Reads only the project's connected Search Console property. Uses no credits. For a page's index status, use inspect_urls.",
     inputSchema: perfInputSchema,
-    outputSchema: z.looseObject({
-      ok: z.boolean(),
-      reason: z.string().optional(),
-      connectUrl: z.string().optional(),
-      setupDocsUrl: z.string().optional(),
-      siteUrl: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-      dimensions: z.array(z.string()).optional(),
-      rowCount: z.number().optional(),
-      rows: z
-        .array(
-          z
-            .object({
-              keys: z.array(z.string()).optional(),
-              clicks: z.number(),
-              impressions: z.number(),
-              ctr: z.number(),
-              // Google omits position for the discover and googleNews search
-              // types even though the other metrics are present. The table
-              // already renders a missing position as an em dash.
-              position: z.number().optional(),
-            })
-            .passthrough(),
-        )
-        .optional(),
-      hasMore: z.boolean().optional(),
-      nextStartRow: z.number().optional(),
-      ...optionalMetaOutputSchema,
-    }),
+    outputSchema: searchConsoleSchema,
     annotations: {
       readOnlyHint: true,
       openWorldHint: true,
@@ -287,11 +270,15 @@ export const getSearchConsolePerformanceTool = {
     );
     if (blocked) return blocked;
 
-    const connectUrl = connectGscUrl(context.baseUrl, args.projectId);
+    const connectUrl = buildConnectGscUrl(
+      context.baseUrl,
+      args.projectId,
+      Boolean(context.auth.guestClaimToken),
+    );
     const meta = buildProjectMeta(
       context,
       args.projectId,
-      `/p/${args.projectId}/settings/integrations`,
+      `/p/${args.projectId}/search-performance`,
     );
 
     // GSC rejects searchAppearance combined with any other dimension.
@@ -303,6 +290,34 @@ export const getSearchConsolePerformanceTool = {
       return invalidRequest(
         meta,
         "searchAppearance must be the only dimension when used.",
+      );
+    }
+    const brandFilters =
+      args.filters?.filter(
+        (filter) => filter.dimension === "brandedClassification",
+      ) ?? [];
+    if (
+      brandFilters.some(
+        (filter) =>
+          filter.operator !== "equals" ||
+          !GSC_BRANDED_CLASSIFICATIONS.some(
+            (value) => value === filter.expression,
+          ),
+      )
+    ) {
+      return invalidRequest(
+        meta,
+        "Filter brandedClassification with operator 'equals' and expression 'BRANDED' or 'NON_BRANDED'.",
+      );
+    }
+    if (
+      (brandFilters.length > 0 ||
+        args.dimensions?.includes("brandedClassification")) &&
+      args.filters?.some((filter) => filter.dimension === "query")
+    ) {
+      return invalidRequest(
+        meta,
+        "Google can't combine brandedClassification with a query filter in one request. Drop one of them.",
       );
     }
     // A half-specified explicit range would silently fall back to a default window.
@@ -384,6 +399,7 @@ export const getSearchConsolePerformanceTool = {
         structuredContent: {
           ok: false,
           reason: isNotConnected ? "not_connected" : "api_error",
+          connectionRequired: isNotConnected || error instanceof GscTokenError,
           connectUrl,
         },
       });
@@ -499,7 +515,7 @@ export const inspectUrlsTool = {
   config: {
     title: "Inspect URLs in Google Search Console",
     description:
-      "Read Google Search Console's existing index status for up to 10 URLs of the connected property: index/coverage state, last crawl time, Google-selected vs declared canonical, and mobile/rich-results verdicts. Use it to answer 'is this page indexed? why not?'. Google requires each URL to belong to that property. This does not run a live crawl. Per-URL failures are reported inline. Reads only the Search Console property already connected to an OpenSEO project the caller is authorized to access. The server selects the Google account and property from that project's saved connection. Read-only; uses no credits.",
+      "Check whether Google has indexed up to 10 pages, and why not: index and coverage state, last crawl time, the canonical Google selected versus the declared one, and mobile and rich-results verdicts. Use it to answer 'is this page indexed? why not?'. It reads Search Console's existing index status and does not run a live crawl. Each URL must belong to the project's connected Search Console property, the only property this reads. Uses no credits. For clicks, impressions, and positions, use get_search_console_performance.",
     inputSchema: inspectInputSchema,
     outputSchema: z.looseObject({
       ok: z.boolean(),
@@ -533,7 +549,11 @@ export const inspectUrlsTool = {
     );
     if (blocked) return blocked;
 
-    const connectUrl = connectGscUrl(context.baseUrl, args.projectId);
+    const connectUrl = buildConnectGscUrl(
+      context.baseUrl,
+      args.projectId,
+      Boolean(context.auth.guestClaimToken),
+    );
     const meta = buildProjectMeta(
       context,
       args.projectId,

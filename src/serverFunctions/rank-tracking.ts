@@ -1,14 +1,35 @@
 import { createServerFn } from "@tanstack/react-start";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
 import { waitUntil } from "cloudflare:workers";
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import { RankTrackingService } from "@/server/features/rank-tracking/services/RankTrackingService";
 import { RankTrackingKeywordService } from "@/server/features/rank-tracking/services/RankTrackingKeywordService";
 import { getLatestResults } from "@/server/features/rank-tracking/services/rankTrackingResults";
 import { AppError, asAppError } from "@/server/lib/errors";
+import { FeatureFlag, isFeatureFlagOn } from "@/server/lib/featureFlags";
 import { captureServerEvent } from "@/server/lib/posthog";
-import { requireProjectContext } from "@/serverFunctions/middleware";
-import {   getConfigsSchema,
+import { markOnboardingMilestone } from "@/server/email/onboarding-drip";
+import {
+  requireAuthenticatedContext,
+  requireProjectContext,
+} from "@/serverFunctions/middleware";
+import {
+  getConfigsSchema,
   createConfigSchema,
   updateConfigSchema,
   triggerCheckSchema,
@@ -45,6 +66,8 @@ export interface RankPositionMatrixCell {
   checkedAt: string;
   trackingKeywordId: string;
   position: number | null;
+  /** False when the keyword was tracked but this run got no result for it. */
+  checked: boolean;
 }
 
 async function requireConfig(configId: string, projectId: string) {
@@ -53,7 +76,7 @@ async function requireConfig(configId: string, projectId: string) {
     projectId,
   });
   if (!config) {
-    throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+    throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
   }
   return config;
 }
@@ -71,6 +94,10 @@ export const getRankTrackingConfigSummaries = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     return RankTrackingRepository.getConfigSummaries(context.projectId);
   });
+
+export const getScheduledRankChecksPaused = createServerFn({ method: "POST" })
+  .middleware(requireAuthenticatedContext)
+  .handler(() => isFeatureFlagOn(FeatureFlag.PauseScheduledRankChecks));
 
 export const createRankTrackingConfig = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)
@@ -97,6 +124,7 @@ export const createRankTrackingConfig = createServerFn({ method: "POST" })
       billingCustomer: context,
     });
 
+    await markOnboardingMilestone(context, "rankTrackingSetUp");
     waitUntil(
       captureServerEvent({
         distinctId: context.userId,
@@ -104,7 +132,6 @@ export const createRankTrackingConfig = createServerFn({ method: "POST" })
         organizationId: context.organizationId,
         properties: {
           project_id: context.projectId,
-          domain: data.domain,
           devices: data.devices ?? "both",
           schedule: data.scheduleInterval ?? "weekly",
         },
@@ -183,7 +210,11 @@ export const estimateRankCheckCost = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)
   .validator(estimateCostSchema)
   .handler(async ({ data, context }) => {
-    return RankTrackingService.estimateCost(data.configId, context.projectId);
+    return RankTrackingService.estimateCost(
+      data.configId,
+      context.projectId,
+      context.organizationId,
+    );
   });
 
 function logAutoActionFailure(action: string, err: unknown) {
@@ -217,8 +248,11 @@ export const addTrackingKeywords = createServerFn({ method: "POST" })
   .validator(addKeywordsSchema)
   .handler(async ({ data, context }) => {
     const result = await RankTrackingService.addKeywords(
-      data.configId,
-      context.projectId,
+      {
+        configId: data.configId,
+        projectId: context.projectId,
+        organizationId: context.organizationId,
+      },
       data.keywords,
       { kind: "direct_user_action" },
       data.matchCase,

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/client/components/ui/button";
 import {
@@ -18,8 +19,8 @@ import { getGscGrantStatus } from "@/serverFunctions/gsc";
 import { dismissGscNudge } from "@/serverFunctions/onboarding";
 
 /**
- * One-time re-engagement prompt nudging users who finished onboarding *before*
- * the Search Console step existed to connect GSC. Hosted-only because this is
+ * One-time prompt nudging users who finished onboarding without the Search
+ * Console step (legacy users, and users onboarded by an agent) to connect GSC. Hosted-only because this is
  * a hosted onboarding re-engagement nudge. Shows once — server-persisted
  * dismissal means it never reappears after the user connects or dismisses, on
  * any device.
@@ -38,6 +39,7 @@ export function GscReEngagementModal({
   const queryClient = useQueryClient();
   const [closed, setClosed] = React.useState(false);
   const shownRef = React.useRef(false);
+  const connectRef = React.useRef<HTMLButtonElement>(null);
 
   const onboardingQuery = useQuery({
     ...onboardingAnswersQueryOptions(),
@@ -56,10 +58,10 @@ export function GscReEngagementModal({
     },
   });
 
-  // Legacy users — those who finished onboarding before it included the Search
-  // Console step — have no gscNudgeDismissedAt set, so they're the only ones who
-  // see this. Anyone who completes current onboarding gets it stamped (they
-  // already saw that step), and dismissing/connecting clears it too.
+  // Users who finished onboarding outside the wizard have no
+  // gscNudgeDismissedAt set: legacy users from before the step existed, and
+  // users whose agent completed onboarding by connecting over MCP or calling
+  // create_project. Completing the wizard, dismissing, or connecting stamps it.
   const eligible =
     hosted &&
     !suppressed &&
@@ -110,22 +112,30 @@ export function GscReEngagementModal({
         if (!open) handleDismiss();
       }}
     >
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg" initialFocus={connectRef}>
         <DialogHeader>
           <DialogTitle className="text-lg">
-            New: Connect Google Search Console
+            Connect Google Search Console
           </DialogTitle>
           <DialogDescription>
-            Bring your real clicks, impressions, and rankings into OpenSEO and
-            query them from Claude or Codex over MCP. It never uses credits.
+            Bring your real clicks, impressions, and rankings into{" "}
+            {PRODUCT_NAME} and query them from Claude or Codex over MCP. It
+            never uses credits.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={handleDismiss}>
+          <button
+            type="button"
+            className="px-2 text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:underline"
+            onClick={handleDismiss}
+          >
             Maybe later
-          </Button>
-          <Button variant="outline" onClick={handleConnect}>
-            <GoogleGlyph className="size-[18px]" />
+          </button>
+          <Button ref={connectRef} onClick={handleConnect}>
+            {/* Google's mark needs a white tile to stay legible on a colored button. */}
+            <span className="flex size-6 items-center justify-center rounded bg-white">
+              <GoogleGlyph className="size-[16px]" />
+            </span>
             Connect with Google
           </Button>
         </DialogFooter>

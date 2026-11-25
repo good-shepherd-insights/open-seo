@@ -4,7 +4,16 @@ import { chunk } from "remeda";
 import { z } from "zod";
 import { normalizeDomainInput } from "@/server/lib/domainUtils";
 import { requireProjectContext } from "@/serverFunctions/middleware";
-import { unauthenticated, notFound, rateLimited, forbidden, projectDefault, serviceUnavailable, crawlTargetBlocked, authConfigMissing } from "@/shared/errors";
+import {
+  unauthenticated,
+  notFound,
+  rateLimited,
+  forbidden,
+  projectDefault,
+  serviceUnavailable,
+  crawlTargetBlocked,
+  authConfigMissing,
+} from "@/shared/errors";
 
 /**
  * Ahrefs publishes a free, keyless Domain Rating lookup. We use it to enrich the

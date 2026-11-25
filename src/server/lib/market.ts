@@ -1,6 +1,22 @@
 import { AppError } from "@/server/lib/errors";
-import { insufficientCredits, serviceUnavailable, serviceTaskMissing, urlInvalid, domainInvalid, crawlTargetBlocked, forbidden, notImplemented, jsonRequired, domainRequired, unauthenticated, notFound, rateLimited, authConfigMissing } from "@/shared/errors";
-import {   DEFAULT_LOCATION_CODE,
+import {
+  insufficientCredits,
+  serviceUnavailable,
+  serviceTaskMissing,
+  urlInvalid,
+  domainInvalid,
+  crawlTargetBlocked,
+  forbidden,
+  notImplemented,
+  jsonRequired,
+  domainRequired,
+  unauthenticated,
+  notFound,
+  rateLimited,
+  authConfigMissing,
+} from "@/shared/errors";
+import {
+  DEFAULT_LOCATION_CODE,
   getKeywordDataProvider,
   getLanguageOptions,
   isLanguageServedForLocation,
@@ -12,7 +28,7 @@ import {   DEFAULT_LOCATION_CODE,
  */
 export function assertLabsLocationCode(locationCode: number | undefined) {
   if (locationCode != null && getKeywordDataProvider(locationCode) !== "labs") {
-    throw new AppError(domainInvalid.code, domainInvalid.message)
+    throw new AppError(domainInvalid.code, domainInvalid.message);
   }
 }
 
@@ -29,5 +45,5 @@ export function assertLanguageForLocation(
   if (languageCode == null) return;
   const resolvedLocation = locationCode ?? DEFAULT_LOCATION_CODE;
   if (isLanguageServedForLocation(resolvedLocation, languageCode)) return;
-  throw new AppError(domainInvalid.code, domainInvalid.message)
+  throw new AppError(domainInvalid.code, domainInvalid.message);
 }

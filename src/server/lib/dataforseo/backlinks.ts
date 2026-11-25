@@ -189,7 +189,7 @@ export async function fetchBacklinksSummary(input: BacklinksRequest) {
         "dataforseo.backlinks-summary-live.invalid-result",
         parsed.error.issues.slice(0, 5),
       );
-      throw new AppError(serviceUnavailable.code, serviceUnavailable.message)
+      throw new AppError(serviceUnavailable.code, serviceUnavailable.message);
     }
     return {
       data: parsed.data,

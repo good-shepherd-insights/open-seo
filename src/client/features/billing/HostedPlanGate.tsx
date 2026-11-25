@@ -17,5 +17,6 @@ export function useHostedPlanGate(): "loading" | PlanStatus {
   if (!isHostedMode) return "paid";
   if (accountQuery.isPending) return "loading";
   // Fails closed: an account that failed to load resolves to "free".
-  return accountQuery.data?.planStatus ?? "free";
+  // Starter opens every feature, so access decides here, not paying.
+  return accountQuery.data?.hasManagedAccess ? "paid" : "free";
 }

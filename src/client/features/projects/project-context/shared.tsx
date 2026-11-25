@@ -22,7 +22,11 @@ export function projectContextQueryKey(projectId: string) {
  * them share one mutation. The server function returns the context as it
  * stands after the patch, which becomes the new cache entry — no refetch.
  */
-export function useContextUpdate(projectId: string) {
+export function useContextUpdate(
+  projectId: string,
+  /** The caller shows the outcome itself. */
+  { quiet = false } = {},
+) {
   const queryClient = useQueryClient();
   const queryKey = projectContextQueryKey(projectId);
 
@@ -34,8 +38,9 @@ export function useContextUpdate(projectId: string) {
     onMutate: () => queryClient.cancelQueries({ queryKey }),
     onSuccess: (context) => {
       queryClient.setQueryData(queryKey, context);
-      toast.success("Project context updated");
+      if (!quiet) toast.success("Project context updated");
     },
+    meta: quiet ? { errorToast: false } : undefined,
     // The page instantiates this mutation per section, so two concurrent
     // patches can settle out of order and the slower (earlier-snapshotted)
     // response can land in the cache last; a settle-time refetch converges

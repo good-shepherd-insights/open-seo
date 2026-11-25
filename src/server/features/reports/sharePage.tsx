@@ -1,3 +1,4 @@
+import { DASHBOARD_URL, PRODUCT_NAME } from "@/shared/branding";
 import { renderToStaticMarkup } from "react-dom/server";
 import { formatRelativeTime } from "@/client/lib/relative-time";
 import { ReportRepository } from "@/server/features/reports/repositories/ReportRepository";
@@ -19,7 +20,7 @@ import { domainField } from "@/types/schemas/domain";
 // JavaScript beyond the Share button's clipboard handler. JSX so every value
 // from the row is escaped by React, not by hand.
 
-const MARKETING_URL = "https://openseo.so/?utm_source=shared_report";
+const MARKETING_URL = `${DASHBOARD_URL}/?utm_source=shared_report`;
 
 const MAX_DESCRIPTION_CHARS = 200;
 
@@ -88,7 +89,7 @@ function TryButton() {
       target="_blank"
       rel="noreferrer"
     >
-      Try OpenSEO
+      Try {PRODUCT_NAME}
     </a>
   );
 }
@@ -111,7 +112,7 @@ function Document({
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
         <meta name="robots" content="noindex, nofollow" />
-        <title>{`${title} · OpenSEO`}</title>
+        <title>{`${title} - ${PRODUCT_NAME}`}</title>
         {head}
         <link rel="icon" href="/favicon.ico" />
         <style dangerouslySetInnerHTML={{ __html: STYLES }} />
@@ -160,11 +161,13 @@ const missing = () =>
 /**
  * The public page. Reads the same row the raw endpoint reads and puts the frame
  * pointing at `/s/<token>/raw` straight into the HTML, so the browser requests
- * the document as soon as it has parsed the head.
+ * the document as soon as it has parsed the head. `nonce` is the one the
+ * response's Content-Security-Policy names (server.ts), for the Share script.
  */
 export async function renderSharePage(
   token: string,
   request: Request,
+  nonce: string,
 ): Promise<Response> {
   if (!(await sharesEnabled())) return missing();
   if (!SHARE_TOKEN_PATTERN.test(token)) return missing();
@@ -195,7 +198,7 @@ export async function renderSharePage(
       head={
         <>
           <meta property="og:type" content="article" />
-          <meta property="og:site_name" content="OpenSEO" />
+          <meta property="og:site_name" content={PRODUCT_NAME} />
           <meta property="og:title" content={report.title} />
           <meta name="twitter:title" content={report.title} />
           {description ? (
@@ -208,11 +211,14 @@ export async function renderSharePage(
           <meta property="og:image" content={imageUrl} />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content={`${report.title} · OpenSEO`} />
+          <meta
+            property="og:image:alt"
+            content={`${report.title} - ${PRODUCT_NAME}`}
+          />
           <meta name="twitter:image" content={imageUrl} />
           <meta
             name="twitter:image:alt"
-            content={`${report.title} · OpenSEO`}
+            content={`${report.title} - ${PRODUCT_NAME}`}
           />
           <meta name="twitter:card" content="summary_large_image" />
         </>
@@ -222,7 +228,8 @@ export async function renderSharePage(
         <div className="title">
           <h1>{report.title}</h1>
           <p className="meta">
-            Made with OpenSEO · Updated {formatRelativeTime(report.updatedAt)}
+            Made with {PRODUCT_NAME} · Updated{" "}
+            {formatRelativeTime(report.updatedAt)}
           </p>
         </div>
         <div className="actions">
@@ -253,7 +260,10 @@ export async function renderSharePage(
         referrerPolicy="no-referrer"
         title={report.title}
       />
-      <script dangerouslySetInnerHTML={{ __html: SHARE_SCRIPT }} />
+      <script
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: SHARE_SCRIPT }}
+      />
     </Document>,
     200,
   );

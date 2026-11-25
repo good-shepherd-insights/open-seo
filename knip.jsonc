@@ -5,6 +5,14 @@
     "deploy/alchemy/alchemy.preview-access.run.ts",
     // Site-audit aux worker entry (wrangler.audit.jsonc)
     "src/audit-worker.ts",
+    // Docker self-hosting entry (wrangler.standalone.json)
+    "src/standalone-server.ts",
+    // Separately bundled MCP App, served as an inline HTML resource.
+    "src/client/widgets/main.tsx",
+    // Every App manifest and Worker, read by the everyapp CLI and the
+    // Cloudflare Vite plugin 2.x (AUTH_MODE=everyapp)
+    "everyapp.config.ts",
+    "cloudflare.config.ts",
     // Detect Tanstack Start Routes
     "src/start.ts",
     "src/router.tsx",
@@ -23,6 +31,16 @@
     "scripts/**",
     // shadcn components are copied in whole; pages use only some exports
     "src/client/components/ui/**",
+    // Fork-only branding catalog: a deliberate full set of constants that
+    // callers consume selectively, same rationale as the shadcn block above.
+    // Deleting the currently-unreferenced ones would break the centralization
+    // this fork exists to maintain.
+    "src/shared/branding.ts",
+    // Upstream pages the fork replaced (src/client/design/replaced.json), kept
+    // so upstream merges stay clean.
+    "src/client/layout/AppShell.tsx",
+    "src/client/features/backlinks/BacklinksPage.tsx",
+    "src/client/features/dashboard/DashboardOnboarding.tsx",
   ],
   // tests/badseo/ is the standalone broken-SEO fixture worker (own deps/config),
   // like web/ it isn't part of the app's module graph.
@@ -37,14 +55,31 @@
     "!.agents/**",
     "!.claude/**",
   ],
-  "ignore": ["drizzle/remote-d1.config.ts"],
+  "ignore": [
+    "drizzle/remote-d1.config.ts",
+    // Hidden from users; kept so upstream merges stay clean
+    "src/client/features/settings/ApiKeySettings.tsx",
+    "src/client/features/every-app/MoveToEveryAppSettings.tsx",
+    "src/client/features/every-app/runEveryAppMove.ts",
+  ],
+  // GitHub CLI, used by deploy:prod; installed system-wide, not via npm
+  "ignoreBinaries": ["gh"],
   // Disable Drizzle plugin - it tries to load drizzle/sqlite.config.ts which imports cloudflare:workers
   "drizzle": false,
   "ignoreDependencies": [
+    // Resolved on purpose through another package's dependency tree with
+    // require.resolve(name, { paths }): the standalone build's portable
+    // password hash via better-auth (vite.config.ts), and the legacy Docker
+    // export via wrangler (scripts/celld).
+    "@better-auth/utils",
+    "miniflare",
+    // Its SVG files are loaded through import.meta.glob (CountryFlag.tsx)
+    "country-flag-icons",
     // Tailwindcss used via @tailwindcss/vite plugin
     "tailwindcss",
     // Imported by app.css; shadcn is also the component CLI
     "tw-animate-css",
     "shadcn",
+    // Linked from an Every App checkout until the SDK is published: Knip
   ],
 }

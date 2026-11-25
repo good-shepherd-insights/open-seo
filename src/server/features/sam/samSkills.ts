@@ -1,25 +1,21 @@
+import { PRODUCT_NAME } from "@/shared/branding";
 import { sort } from "remeda";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import type { SkillSource } from "agents/skills";
+import { skillFiles } from "@/server/features/skills/publicSkills";
 
-// Bundle the repo's public-facing skills (.agents/skills) into SAM at build
-// time. Skills marked `metadata.internal: true` are repo-dev tooling and stay
-// out. The glob names the dot-directory literally, so Vite matches it.
+// SAM runs the public-facing skills. Skills marked `metadata.internal: true`
+// are repo-dev tooling and stay out.
 //
 // The source implements the `SkillSource` interface by hand (type-only import
 // above): the `agents/skills` runtime module drags in the skill-*script*
 // executor graph (@cloudflare/codemode, just-bash), which a static in-memory
 // manifest doesn't need.
-const skillFiles = import.meta.glob<string>("/.agents/skills/*/SKILL.md", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
 
 // The skill bodies are written for external MCP clients (Claude Code); this
 // note reframes the surface so SAM skips the steps that don't apply in-app.
-const SAM_SURFACE_NOTE = `> Surface note: you are SAM, running inside the OpenSEO app. You are already
+const SAM_SURFACE_NOTE = `> Surface note: you are SAM, running inside the ${PRODUCT_NAME} app. You are already
 > authenticated and scoped to the user's current project — skip any "verify the
 > MCP connection", "choose a project", or skill-install steps. You have no
 > local filesystem: skip local-folder and file steps.
@@ -32,7 +28,7 @@ const SAM_SURFACE_NOTE = `> Surface note: you are SAM, running inside the OpenSE
 > If a skill step needs a tool you don't have (e.g. project creation), say so
 > and point the user at the app page rather than improvising.`;
 
-type SamSkill = { name: string; description: string; body: string };
+type PublicSkill = { name: string; description: string; body: string };
 
 const frontmatterSchema = z.looseObject({
   name: z.string().min(1),
@@ -40,7 +36,7 @@ const frontmatterSchema = z.looseObject({
   metadata: z.looseObject({ internal: z.boolean().optional() }).optional(),
 });
 
-function parseSkill(path: string, raw: string): SamSkill | null {
+export function parseSkill(path: string, raw: string): PublicSkill | null {
   const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(raw);
   if (!match) throw new Error(`Skill has no frontmatter: ${path}`);
   const parsed = frontmatterSchema.safeParse(parseYaml(match[1]));
@@ -52,18 +48,16 @@ function parseSkill(path: string, raw: string): SamSkill | null {
   // Public for `npx skills add` users but not an in-app workflow: it drafts
   // GitHub issues for contributors, which SAM has no surface for.
   if (frontmatter.name === "simple-issue-description") return null;
-  // SAM has no report tools, so the report-writing skill has nothing to drive.
-  if (frontmatter.name === "seo-report") return null;
   return {
     name: frontmatter.name,
     description: frontmatter.description,
-    body: `${SAM_SURFACE_NOTE}\n\n${match[2].trim()}`,
+    body: match[2].trim(),
   };
 }
 
 // Content hash so Think's registry refreshes the catalog when a deploy ships
 // changed skills (djb2 — stability matters here, not collision resistance).
-function fingerprint(skills: SamSkill[]): string {
+function fingerprint(skills: PublicSkill[]): string {
   let hash = 5381;
   for (const ch of skills.map((s) => `${s.name}\n${s.body}`).join("\n")) {
     hash = ((hash * 33) ^ ch.charCodeAt(0)) >>> 0;
@@ -78,14 +72,20 @@ let cachedSource: SkillSource | undefined;
 export function buildSamSkillSource(): SkillSource {
   if (cachedSource) return cachedSource;
   const skills = sort(
-    Object.entries(skillFiles)
-      .map(([path, raw]) => parseSkill(path, raw))
-      .filter((skill): skill is SamSkill => skill !== null),
+    skillFiles
+      .map(({ path, raw }) => parseSkill(path, raw))
+      .filter((skill): skill is PublicSkill => skill !== null)
+      // SAM has no report tools, so the report-writing skill has nothing to drive.
+      .filter((skill) => skill.name !== "seo-report")
+      .map((skill) => ({
+        ...skill,
+        body: `${SAM_SURFACE_NOTE}\n\n${skill.body}`,
+      })),
     (a, b) => a.name.localeCompare(b.name),
   );
 
   return (cachedSource = {
-    id: "openseo-public-skills",
+    id: "public-skills",
     fingerprint: fingerprint(skills),
     list: () =>
       Promise.resolve(

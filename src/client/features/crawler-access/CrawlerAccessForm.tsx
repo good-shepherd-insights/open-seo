@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PRODUCT_NAME } from "@/shared/branding";
 import { toast } from "sonner";
 import { z } from "zod";
 import { revalidateLogic } from "@tanstack/react-form";
 import { useAppForm } from "@/client/components/form/useAppForm";
+import { useAuditCapabilities } from "@/client/features/audit/shared";
+import { isEveryAppClientAuthMode } from "@/lib/auth-mode";
 import { saveCrawlerCredential } from "@/serverFunctions/crawlerAccess";
 import {
   isCrawlerAccessExpired,
@@ -11,6 +14,27 @@ import {
 
 export const crawlerCredentialsQueryKey = ["crawler-credentials"];
 export const saveCrawlerCredentialMutationKey = ["save-crawler-credential"];
+
+/**
+ * CRAWLER_ACCESS_SECRET is optional on Every App and on self-hosts, so the form
+ * and the Shopify crawl warning say how to set it instead of failing on save.
+ */
+export function CrawlerAccessSetupHint() {
+  if (isEveryAppClientAuthMode()) {
+    return (
+      <>
+        An admin sets <code>CRAWLER_ACCESS_SECRET</code> with{" "}
+        <code>pnpm everyapp secret set CRAWLER_ACCESS_SECRET</code>.
+      </>
+    );
+  }
+  return <>Crawler access isn't available right now. Please contact support.</>;
+}
+
+/** Whether to show the setup hint, once the server has said. */
+export function useCrawlerAccessNeedsSetup(projectId: string) {
+  return useAuditCapabilities(projectId).data?.canStoreCrawlerAccess === false;
+}
 
 const signatureSchema = z.object({
   host: z.string().trim().min(1, "Enter a domain."),
@@ -83,6 +107,14 @@ export function CrawlerAccessForm({
     },
   });
 
+  if (useCrawlerAccessNeedsSetup(projectId)) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Crawler access isn't set up yet. <CrawlerAccessSetupHint />
+      </p>
+    );
+  }
+
   return (
     <form.AppForm>
       <form.Form className="space-y-3">
@@ -115,7 +147,7 @@ export function CrawlerAccessForm({
           {(field) => (
             <field.TextField
               label="Signature"
-              description="Shopify also shows a Signature-Agent value. You don't need to paste it: OpenSEO sends it with every request."
+              description={`Shopify also shows a Signature-Agent value. You don't need to paste it: ${PRODUCT_NAME} sends it with every request.`}
               type="password"
               autoComplete="off"
               data-ph-mask

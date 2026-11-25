@@ -1,23 +1,28 @@
+import { AuditStatus } from "@/shared/audit-status";
 import { Link } from "@tanstack/react-router";
 import { Link2, Settings } from "lucide-react";
 import { EmptyState } from "@/client/components/EmptyState";
 import { Button } from "@/client/components/ui/button";
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/client/components/ui/tabs";
+  DashboardTabList,
+  DashboardTabPanel,
+  DashboardTabs,
+  DashboardTabTrigger,
+} from "@/client/design/dashboard/DashboardTabs";
+import { GetStartedScreen } from "@/client/design/dashboard/GetStartedScreen";
+import { ProjectDetails } from "@/client/design/dashboard/ProjectDetails";
+import { useProjectAnswersPending } from "@/client/design/dashboard/useProjectAnswers";
 import { DashboardKeywords } from "./DashboardKeywords";
 import { DashboardBacklinks } from "./DashboardBacklinks";
 import { DashboardNewQueries } from "./DashboardNewQueries";
 import { DashboardLinkActivity } from "./DashboardLinkActivity";
-import { dashboardSiteTabSchema } from "@/types/schemas/dashboard";
-import type { z } from "zod";
-import { Fragment } from "react";
+import { OverviewCardGrid, type OverviewCard } from "./OverviewCardGrid";
 import { useQuery } from "@tanstack/react-query";
-import { sort } from "remeda";
-import { DashboardOnboarding } from "./DashboardOnboarding";
+import { isAgentConnected } from "./dashboardSteps";
+import {
+  DashboardAgentCard,
+  DashboardAgentPromptCard,
+} from "./DashboardAgentCard";
 import {
   AuditHealthCard,
   GscCard,
@@ -30,27 +35,25 @@ import {
   getDashboardOverview,
 } from "@/serverFunctions/dashboard";
 import { Skeleton } from "@/client/components/ui/skeleton";
+import { usesBetterAuthClient } from "@/lib/auth-mode";
 
-export function DashboardPage({
-  projectId,
-  tab = "overview",
-  onTabChange,
-}: {
-  projectId: string;
-  tab?: z.infer<typeof dashboardSiteTabSchema>;
-  onTabChange: (tab: z.infer<typeof dashboardSiteTabSchema>) => void;
-}) {
+export function DashboardPage({ projectId }: { projectId: string }) {
   const activationQuery = useQuery({
     queryKey: ["dashboardActivation", projectId],
     queryFn: () => getDashboardActivation({ data: { projectId } }),
+    // Setup steps complete from research pages and agents, so recheck on
+    // every return to the dashboard.
+    refetchOnMount: "always",
+    refetchOnWindowFocus: "always",
   });
   const overviewQuery = useQuery({
     queryKey: ["dashboardOverview", projectId],
     queryFn: () => getDashboardOverview({ data: { projectId } }),
     refetchInterval: (query) =>
-      query.state.data?.audit?.status === "running" ? 3000 : false,
+      query.state.data?.audit?.status === AuditStatus.Running ? 3000 : false,
   });
 
+  const answersPending = useProjectAnswersPending(projectId);
   const activation = activationQuery.data;
   const overview = overviewQuery.data;
 
@@ -68,22 +71,11 @@ export function DashboardPage({
   }
 
   // Wait for the overview too: rendering cards from `overview === undefined`
-  // flashes their empty states (and reshuffles the data-first sort) once the
-  // real data lands. An overview error falls through so the page still loads,
-  // with the error in place of the audit card.
-  if (!activation || overviewQuery.isPending) {
-    return (
-      <div className="px-4 py-4 md:px-6 md:py-6" aria-busy>
-        <div className="mx-auto flex max-w-7xl flex-col gap-5">
-          <Skeleton className="h-8 w-52" />
-          <Skeleton className="h-36" />
-          <div className="grid gap-5 lg:grid-cols-2">
-            <Skeleton className="h-44" />
-            <Skeleton className="h-44" />
-          </div>
-        </div>
-      </div>
-    );
+  // flashes their empty states once the real data lands. An overview error
+  // falls through so the page still loads, with the error in place of the
+  // audit card.
+  if (!activation || overviewQuery.isPending || answersPending) {
+    return <DashboardSkeleton />;
   }
 
   const showBacklinks = activation.domain !== null;
@@ -92,20 +84,24 @@ export function DashboardPage({
 
   // Search Console always renders: connected shows the report, otherwise the
   // connect pitch. It sits ahead of the optional GA4 pitch.
-  const cards = [
+  const cards: OverviewCard[] = [
+    ...(gscConnected
+      ? [
+          {
+            key: "newQueries" as const,
+            hasData: true,
+            node: (
+              <DashboardNewQueries
+                projectId={projectId}
+                connected={gscConnected}
+                siteUrl={activation.gsc.siteUrl}
+              />
+            ),
+          },
+        ]
+      : []),
     {
-      key: "newQueries",
-      hasData: gscConnected,
-      node: (
-        <DashboardNewQueries
-          projectId={projectId}
-          connected={gscConnected}
-          siteUrl={activation.gsc.siteUrl}
-        />
-      ),
-    },
-    {
-      key: "gsc",
+      key: "gsc" as const,
       hasData: gscConnected,
       node: (
         <GscCard
@@ -118,7 +114,7 @@ export function DashboardPage({
     ...(ga4Connected || !activation.ga4.cardDismissedAt
       ? [
           {
-            key: "ga4",
+            key: "ga4" as const,
             hasData: ga4Connected,
             node: <Ga4Card projectId={projectId} connected={ga4Connected} />,
           },
@@ -127,7 +123,7 @@ export function DashboardPage({
     ...(overview
       ? [
           {
-            key: "audit",
+            key: "audit" as const,
             hasData: overview.audit != null,
             node: (
               <AuditHealthCard
@@ -142,7 +138,7 @@ export function DashboardPage({
     ...(showBacklinks
       ? [
           {
-            key: "backlinks",
+            key: "backlinks" as const,
             hasData: true,
             node: (
               <DashboardLinkActivity
@@ -154,15 +150,18 @@ export function DashboardPage({
         ]
       : []),
   ];
+  const agentConnected = isAgentConnected(activation);
+  // An agent is connected, but no one in the organization has used OpenSEO
+  // from one yet.
+  const agentNeverUsed =
+    activation.mcp.authorizedAt !== null &&
+    activation.mcp.firstToolCallAt === null;
 
   return (
     <div className="px-4 py-4 pb-24 md:px-6 md:py-6 md:pb-8">
       <div className="mx-auto flex max-w-7xl flex-col gap-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Your website
-            </p>
             <h1 className="text-2xl font-semibold">
               {activation.domain || "Dashboard"}
             </h1>
@@ -170,15 +169,38 @@ export function DashboardPage({
               Search visibility, links and site health in one place.
             </p>
           </div>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to="/p/$projectId/settings" params={{ projectId }} />}
-          >
-            <Settings />
-            Project settings
-          </Button>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <ProjectDetails
+              key={projectId}
+              projectId={projectId}
+              activation={activation}
+            />
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={
+                <Link to="/p/$projectId/settings" params={{ projectId }} />
+              }
+            >
+              <Settings />
+              Project settings
+            </Button>
+          </div>
         </div>
+
+        {/* The agent cards are separate from the checklist's agent step:
+            skipping the step leaves the cards, and dismissing the cards leaves
+            the step. */}
+        {usesBetterAuthClient() && !activation.mcp.cardDismissed ? (
+          !agentConnected ? (
+            <DashboardAgentCard projectId={projectId} />
+          ) : agentNeverUsed ? (
+            <DashboardAgentPromptCard
+              projectId={projectId}
+              domain={activation.domain}
+            />
+          ) : null
+        ) : null}
 
         <WorkspaceMergeBanner />
 
@@ -200,21 +222,14 @@ export function DashboardPage({
           />
         ) : null}
 
-        <DashboardOnboarding
+        <GetStartedScreen
           key={projectId}
           projectId={projectId}
           activation={activation}
         />
 
-        <Tabs
-          value={tab}
-          onValueChange={(value) => {
-            const parsed = dashboardSiteTabSchema.safeParse(value);
-            if (parsed.success) onTabChange(parsed.data);
-          }}
-          className="gap-4"
-        >
-          <TabsList aria-label="Your website dashboard" className="h-9">
+        <DashboardTabs>
+          <DashboardTabList label="Your website dashboard">
             {(
               [
                 ["overview", "Overview"],
@@ -222,34 +237,26 @@ export function DashboardPage({
                 ["backlinks", "Backlinks"],
               ] as const
             ).map(([value, label]) => (
-              <TabsTrigger key={value} value={value} className="px-3">
+              <DashboardTabTrigger key={value} value={value}>
                 {label}
-              </TabsTrigger>
+              </DashboardTabTrigger>
             ))}
-          </TabsList>
+          </DashboardTabList>
 
-          {/* Base UI unmounts inactive panels, so paid detail queries load only on opening their tab. */}
-          <TabsContent
-            value="overview"
-            className="grid gap-5 lg:grid-cols-2"
-            keepMounted={false}
-          >
-            {sort(cards, (a, b) => Number(b.hasData) - Number(a.hasData)).map(
-              (card) => (
-                <Fragment key={card.key}>{card.node}</Fragment>
-              ),
-            )}
-          </TabsContent>
+          {/* Panels load on first open, so paid detail queries run only then. */}
+          <DashboardTabPanel value="overview">
+            <OverviewCardGrid projectId={projectId} cards={cards} />
+          </DashboardTabPanel>
 
-          <TabsContent value="keywords" keepMounted={false}>
+          <DashboardTabPanel value="keywords">
             <DashboardKeywords
               key={`${projectId}:${activation.domain}`}
               projectId={projectId}
               connected={gscConnected}
               siteUrl={activation.gsc.siteUrl}
             />
-          </TabsContent>
-          <TabsContent value="backlinks" keepMounted={false}>
+          </DashboardTabPanel>
+          <DashboardTabPanel value="backlinks">
             {activation.domain ? (
               <DashboardBacklinks
                 key={activation.domain}
@@ -277,8 +284,26 @@ export function DashboardPage({
                 }
               />
             )}
-          </TabsContent>
-        </Tabs>
+          </DashboardTabPanel>
+        </DashboardTabs>
+      </div>
+    </div>
+  );
+}
+
+/** The dashboard before its data arrives; the landing redirect shows it too. */
+export function DashboardSkeleton() {
+  return (
+    <div className="px-4 py-4 md:px-6 md:py-6" aria-busy>
+      <div className="mx-auto flex max-w-7xl flex-col gap-5">
+        <Skeleton className="h-8 w-52" />
+        <Skeleton className="h-36" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Skeleton className="h-72" />
+          <Skeleton className="h-72" />
+          <Skeleton className="h-52" />
+          <Skeleton className="h-52" />
+        </div>
       </div>
     </div>
   );
