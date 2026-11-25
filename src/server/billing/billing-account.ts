@@ -28,8 +28,6 @@ type BillingAccount = {
   monthlyCreditsUsd: number;
   monthlyRemainingUsd: number;
   topUpRemainingUsd: number;
-  /** The plan credits have no limit, so the remaining amounts say nothing. */
-  isUnlimited: boolean;
   hasManagedAccess: boolean;
   isPastDue: boolean;
   /** When the monthly credits refill, in epoch ms. Null for the free plan's
@@ -92,7 +90,6 @@ export async function getOrganizationBillingAccount(
     ),
     monthlyRemainingUsd: autumnSeoDataCreditsToUsd(monthly?.remaining ?? 0),
     topUpRemainingUsd: autumnSeoDataCreditsToUsd(topUp?.remaining ?? 0),
-    isUnlimited: monthly?.unlimited === true,
     hasManagedAccess: Boolean(customer.flags[AUTUMN_MANAGED_ACCESS_FEATURE_ID]),
     isPastDue: customer.subscriptions.some((s) => s.pastDue),
     monthlyRefillsAt: paidSubscription?.canceledAt

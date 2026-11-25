@@ -39,21 +39,14 @@ export function NavBalance({
   onNavigate: () => void;
 }) {
   useFreshBalance();
-  const {
-    accountQuery,
-    totalRemaining,
-    isUnlimited,
-    isOutOfCredits,
-    isLowCredits,
-  } = useCreditBalance();
+  const { accountQuery, totalRemaining, isOutOfCredits, isLowCredits } =
+    useCreditBalance();
   if (!accountQuery.data) return null;
 
-  const balance = isUnlimited
-    ? "Unlimited"
-    : `$${Math.max(0, totalRemaining).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`;
+  const balance = `$${Math.max(0, totalRemaining).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
   return (
     <Link
       to={BILLING_ROUTE}

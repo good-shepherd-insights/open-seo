@@ -14,8 +14,7 @@ export function useCreditBalance() {
   const monthlyRemaining = account?.monthlyRemainingUsd ?? 0;
   const topUpRemaining = account?.topUpRemainingUsd ?? 0;
   const totalRemaining = monthlyRemaining + topUpRemaining;
-  const isUnlimited = account?.isUnlimited ?? false;
-  const isOutOfCredits = !isUnlimited && totalRemaining <= 0;
+  const isOutOfCredits = totalRemaining <= 0;
 
   // Whether auto-reload will bring credits: "on" means the next low balance
   // buys more, the others say why it will not. "card_failed" is the
@@ -47,11 +46,9 @@ export function useCreditBalance() {
     monthlyRemaining,
     topUpRemaining,
     totalRemaining,
-    isUnlimited,
     isOutOfCredits,
     // Running low is expected while auto-reload is about to buy more.
     isLowCredits:
-      !isUnlimited &&
       !isOutOfCredits &&
       totalRemaining < LOW_CREDITS_THRESHOLD_USD &&
       autoReloadState !== "on",
