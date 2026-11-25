@@ -4,7 +4,7 @@ import { pgDb } from "./pg/client";
 
 // Per-request Postgres client scope (no-op in D1 mode). Re-exported here so
 // entrypoints import it from "@/db" rather than the dialect-specific client.
-export { withPgClient } from "./pg/client";
+export { withPgClient, withTenant } from "./pg/client";
 
 // Provider-aware database handle. D1 is the default (free, zero-config self-host
 // on the Cloudflare free plan); Postgres is opt-in via DATABASE_PROVIDER=postgres.

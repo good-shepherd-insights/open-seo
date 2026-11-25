@@ -27,6 +27,44 @@ const pgClientStore = new AsyncLocalStorage<{
   db: ReturnType<typeof createPgDb>;
 }>();
 
+/**
+ * Run an authorized request as the seo_app role, which only sees its own
+ * organization (drizzle/pg-rls.sql). Role and identity last one transaction,
+ * so a pooled connection never carries them into the next request. No-op on D1.
+ */
+export async function withTenant<T>(
+  tenant: { organizationId: string; userId: string },
+  fn: () => Promise<T>,
+): Promise<T> {
+  if (getDatabaseProvider() !== "postgres") return fn();
+  const ambient = pgClientStore.getStore();
+  if (!ambient) throw new Error("withTenant needs a withPgClient() scope.");
+  const begin = <R>(run: (tx: postgres.TransactionSql) => Promise<R>) =>
+    ambient.sql.begin(async (tx) => {
+      await tx`select set_config('role', 'seo_app', true),
+        set_config('app.org', ${tenant.organizationId}, true),
+        set_config('app.user', ${tenant.userId}, true)`;
+      return run(tx);
+    });
+  // Drizzle awaits unsafe() directly, or calls .values() on it.
+  const unsafe = (...args: Parameters<Sql["unsafe"]>) => ({
+    // oxlint-disable-next-line unicorn/no-thenable -- stands in for postgres.js's PendingQuery, which is awaited directly
+    then: (...on: Parameters<Promise<unknown>["then"]>) =>
+      begin(async (tx) => tx.unsafe(...args)).then(...on),
+    values: () => begin(async (tx) => tx.unsafe(...args).values()),
+  });
+  const scoped = new Proxy(ambient.sql, {
+    get: (target, prop): unknown =>
+      prop === "begin"
+        ? begin
+        : prop === "unsafe"
+          ? unsafe
+          : Reflect.get(target, prop),
+  });
+  const sql = withQueryRetries(scoped);
+  return pgClientStore.run({ sql, db: createPgDb(sql) }, fn);
+}
+
 export const pgDb = new Proxy(
   {},
   {
